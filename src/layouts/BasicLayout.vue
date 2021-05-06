@@ -44,7 +44,7 @@ import defaultSettings from '@/config/defaultSettings'
 import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
 import Ads from '@/components/Other/CarbonAds'
-import LogoSvg from '../assets/logo.svg?inline'
+import LogoSvg from '../assets/logo.png?inline'
 
 export default {
   name: 'BasicLayout',

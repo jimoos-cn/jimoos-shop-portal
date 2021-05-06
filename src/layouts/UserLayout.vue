@@ -1,5 +1,4 @@
 <template>
-
   <div id="userLayout" :class="['user-layout-wrapper', isMobile && 'mobile']">
     <div class="container">
       <!-- <div class="user-layout-lang">
@@ -9,8 +8,8 @@
         <div class="top">
           <div class="header">
             <a href="/">
-              <img src="~@/assets/logo.svg" class="logo" alt="logo">
-              <span class="title">Ant Design</span>
+              <img src="~@/assets/logo.png" class="logo" alt="logo" />
+              <span class="title">积墨开源</span>
             </a>
           </div>
           <div class="desc">
@@ -22,13 +21,11 @@
 
         <div class="footer">
           <div class="links">
-            <a href="_self">帮助</a>
-            <a href="_self">隐私</a>
-            <a href="_self">条款</a>
+            <a href="https://forum.jimoos.cn/" target="_blank">论坛支持</a>
+            <a href="https://github.com/jimoos-cn/jimoos-shop-portal" target="_blank">Github</a>
+            <a href="https://github.com/keepcleargas" target="_blank">@keepcleargas</a>
           </div>
-          <div class="copyright">
-            Copyright &copy; 2018 vueComponent
-          </div>
+          <div class="copyright">Copyright &copy; 2021 积墨开源</div>
         </div>
       </div>
     </div>
@@ -37,12 +34,12 @@
 
 <script>
 import { deviceMixin } from '@/store/device-mixin'
-import SelectLang from '@/components/SelectLang'
+// import SelectLang from '@/components/SelectLang'
 
 export default {
   name: 'UserLayout',
   components: {
-    SelectLang
+    // SelectLang,
   },
   mixins: [deviceMixin],
   mounted () {
@@ -122,7 +119,7 @@ export default {
 
           .title {
             font-size: 33px;
-            color: rgba(0, 0, 0, .85);
+            color: rgba(0, 0, 0, 0.85);
             font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
             font-weight: 600;
             position: relative;
@@ -172,7 +169,6 @@ export default {
     a {
       text-decoration: none;
     }
-
   }
 }
 </style>
