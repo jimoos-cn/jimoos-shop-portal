@@ -31,6 +31,22 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // coupons 优惠券管理
+      {
+        path: '/coupons',
+        name: 'coupon',
+        redirect: '/coupon/list',
+        component: RouteView,
+        meta: { title: 'menu.coupon', keepAlive: true, icon: 'gift', permission: ['coupon'] },
+        children: [
+          {
+            path: '/coupon/list',
+            name: 'couponList',
+            component: () => import('@/views/coupon/CouponList'),
+            meta: { title: 'menu.coupon.list', keepAlive: false, permission: ['coupon'] }
+          }
+        ]
+      },
       // admin
       {
         path: '/admins',

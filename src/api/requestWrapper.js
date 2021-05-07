@@ -10,7 +10,7 @@ import storage from 'store'
  * @param {*} type 类别 0 application/x-www-form-urlencoded 1 json other form-data
  * @returns
  */
-export default function requestWapper (url, method, data = null, type = ContentTypes.FORM) {
+export default function requestWapper (url, method, data = {}, type = ContentTypes.FORM) {
     if (method === Methods.GET || method === Methods.DELETE) {
         return { url: url, method: method, params: data }
     } else {
