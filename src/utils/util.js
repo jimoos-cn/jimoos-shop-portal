@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 export function timeFix () {
   const time = new Date()
   const hour = time.getHours()
@@ -24,7 +26,7 @@ export function handleScrollHeader (callback) {
   let timer = 0
 
   let beforeScrollTop = window.pageYOffset
-  callback = callback || function () {}
+  callback = callback || function () { }
   window.addEventListener(
     'scroll',
     event => {
@@ -73,23 +75,35 @@ export function scorePassword (pass) {
   // award every unique letter until 5 repetitions
   const letters = {}
   for (let i = 0; i < pass.length; i++) {
-      letters[pass[i]] = (letters[pass[i]] || 0) + 1
-      score += 5.0 / letters[pass[i]]
+    letters[pass[i]] = (letters[pass[i]] || 0) + 1
+    score += 5.0 / letters[pass[i]]
   }
 
   // bonus points for mixing it up
   const variations = {
-      digits: /\d/.test(pass),
-      lower: /[a-z]/.test(pass),
-      upper: /[A-Z]/.test(pass),
-      nonWords: /\W/.test(pass)
+    digits: /\d/.test(pass),
+    lower: /[a-z]/.test(pass),
+    upper: /[A-Z]/.test(pass),
+    nonWords: /\W/.test(pass)
   }
 
   let variationCount = 0
   for (var check in variations) {
-      variationCount += (variations[check] === true) ? 1 : 0
+    variationCount += (variations[check] === true) ? 1 : 0
   }
   score += (variationCount - 1) * 10
 
   return parseInt(score)
+}
+
+export function obj2FormData (obj) {
+  const formData = new FormData()
+  for (const key in obj) {
+    formData.append(key, obj[key])
+  }
+  return formData
+}
+
+export function stringifyObj (obj) {
+  return qs.stringify(obj)
 }

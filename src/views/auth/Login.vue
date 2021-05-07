@@ -62,10 +62,7 @@
 </template>
 
 <script>
-import md5 from 'md5'
 import { mapActions } from 'vuex'
-import { timeFix } from '@/utils/util'
-import { getSmsCaptcha } from '@/api/login'
 
 export default {
   data () {
@@ -121,11 +118,10 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
-          const loginParams = { ...values }
+          const loginParams = { }
           delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
+          loginParams.account = values.username
+          loginParams.pwd = values.password
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -139,79 +135,26 @@ export default {
         }
       })
     },
-    getCaptcha (e) {
-      e.preventDefault()
-      const { form: { validateFields }, state } = this
-
-      validateFields(['mobile'], { force: true }, (err, values) => {
-        if (!err) {
-          state.smsSendBtn = true
-
-          const interval = window.setInterval(() => {
-            if (state.time-- <= 0) {
-              state.time = 60
-              state.smsSendBtn = false
-              window.clearInterval(interval)
-            }
-          }, 1000)
-
-          const hide = this.$message.loading('验证码发送中..', 0)
-          getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            setTimeout(hide, 2500)
-            this.$notification['success']({
-              message: '提示',
-              description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-              duration: 8
-            })
-          }).catch(err => {
-            setTimeout(hide, 1)
-            clearInterval(interval)
-            state.time = 60
-            state.smsSendBtn = false
-            this.requestFailed(err)
-          })
-        }
-      })
-    },
-    stepCaptchaSuccess () {
-      this.loginSuccess()
-    },
-    stepCaptchaCancel () {
-      this.Logout().then(() => {
-        this.loginBtn = false
-        this.stepCaptchaVisible = false
-      })
-    },
     loginSuccess (res) {
-      console.log(res)
-      // check res.homePage define, set $router.push name res.homePage
-      // Why not enter onComplete
-      /*
-      this.$router.push({ name: 'analysis' }, () => {
-        console.log('onComplete')
-        this.$notification.success({
+      console.log('login success:' + res)
+      this.$notification.success({
           message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
+          description: res.username + ',欢迎回来'
         })
-      })
-      */
-      this.$router.push({ path: '/' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      }, 1000)
+        const redirect = decodeURIComponent(window.location.hash.split('redirect=')[1])
+        if (redirect !== 'undefined') {
+          location.replace('/#' + redirect)
+        } else {
+          location.replace('/dashboard/workplace')
+        }
+      }, 500)
       this.isLoginError = false
     },
     requestFailed (err) {
       this.isLoginError = true
-      this.$notification['error']({
-        message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
-        duration: 4
-      })
+      console.log('error:' + err)
     }
   }
 }
