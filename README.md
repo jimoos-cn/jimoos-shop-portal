@@ -10,7 +10,8 @@
 
 > yarn run serve
 
-启动完成后会自动打开浏览器访问 http://localhost:8000，你看到登录页面就代表成功了。
+启动完成后会自动打开浏览器访问 http://localhost:8000
+你看到登录页面就代表成功了。
 
 ## License
 

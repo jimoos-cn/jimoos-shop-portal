@@ -19,8 +19,12 @@ import bootstrap from './core/bootstrap'
 import './core/lazy_use' // use lazy load components
 import './permission' // permission control
 import './utils/filter' // global filter
+import './utils/prototype' // global prototype
 import './global.less' // global style
+import 'k-form-design/lib/k-form-design-mini.css' // 表单设计器
+import KFormDesign from 'k-form-design'
 
+Vue.use(KFormDesign)
 Vue.config.productionTip = false
 
 // mount axios to `Vue.$http` and `this.$http`

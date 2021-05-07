@@ -1,5 +1,5 @@
 <template>
-  <di>
+  <div>
     <a-dropdown v-if="currentUser && currentUser.name" placement="bottomRight">
       <span class="ant-pro-account-avatar">
         <span>{{ currentUser.name }}</span>
@@ -37,8 +37,8 @@
         </a-form-item>
       </a-form>
     </a-modal>
-  </di>
-</template>
+    </di>
+  </div></template>
 
 <script>
 import { Modal } from 'ant-design-vue'

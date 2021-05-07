@@ -29,11 +29,12 @@ router.beforeEach((to, from, next) => {
         store
           .dispatch('GetInfo')
           .then(res => {
-            const roles = {
-              permissionList: []
-            }
+            // const roles = {
+            //   permissionList: []
+            // }
             // generate dynamic router
-            store.dispatch('GenerateRoutes', { roles }).then(() => {
+            console.log('isAdmin:' + res.id === 1)
+            store.dispatch('GenerateRoutes', res.id === 1).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
               router.addRoutes(store.getters.addRouters)

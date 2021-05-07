@@ -31,6 +31,22 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // admin
+      {
+        path: '/admins',
+        name: 'admin',
+        redirect: '/admin/list',
+        component: RouteView,
+        meta: { title: 'menu.admin', keepAlive: true, icon: 'crown', permission: ['admin'] },
+        children: [
+          {
+            path: '/admin/list',
+            name: 'adminList',
+            component: () => import('@/views/admin/adminList'),
+            meta: { title: 'menu.admin.list', keepAlive: false, permission: ['admin'] }
+          }
+        ]
+      },
       // account
       {
         path: '/account',
