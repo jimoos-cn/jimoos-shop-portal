@@ -17,9 +17,15 @@
           v-decorator="['des', { initialValue: data.des, rules: [{ required: true, message: '请输入优惠券名称' }] }]"
         />
       </a-form-item>
-      <a-form-item label="满减条件" :labelCol="labelCol" :wrapperCol="wrapperCol">
+      <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <span slot="label">
+          满减条件&nbsp;
+          <a-tooltip title="用户的购买金额须满足该设置金额，才可以使用该优惠券">
+            <a-icon type="question-circle-o" />
+          </a-tooltip>
+        </span>
         <a-input
-          prefix="￥"
+          suffix="元"
           type="number"
           style="width: 100%"
           placeholder="请输入"
@@ -28,11 +34,26 @@
       </a-form-item>
       <a-form-item label="优惠金额" :labelCol="labelCol" :wrapperCol="wrapperCol">
         <a-input
-          prefix="￥"
+          suffix="元"
           type="number"
           style="width: 100%"
           placeholder="请输入"
           v-decorator="['reduceMoney', { initialValue: 10, rules: [{ required: true, message: '优惠金额不能为空' }] }]"
+        />
+      </a-form-item>
+      <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <span slot="label">
+          有效时长&nbsp;
+          <a-tooltip title="用户领券后的有效时长">
+            <a-icon type="question-circle-o" />
+          </a-tooltip>
+        </span>
+        <a-input
+          suffix="天"
+          type="number"
+          style="width: 100%"
+          placeholder="请输入"
+          v-decorator="['validTime', { initialValue: 30, rules: [{ required: true, message: '有效时长不能为空' }] }]"
         />
       </a-form-item>
       <a-form-item label="有效时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -68,7 +89,7 @@
           style="width: 100%"
           :min="1"
           placeholder="请输入"
-          v-decorator="['quantity', { initialValue: 100, rules: [{ required: true, message: '请输入' }] }]"
+          v-decorator="['totalNum', { initialValue: 100, rules: [{ required: true, message: '请输入' }] }]"
         />
       </a-form-item>
       <a-form-item label="上架状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -128,17 +149,11 @@ export default {
           console.log(values)
           const theData = Object.assign({}, this.data, values)
 
-          theData.useStartAt = values['join-time-picker'][0].format('x')
-          theData.useEndAt = values['join-time-picker'][1].format('x')
-          theData.startAt = values['range-time-picker'][0].format('x')
-          theData.endAt = values['range-time-picker'][1].format('x')
-
-          theData.receiveLimit = 1
-          theData.validityType = 0
-          theData.type = 0 // 默认类型
-          theData.show = 1 // 默认上架
-          // theData.duration = theData.useEndAt - theData.useStartAt
-
+          theData.effectiveStartTime = values['join-time-picker'][0].format('x')
+          theData.effectiveEndTime = values['join-time-picker'][1].format('x')
+          theData.startTime = values['range-time-picker'][0].format('x')
+          theData.endTime = values['range-time-picker'][1].format('x')
+          theData.validTime = values['validTime'] * 3600 * 24
           console.log(theData)
           this.$emit('submit', theData, this.editFlag)
           this.form.resetFields()

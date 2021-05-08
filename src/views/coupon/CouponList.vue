@@ -49,7 +49,7 @@
           <a @click="goToDetail(record)">{{ text }}</a>
         </span>
         <!-- fullmoney -->
-        <span slot="fullmoney" slot-scope="text, record">
+        <span slot="fullMoney" slot-scope="text, record">
           满 <b>{{ text }}</b> 减 <b>{{ record.reduceMoney }}</b>
         </span>
         <!--时间-->
@@ -62,8 +62,19 @@
         </div>
         <!-- 操作 -->
         <div slot="action" slot-scope="text, record">
-          <a @click="goToDetail(record)">详情</a>
-          <a v-if="!record.status" @click="handleStop(record)" style="margin-left: 8px; color: red">上架</a>
+          <a-space>
+            <a @click="goToDetail(record)">详情</a>
+            <a v-if="!record.status" @click="handleUp(record)">上架</a>
+            <a-popconfirm
+              title="确定要下架优惠券吗？"
+              ok-text="是"
+              cancel-text="取消"
+              @confirm="handleDown(record)"
+              v-else
+            >
+              <a style="color: red">下架</a>
+            </a-popconfirm>
+          </a-space>
         </div>
       </s-table>
       <CouponModal
@@ -84,19 +95,25 @@
 <script>
 import { STable } from '@/components'
 import CouponModal from '@/views/coupon/modules/CouponModal'
-import { getCouponPage, createCoupon, downCoupon } from '@/api/coupon'
+import { getCouponPage, createCoupon, downCoupon, upCoupon } from '@/api/coupon'
 
 const columns = [
   {
+    title: '编号',
+    dataIndex: 'id',
+    align: 'center',
+    width: '80px'
+  },
+  {
     title: '优惠券名称',
-    dataIndex: 'name',
+    dataIndex: 'des',
     align: 'center',
     width: '150px'
   },
   {
     title: '满减金额',
     dataIndex: 'fullMoney',
-    width: '100px',
+    width: '200px',
     align: 'center',
     scopedSlots: {
       customRender: 'fullMoney'
@@ -269,29 +286,36 @@ export default {
         }
       })
     },
-    // 停止发券
-    handleStop (record) {
+    // 下架优惠券
+    handleDown (record) {
       const _this = this
-      this.$confirm({
-        title: '停止发券',
-        content: '确定要停止发券吗？',
-        okText: '确认',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          const data = {
-            id: record.id
-          }
-          downCoupon(data)
-            .then(() => {
-              _this.$refs.table.refresh()
-              _this.$message.success('成功!')
-            })
-            .catch(() => {
-              _this.$message.success('失败')
-            })
-        }
-      })
+
+      const data = {
+        id: record.id
+      }
+      downCoupon(data)
+        .then(() => {
+          _this.$refs.table.refresh()
+          _this.$message.success('下架成功!')
+        })
+        .catch(() => {
+          _this.$message.success('操作失败')
+        })
+    },
+    // 下架优惠券
+    handleUp (record) {
+      const _this = this
+      const data = {
+        id: record.id
+      }
+      upCoupon(data)
+        .then(() => {
+          _this.$refs.table.refresh()
+          _this.$message.success('上架成功!')
+        })
+        .catch(() => {
+          _this.$message.success('操作失败')
+        })
     }
   }
 }
