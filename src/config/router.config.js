@@ -44,6 +44,13 @@ export const asyncRouterMap = [
             name: 'couponList',
             component: () => import('@/views/coupon/CouponList'),
             meta: { title: 'menu.coupon.list', keepAlive: false, permission: ['coupon'] }
+          },
+          {
+            path: '/coupon/detail',
+            name: 'couponDetail',
+            hidden: true,
+            component: () => import('@/views/coupon/CouponDetail'),
+            meta: { title: '优惠券详情', keepAlive: true }
           }
         ]
       },

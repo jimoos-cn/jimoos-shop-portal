@@ -8,6 +8,7 @@ import { axios } from '@/utils/request'
 const api = {
     getCouponPage: data => requestWrapper('/coupons/query', Methods.GET, data),
     createCoupon: data => requestWrapper('/coupons', Methods.POST, data),
+    getCouponDetail: data => requestWrapper('/coupons/' + data.id, Methods.GET),
     updateCoupon: data => requestWrapper('/coupons/' + data.id, Methods.POST, data),
     deleteCoupon: data => requestWrapper('/coupons/' + data.id + '/delete', Methods.POST),
     upCoupon: data => requestWrapper('/coupons/' + data.id + '/up', Methods.POST, data),
@@ -30,6 +31,14 @@ export function getCouponPage (data) {
  */
 export function createCoupon (data) {
     return axios(api.createCoupon(data))
+}
+/**
+ * 获取优惠券信息
+ * @param {Object} data
+ * @returns
+ */
+export function getCouponDetail (data) {
+    return axios(api.getCouponDetail(data))
 }
 
 /**

@@ -17,6 +17,12 @@
           v-decorator="['des', { initialValue: data.des, rules: [{ required: true, message: '请输入优惠券名称' }] }]"
         />
       </a-form-item>
+      <a-form-item label="兑换码(可选)" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-input
+          placeholder="请输入兑换码"
+          v-decorator="['code', { initialValue: data.code }]"
+        />
+      </a-form-item>
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol">
         <span slot="label">
           满减条件&nbsp;

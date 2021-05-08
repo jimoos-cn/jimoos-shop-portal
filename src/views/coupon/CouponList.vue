@@ -9,6 +9,20 @@
                 <a-input v-model="search.name" placeholder="请输入" />
               </a-form-item>
             </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="状态">
+                <a-select
+                  v-model="search.status"
+                  placeholder="请选择状态">
+                  <a-select-option value="true">
+                    上架
+                  </a-select-option>
+                  <a-select-option value="false">
+                    已下架
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
             <!-- 查询，重置 -->
             <a-col :md="(!advanced && 8) || 24" :sm="24">
               <span
@@ -109,6 +123,12 @@ const columns = [
     dataIndex: 'des',
     align: 'center',
     width: '150px'
+  },
+  {
+    title: '兑换码',
+    dataIndex: 'code',
+    align: 'center',
+    width: '100px'
   },
   {
     title: '满减金额',
@@ -280,7 +300,7 @@ export default {
     },
     goToDetail (record) {
       this.$router.push({
-        name: 'coupon-detail',
+        name: 'couponDetail',
         query: {
           id: record.id
         }
