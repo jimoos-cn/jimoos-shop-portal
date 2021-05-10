@@ -24,5 +24,6 @@ export default {
     'menu.admin.logout': '退出登录',
     'menu.setting': '设置',
     'menu.setting.system': '系统设置',
-    'menu.setting.shopInfo': '商城信息'
+    'menu.setting.shopInfo': '商城信息',
+    'menu.develop': '开发者选项'
 }

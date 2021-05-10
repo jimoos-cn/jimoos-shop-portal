@@ -129,6 +129,36 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+      {
+        path: '/develop',
+        component: RouteView,
+        name: 'develop',
+        meta: { title: 'menu.develop', icon: 'tool', keepAlive: true, permission: ['admin'] },
+        children: [
+          {
+            path: '/develop',
+            name: 'develop',
+            component: () => import('@/views/develop/Index'),
+            meta: { title: '开发者选项', hideHeader: true, permission: ['develop'] },
+            redirect: '/develop/Debug',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: '/develop/debug',
+                name: 'Debug',
+                component: () => import('@/views/develop/Debug'),
+                meta: { title: '开发者模式', hidden: true, permission: ['develop'] }
+              },
+              {
+                path: '/develop/upload',
+                name: 'Upload',
+                component: () => import('@/views/develop/Upload'),
+                meta: { title: '文件上传设置', hidden: true, permission: ['develop'] }
+              }
+            ]
+          }
+        ]
       }
     ]
   },
