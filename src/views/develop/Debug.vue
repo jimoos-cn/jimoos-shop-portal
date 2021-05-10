@@ -1,20 +1,28 @@
 <template>
   <div class="account-settings-info-view">
-    <a-row :gutter="16">
-      <a-col :md="24" :lg="16">
-        <a-form layout="vertical">
-          <a-form-item label="是否开启开发者配置">
-            <a-switch
-              @change="handleDebug"
-              v-model="debugState"
-              checked-children="开启"
-              un-checked-children="关闭"
-              v-decorator="['status', { initialValue: false, valuePropName: 'checked' }]"
-            />
-          </a-form-item>
-        </a-form>
-      </a-col>
-    </a-row>
+    <a-list itemLayout="horizontal">
+      <a-list-item>
+        <a-list-item-meta>
+          <template v-slot:title>
+            <a>开发者模式</a>
+          </template>
+          <template v-slot:description>
+            <span>
+              开启开发者模式后，可以对商城应用进行开发设置。普通用户请勿开启。
+            </span>
+          </template>
+        </a-list-item-meta>
+        <template v-slot:actions>
+          <a-switch
+            @change="handleDebug"
+            v-model="debugState"
+            checked-children="开启"
+            un-checked-children="关闭"
+            v-decorator="['status', { initialValue: false, valuePropName: 'checked' }]"
+          />
+        </template>
+      </a-list-item>
+    </a-list>
   </div>
 </template>
 
