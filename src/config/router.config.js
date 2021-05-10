@@ -72,25 +72,25 @@ export const asyncRouterMap = [
       },
       // account
       {
-        path: '/account',
+        path: '/settings',
         component: RouteView,
-        redirect: '/account/center',
+        redirect: '/settings/center',
         name: 'account',
-        meta: { title: 'menu.setting', icon: 'setting', keepAlive: true, permission: ['user'] },
+        meta: { title: 'menu.setting', icon: 'setting', keepAlive: true, permission: ['setting'] },
         children: [
           {
-            path: '/account/settings',
+            path: '/settings',
             name: 'settings',
-            component: () => import('@/views/account/settings/Index'),
-            meta: { title: 'menu.setting.system', hideHeader: true, permission: ['user'] },
-            redirect: '/account/settings/basic',
+            component: () => import('@/views/settings/Index'),
+            meta: { title: '商城设置', hideHeader: true, permission: ['setting'] },
+            redirect: '/settings/shopInfo',
             hideChildrenInMenu: true,
             children: [
               {
-                path: '/account/settings/basic',
-                name: 'BasicSettings',
-                component: () => import('@/views/account/settings/BasicSetting'),
-                meta: { title: 'account.settings.menuMap.basic', hidden: true, permission: ['user'] }
+                path: '/settings/shopInfo',
+                name: 'ShopInfo',
+                component: () => import('@/views/settings/ShopInfo'),
+                meta: { title: '基本信息', hidden: true, permission: ['setting'] }
               },
               {
                 path: '/account/settings/security',

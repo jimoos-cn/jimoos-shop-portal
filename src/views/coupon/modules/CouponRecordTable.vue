@@ -68,15 +68,6 @@ const columns = [
     },
     align: 'center',
     width: '150px'
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createAt',
-    scopedSlots: {
-      customRender: 'createAt'
-    },
-    align: 'center',
-    width: '150px'
   }
 ]
 
