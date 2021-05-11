@@ -27,10 +27,11 @@
       <s-table
         ref="table"
         size="default"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadData"
-        :pagination="pagination">
+        :pagination="pagination"
+      >
         <!--时间-->
         <div slot="createAt" slot-scope="createAt">
           {{ $dateFormat(createAt) }}
@@ -47,13 +48,19 @@
         </div>
 
         <!-- 操作 -->
-        <span slot="action" slot-scope="text, record">
-          <a @click="changePassword(record)" style="margin-left: 8px">修改密码</a>
-          <a
-            v-if="record.id !== $store.state.user.info.id && record.id !== 1"
-            style="color: red;margin-left: 8px"
-            @click="deleteUser(record)">删除</a>
-        </span>
+        <div slot="action" slot-scope="text, record">
+          <a-space>
+            <a @click="changePassword(record)">修改密码</a>
+            <a-popconfirm
+              title="确定要删除管理员吗?"
+              ok-text="是"
+              cancel-text="取消"
+              v-if="record.id !== $store.state.user.info.id && record.id !== 1"
+              @confirm="deleteUser(record)"
+            >
+              <a style="color: red">删除</a>
+            </a-popconfirm></a-space>
+        </div>
       </s-table>
     </a-card>
     <!--新增对话框-->
@@ -63,7 +70,8 @@
       title="添加管理员"
       on-ok="handleCreateOk"
       :keyboard="true"
-      :confirmLoading="createLoad">
+      :confirmLoading="createLoad"
+    >
       <template slot="footer">
         <a-button key="back" @click="createVisible = false">取消</a-button>
         <a-button key="submit" type="primary" @click="handleCreateOk">提交</a-button>
@@ -78,7 +86,8 @@
       title="修改密码"
       on-ok="handleCreateOk"
       :keyboard="true"
-      :confirmLoading="resetLoad">
+      :confirmLoading="resetLoad"
+    >
       <template slot="footer">
         <a-button key="back" @click="resetVisible = false">取消</a-button>
         <a-button key="submit" type="primary" @click="handleResetOk">提交</a-button>
@@ -96,31 +105,24 @@ import adminResetForm from '@/views/admin/k-form/admin-reset-form'
 
 const columns = [
   {
-    title: '管理员编号',
+    title: '编号',
     dataIndex: 'id',
-    width: '150px',
-    align: 'center'
+    width: '80px'
   },
   {
     title: '管理员账号',
-    dataIndex: 'username',
-    align: 'center',
-    width: '190px'
+    dataIndex: 'username'
   },
   {
     title: '管理员状态',
     dataIndex: 'ban',
-    align: 'center',
     scopedSlots: {
       customRender: 'ban'
-    },
-    width: '150px'
+    }
   },
   {
     title: '创建时间',
     dataIndex: 'createAt',
-    align: 'center',
-    width: '190px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -128,11 +130,10 @@ const columns = [
   {
     title: '操作',
     key: 'operation',
-    width: '200px',
+    fixed: 'right',
     scopedSlots: {
       customRender: 'action'
-    },
-    align: 'center'
+    }
   }
 ]
 
@@ -164,14 +165,14 @@ export default {
       // 查询参数
       search: {},
       // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
+      loadData: (parameter) => {
         let params = {
           offset: (parameter.pageNo - 1) * parameter.pageSize,
           limit: parameter.pageSize
         }
         params = Object.assign({}, params, this.search)
         console.log('loadData request parameters:', params)
-        return this.getList(params).then(res => {
+        return this.getList(params).then((res) => {
           console.log('表格获取数据', res)
           return {
             pageNo: parameter.pageNo,
@@ -182,7 +183,7 @@ export default {
         })
       },
       pagination: {
-        showTotal: total => `共<b>${total}</b>条数据`
+        showTotal: (total) => `共<b>${total}</b>条数据`
       }
     }
   },
@@ -202,7 +203,7 @@ export default {
           }
           this.$refs.table.refresh()
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
           this.$message.error('失败')
         })
@@ -210,35 +211,23 @@ export default {
     // 删除管理员
     deleteUser (record) {
       const _this = this
-      this.$confirm({
-        title: '删除',
-        content: `确定要删除( ${record.username} )吗?`,
-        okText: '确定删除',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          const data = {
-            toDeleteAdminId: record.id
-          }
-          deleteAdmin(data)
-            .then(() => {
-              _this.$refs.table.refresh()
-              _this.$message.success('删除成功')
-            })
-            .catch(() => {
-              _this.$message.success('删除失败')
-            })
-        },
-        onCancel () {
-          _this.$message.info('取消删除')
-        }
-      })
+      const data = {
+        toDeleteAdminId: record.id
+      }
+      deleteAdmin(data)
+        .then(() => {
+          _this.$refs.table.refresh()
+          _this.$message.success('删除成功')
+        })
+        .catch(() => {
+          _this.$message.success('删除失败')
+        })
     },
     // 获取数据
     getList (params) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         getAdminPage(params)
-          .then(res => {
+          .then((res) => {
             this.pagination = {
               ...this.pagination,
               total: res['total'],
@@ -246,7 +235,7 @@ export default {
             }
             resolve(res['list'])
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('', err)
           })
       })
@@ -258,7 +247,7 @@ export default {
     },
     // 提交新增
     handleResetOk () {
-      this.$refs.PwdChangeTable.getData().then(values => {
+      this.$refs.PwdChangeTable.getData().then((values) => {
         if (values.pwd !== values.pwdRepeat) {
           this.$message.error('密码不匹配')
           return
@@ -287,7 +276,7 @@ export default {
     },
     // 提交新增
     handleCreateOk () {
-      this.$refs.adminCreateTable.getData().then(values => {
+      this.$refs.adminCreateTable.getData().then((values) => {
         if (values.pwd !== values.pwdRepeat) {
           this.$message.error('密码不匹配')
           return

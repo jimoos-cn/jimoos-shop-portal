@@ -23,8 +23,10 @@ import './utils/prototype' // global prototype
 import './global.less' // global style
 import 'k-form-design/lib/k-form-design-mini.css' // 表单设计器
 import KFormDesign from 'k-form-design'
+import vcolorpicker from 'vcolorpicker'
 
 Vue.use(KFormDesign)
+Vue.use(vcolorpicker)
 Vue.config.productionTip = false
 
 // mount axios to `Vue.$http` and `this.$http`

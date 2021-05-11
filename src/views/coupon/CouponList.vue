@@ -84,8 +84,7 @@
               ok-text="是"
               cancel-text="取消"
               @confirm="handleDown(record)"
-              v-else
-            >
+              v-else>
               <a style="color: red">下架</a>
             </a-popconfirm>
           </a-space>
@@ -115,26 +114,19 @@ const columns = [
   {
     title: '编号',
     dataIndex: 'id',
-    align: 'center',
     width: '80px'
   },
   {
-    title: '优惠券名称',
-    dataIndex: 'des',
-    align: 'center',
-    width: '150px'
+    title: '名称',
+    dataIndex: 'des'
   },
   {
     title: '兑换码',
-    dataIndex: 'code',
-    align: 'center',
-    width: '100px'
+    dataIndex: 'code'
   },
   {
     title: '满减金额',
     dataIndex: 'fullMoney',
-    width: '200px',
-    align: 'center',
     scopedSlots: {
       customRender: 'fullMoney'
     }
@@ -142,8 +134,6 @@ const columns = [
   {
     title: '有效时间开始',
     dataIndex: 'effectiveStartTime',
-    align: 'center',
-    width: '150px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -151,8 +141,6 @@ const columns = [
   {
     title: '有效时间结束',
     dataIndex: 'effectiveEndTime',
-    align: 'center',
-    width: '150px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -160,8 +148,6 @@ const columns = [
   {
     title: '领券开始时间',
     dataIndex: 'startTime',
-    align: 'center',
-    width: '150px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -169,8 +155,6 @@ const columns = [
   {
     title: '领券截至时间',
     dataIndex: 'endTime',
-    align: 'center',
-    width: '150px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -178,7 +162,6 @@ const columns = [
   {
     title: '上架状态',
     dataIndex: 'status',
-    align: 'center',
     width: '150px',
     scopedSlots: {
       customRender: 'status'
@@ -187,8 +170,6 @@ const columns = [
   {
     title: '创建时间',
     dataIndex: 'createAt',
-    align: 'center',
-    width: '150px',
     scopedSlots: {
       customRender: 'createAt'
     }
@@ -196,11 +177,9 @@ const columns = [
   {
     title: '操作',
     key: 'operation',
-    width: '200px',
     scopedSlots: {
       customRender: 'action'
-    },
-    align: 'center'
+    }
   }
 ]
 export default {

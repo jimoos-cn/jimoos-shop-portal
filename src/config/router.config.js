@@ -31,6 +31,47 @@ export const asyncRouterMap = [
           }
         ]
       },
+      //  product 商品管理
+      {
+        path: '/products',
+        name: 'product',
+        redirect: '/product/list',
+        component: RouteView,
+        meta: { title: 'menu.product', keepAlive: true, icon: 'shopping', permission: ['product'] },
+        children: [
+          {
+            path: '/product/list',
+            name: 'productList',
+            component: () => import('@/views/product/ProductList'),
+            meta: { title: 'menu.product.list', keepAlive: false, permission: ['product'] }
+          },
+          {
+            path: '/product/categoryList',
+            name: 'productCategoryList',
+            component: () => import('@/views/product/ProductCategoryList'),
+            meta: { title: 'menu.product.category', keepAlive: false, permission: ['product'] }
+          },
+          {
+            path: '/product/tagList',
+            name: 'productTagList',
+            component: () => import('@/views/product/ProductTagList'),
+            meta: { title: 'menu.product.tag', keepAlive: false, permission: ['product'] }
+          },
+          {
+            path: '/product/attrList',
+            name: 'productAttrList',
+            component: () => import('@/views/product/ProductAttrList'),
+            meta: { title: 'menu.product.attr', keepAlive: false, permission: ['product'] }
+          },
+          {
+            path: '/product/detail',
+            name: 'productDetail',
+            hidden: true,
+            component: () => import('@/views/product/ProductDetail'),
+            meta: { title: '商品详情', keepAlive: true, permission: ['product'] }
+          }
+        ]
+      },
       // coupons 优惠券管理
       {
         path: '/coupons',
