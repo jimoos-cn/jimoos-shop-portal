@@ -58,17 +58,40 @@ export const asyncRouterMap = [
             meta: { title: 'menu.product.tag', keepAlive: false, permission: ['product'] }
           },
           {
-            path: '/product/attrList',
-            name: 'productAttrList',
-            component: () => import('@/views/product/ProductAttrList'),
-            meta: { title: 'menu.product.attr', keepAlive: false, permission: ['product'] }
-          },
-          {
             path: '/product/detail',
             name: 'productDetail',
             hidden: true,
             component: () => import('@/views/product/ProductDetail'),
             meta: { title: '商品详情', keepAlive: true, permission: ['product'] }
+          },
+          {
+            path: '/product/attrList-management',
+            name: 'attrList-management',
+            hideChildrenInMenu: true,
+            redirect: '/product/attrList',
+            meta: { title: 'menu.product.attr', keepAlive: true, permission: ['product'] },
+            component: RouteView,
+            children: [
+              {
+                path: '/product/attrList',
+                name: 'attrList',
+                meta: { title: 'menu.product.attr', keepAlive: true, permission: ['product'] },
+                component: () => import('@/views/product/ProductAttrList')
+              },
+              {
+                path: '/product/attr/add',
+                name: 'productAttrAdd',
+                hidden: true,
+                component: () => import('@/views/product/attr/AddAttr'),
+                meta: { title: 'menu.product.addAttr', keepAlive: false, permission: ['product'] }
+              }
+              // {
+              //   path: '/product/product-attr-management/edit',
+              //   name: 'skuEdit',
+              //   meta: { title: '编辑销售属性', keepAlive: true, permission: ['attr-edit'] },
+              //   component: () => import('@/views/product/product-attr-management/product-attr-edit/ProductAttrEdit')
+              // }
+            ]
           }
         ]
       },

@@ -10,6 +10,7 @@ export default {
     'menu.product.category': '商品分类',
     'menu.product.tag': '商品标签',
     'menu.product.attr': '销售属性管理',
+    'menu.product.addAttr': ' 添加销售属性',
     'menu.collect': '商品集合',
     'menu.collect.list': '商品集合列表',
     'menu.coupon': '优惠券',
