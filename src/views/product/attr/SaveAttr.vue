@@ -13,7 +13,9 @@
           </a-col>
           <a-col :xl="{ span: 7, offset: 1 }" :lg="{ span: 8 }" :md="{ span: 12 }" :sm="24">
             <a-form-item label="销售属性描述">
-              <a-input placeholder="请输入销售属性描述" v-decorator="['description']" />
+              <a-input
+                placeholder="请输入销售属性描述"
+                v-decorator="['description']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -183,30 +185,42 @@ export default {
         $refs: { attr }
       } = this
       this.errors = []
-      let errorFlag = false
-      let attrData = {}
       attr.form.validateFields((err, values) => {
         if (err) {
           const errors = Object.assign({}, attr.getFieldsError())
           const tmp = { ...errors }
           this.errorList(tmp)
-          errorFlag = true
           return
         }
-        attrData = { ...values }
+        const x = [...this.data].filter((res) => res.editable)
+        if (x.length !== 0) {
+          this.$message.warning('请确定属性值已填写或已保存')
+          return
+        }
+        if (this.data.length === 0) {
+          this.$message.warning('销售属性必须有销售属性值')
+        }
         console.log(values)
+
+        this.callbackSave({ ...values, attr })
       })
-      if (errorFlag) {
+    },
+    errorList (errors) {
+      if (!errors || errors.length === 0) {
         return
       }
-      const x = [...this.data].filter((res) => res.editable)
-      if (x.length !== 0) {
-        this.$message.warning('请确定属性值已填写或已保存')
-        return
-      }
-      if (this.data.length === 0) {
-        this.$message.warning('销售属性必须有销售属性值')
-      }
+      this.errors = Object.keys(errors)
+        .filter((key) => errors[key])
+        .map((key) => ({
+          key: key,
+          message: errors[key][0],
+          fieldLabel: fieldLabels[key]
+        }))
+    },
+    callbackSave (attrData) {
+      // attr form
+      const { attr } = attrData
+
       const params = {
         name: attrData.name,
         description: attrData.description,
@@ -244,18 +258,6 @@ export default {
             this.$message.error('销售属性添加失败')
           })
       }
-    },
-    errorList (errors) {
-      if (!errors || errors.length === 0) {
-        return
-      }
-      this.errors = Object.keys(errors)
-        .filter((key) => errors[key])
-        .map((key) => ({
-          key: key,
-          message: errors[key][0],
-          fieldLabel: fieldLabels[key]
-        }))
     },
     newAttrValue () {
       const length = this.data.length
