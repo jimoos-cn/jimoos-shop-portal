@@ -171,9 +171,7 @@ export default {
           limit: parameter.pageSize
         }
         params = Object.assign({}, params, this.search)
-        console.log('loadData request parameters:', params)
         return this.getList(params).then((res) => {
-          console.log('表格获取数据', res)
           return {
             pageNo: parameter.pageNo,
             totalCount: this.pagination.total,

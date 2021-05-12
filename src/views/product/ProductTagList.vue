@@ -157,7 +157,6 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        console.log('loadData request parameters:', requestParameters)
         const params = {
           offset: (requestParameters.pageNo - 1) * requestParameters.pageSize,
           limit: requestParameters.pageSize

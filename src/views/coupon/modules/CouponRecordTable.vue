@@ -101,7 +101,6 @@ export default {
         }
         params = Object.assign({}, params, this.search)
         return this.getList(params).then(res => {
-          console.log('表格获取数据', res)
           return {
             pageSize: parameter.pageSize,
             pageNo: parameter.pageNo,

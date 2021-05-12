@@ -3,7 +3,7 @@ import requestWrapper from '@/api/requestWrapper'
 import { axios } from '@/utils/request'
 
 /**
- * 优惠券模块接口
+ * 商品标签模块接口
  */
 const api = {
     getProductTagPage: data => requestWrapper('/product/tags/query', Methods.GET, data),

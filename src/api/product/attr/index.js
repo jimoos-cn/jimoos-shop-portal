@@ -3,7 +3,7 @@ import requestWrapper from '@/api/requestWrapper'
 import { axios } from '@/utils/request'
 
 /**
- * 优惠券模块接口
+ * 销售属性模块接口
  */
 const api = {
     getProductAttrPage: data => requestWrapper('/product/attrs/query', Methods.GET, data),

@@ -213,7 +213,6 @@ export default {
           }
         })
         return this.getList(params).then((res) => {
-          console.log('表格获取数据', res)
           return {
             pageSize: this.pagination.pageSize,
             pageNo: parameter.pageNo,
