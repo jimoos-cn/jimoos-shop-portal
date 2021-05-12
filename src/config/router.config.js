@@ -79,10 +79,10 @@ export const asyncRouterMap = [
                 component: () => import('@/views/product/ProductAttrList')
               },
               {
-                path: '/product/attr/add',
-                name: 'productAttrAdd',
+                path: '/product/attr/save',
+                name: 'productAttrSave',
                 hidden: true,
-                component: () => import('@/views/product/attr/AddAttr'),
+                component: () => import('@/views/product/attr/SaveAttr'),
                 meta: { title: 'menu.product.addAttr', keepAlive: false, permission: ['product'] }
               }
               // {

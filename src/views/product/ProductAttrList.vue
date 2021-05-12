@@ -38,8 +38,18 @@
           <span v-else>-</span>
         </div>
         <div slot="action" slot-scope="text, record">
-          <a @click="editAttr(record)">编辑</a>
-          <a @click="removeAttr(record)" style="color: red; margin-left: 10px" v-if="record.name !== '单品'">删除</a>
+          <a-space>
+            <a @click="editAttr(record)">编辑</a>
+            <a-popconfirm
+              v-if="record.name !== '单品'"
+              title="删除该销售属性？"
+              ok-text="是"
+              cancel-text="取消"
+              @confirm="removeAttr(record)"
+            >
+              <a style="color: red">删除</a>
+            </a-popconfirm>
+          </a-space>
         </div>
       </s-table>
     </a-card>
@@ -163,29 +173,20 @@ export default {
     },
     removeAttr (record) {
       const that = this
-      this.$confirm({
-        title: '删除销售属性',
-        content: '确定要删除销售属性(' + record.name + ')吗?',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          deleteProductAttr({ id: record.id })
-            .then((res) => {
-              that.$refs.table.refresh()
-              that.$message.success('删除成功')
-            })
-            .catch((err) => {
-              console.log(err)
-              that.$refs.table.refresh()
-              that.$message.error('删除失败')
-            })
-        }
-      })
+      deleteProductAttr({ id: record.id })
+        .then((res) => {
+          that.$refs.table.refresh()
+          that.$message.success('删除成功')
+        })
+        .catch((err) => {
+          console.log(err)
+          that.$refs.table.refresh()
+          that.$message.error('删除失败')
+        })
     },
     goToAttrAdd () {
       this.$router.push({
-        name: 'productAttrAdd'
+        name: 'productAttrSave'
       })
     },
     editAttr (record) {

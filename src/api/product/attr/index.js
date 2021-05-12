@@ -1,4 +1,4 @@
-import { Methods } from '@/api/methods'
+import { Methods, ContentTypes } from '@/api/methods'
 import requestWrapper from '@/api/requestWrapper'
 import { axios } from '@/utils/request'
 
@@ -7,8 +7,8 @@ import { axios } from '@/utils/request'
  */
 const api = {
     getProductAttrPage: data => requestWrapper('/product/attrs/query', Methods.GET, data),
-    createProductAttr: data => requestWrapper('/product/attrs', Methods.POST, data),
-    updateProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.POST, data),
+    createProductAttr: data => requestWrapper('/product/attrs', Methods.POST, data, ContentTypes.JSON),
+    updateProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.POST, data, ContentTypes.JSON),
     deleteProductAttr: data => requestWrapper('/product/attrs/' + data.id + '/delete', Methods.POST)
 }
 

@@ -1,25 +1,20 @@
 <template>
-  <page-header-wrapper>
+  <page-header-wrapper content="新建商品的时候，需要用到销售属性。例如尺寸 XXL、XL、L、M、S">
     <a-card class="card" :bordered="false">
-      <a-form :form="form" class="form">
+      <a-form ref="attr" :form="form" class="form">
         <a-row class="form-row" :gutter="16">
           <a-col :lg="6" :md="12" :sm="24">
             <a-form-item label="销售属性名称">
               <a-input
                 placeholder="请输入销售属性名称"
+                v-model="attrData.name"
                 v-decorator="['name', { rules: [{ required: true, message: '请输入销售属性名称', whitespace: true }] }]"
               />
             </a-form-item>
           </a-col>
           <a-col :xl="{ span: 7, offset: 1 }" :lg="{ span: 8 }" :md="{ span: 12 }" :sm="24">
             <a-form-item label="销售属性描述">
-              <a-input
-                placeholder="请输入销售属性描述"
-                v-decorator="[
-                  'description',
-                  { rules: [{ required: true, message: '请输入销售属性描述', whitespace: true }] },
-                ]"
-              />
+              <a-input placeholder="请输入销售属性描述" v-model="attrData.description" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -75,31 +70,10 @@
 
     <!-- fixed footer toolbar -->
     <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
-      <!-- <span class="popover-wrapper">
-        <a-popover
-          title="表单校验信息"
-          overlayClassName="antd-pro-pages-forms-style-errorPopover"
-          trigger="click"
-          :getPopupContainer="(trigger) => trigger.parentNode"
-        >
-          <template slot="content">
-            <li
-              v-for="item in errors"
-              :key="item.key"
-              @click="scrollToField(item.key)"
-              class="antd-pro-pages-forms-style-errorListItem"
-            >
-              <a-icon type="cross-circle-o" class="antd-pro-pages-forms-style-errorIcon" />
-              <div class="">{{ item.message }}</div>
-              <div class="antd-pro-pages-forms-style-errorField">{{ item.fieldLabel }}</div>
-            </li>
-          </template>
-          <span class="antd-pro-pages-forms-style-errorIcon" v-if="errors.length > 0">
-            <a-icon type="exclamation-circle" />{{ errors.length }}
-          </span>
-        </a-popover>
-      </span> -->
-      <a-button type="primary" @click="validate" :loading="loading">提交</a-button>
+      <a-space>
+        <a-button @click="cancelSaveAttr">取消</a-button>
+        <a-button type="primary" @click="handleSubmit" :loading="loading">提交</a-button>
+      </a-space>
     </footer-tool-bar>
   </page-header-wrapper>
 </template>
@@ -107,6 +81,12 @@
 <script>
 import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
+import { createProductAttr } from '@/api/product/attr'
+
+const fieldLabels = {
+  name: '属性名',
+  description: '属性名称'
+}
 
 export default {
   name: 'ProductAttrAdd',
@@ -116,12 +96,10 @@ export default {
   },
   data () {
     return {
-      attr: {},
+      form: this.$form.createForm(this),
       loading: false,
       memberLoading: false,
-      // attr
-      name: '',
-      description: '',
+      attrData: {},
       // table
       columns: [
         {
@@ -155,25 +133,12 @@ export default {
       ],
       data: [
         {
-          key: '1',
-          name: '小明',
-          description: '001',
-          editable: false,
-          sort: '100'
-        },
-        {
-          key: '2',
-          name: '李莉',
-          description: '002',
-          editable: false,
-          sort: '100'
-        },
-        {
-          key: '3',
-          name: '王小帅',
-          description: '003',
-          editable: false,
-          sort: '100'
+          key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
+          name: '',
+          description: '默认描述',
+          sort: '100',
+          editable: true,
+          isNew: true
         }
       ],
 
@@ -182,6 +147,73 @@ export default {
   },
   created () {},
   methods: {
+    handleSubmit () {
+      const {
+        $refs: { attr }
+      } = this
+      this.errors = []
+      let errorFlag = false
+      attr.form.validateFields((err, values) => {
+        if (err) {
+          const errors = Object.assign({}, attr.getFieldsError())
+          const tmp = { ...errors }
+          this.errorList(tmp)
+          errorFlag = true
+          return
+        }
+        console.log(values)
+      })
+      if (errorFlag) {
+        return
+      }
+      const x = [...this.data].filter((res) => res.editable)
+      if (x.length !== 0) {
+        this.$message.warning('请确定属性值已填写或已保存')
+        return
+      }
+      if (this.data.length === 0) {
+        this.$message.warning('销售属性必须有销售属性值')
+      }
+      console.log('name:' + this.attrData.name + ',' + this.attrData.description)
+      const params = {
+        name: this.attrData.name,
+        description: this.attrData.description,
+        attrValues: this.data
+      }
+
+      createProductAttr(params)
+        .then((res) => {
+          this.$message.success('销售属性添加成功！继续添加')
+          attr.form.resetFields()
+          this.attrData = {}
+          this.data = []
+          this.data.push({
+            key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
+            name: '',
+            description: '默认描述',
+            sort: '100',
+            editable: true,
+            isNew: true
+          })
+          this.showSuccessFlag = true
+        })
+        .catch((err) => {
+          console.log('销售属性添加失败:', err)
+          this.$message.error('销售属性添加失败')
+        })
+    },
+    errorList (errors) {
+      if (!errors || errors.length === 0) {
+        return
+      }
+      this.errors = Object.keys(errors)
+        .filter((key) => errors[key])
+        .map((key) => ({
+          key: key,
+          message: errors[key][0],
+          fieldLabel: fieldLabels[key]
+        }))
+    },
     newAttrValue () {
       const length = this.data.length
       this.data.push({
@@ -233,6 +265,9 @@ export default {
         target[column] = value
         this.data = newData
       }
+    },
+    cancelSaveAttr () {
+      this.$router.go(-1)
     }
   }
 }
