@@ -160,7 +160,6 @@ export default {
           theData.startTime = values['range-time-picker'][0].format('x')
           theData.endTime = values['range-time-picker'][1].format('x')
           theData.validTime = values['validTime'] * 3600 * 24
-          console.log(theData)
           this.$emit('submit', theData, this.editFlag)
           this.form.resetFields()
         }

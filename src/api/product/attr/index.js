@@ -9,6 +9,7 @@ const api = {
     getProductAttrPage: data => requestWrapper('/product/attrs/query', Methods.GET, data),
     createProductAttr: data => requestWrapper('/product/attrs', Methods.POST, data, ContentTypes.JSON),
     updateProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.POST, data, ContentTypes.JSON),
+    getProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.GET, data),
     deleteProductAttr: data => requestWrapper('/product/attrs/' + data.id + '/delete', Methods.POST)
 }
 
@@ -36,6 +37,14 @@ export function createProductAttr (data) {
  */
 export function updateProductAttr (data) {
     return axios(api.updateProductAttr(data))
+}
+/**
+ * 获取销售属性
+ * @param {Object} data
+ * @returns
+ */
+export function getProductAttr (data) {
+    return axios(api.getProductAttr(data))
 }
 /**
  * 删除销售属性

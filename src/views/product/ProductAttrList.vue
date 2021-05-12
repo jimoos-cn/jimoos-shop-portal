@@ -190,11 +190,10 @@ export default {
       })
     },
     editAttr (record) {
-      console.log(record)
       this.$router.push({
-        name: 'skuEdit',
+        name: 'productAttrSave',
         query: {
-          attr: JSON.stringify(record)
+          id: record.id
         }
       })
     }

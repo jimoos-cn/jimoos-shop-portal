@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper content="新建商品的时候，需要用到销售属性。例如尺寸 XXL、XL、L、M、S">
+  <page-header-wrapper :title="title" content="新建商品的时候，需要用到销售属性。例如尺寸 XXL、XL、L、M、S">
     <a-card class="card" :bordered="false">
       <a-form ref="attr" :form="form" class="form">
         <a-row class="form-row" :gutter="16">
@@ -7,14 +7,13 @@
             <a-form-item label="销售属性名称">
               <a-input
                 placeholder="请输入销售属性名称"
-                v-model="attrData.name"
                 v-decorator="['name', { rules: [{ required: true, message: '请输入销售属性名称', whitespace: true }] }]"
               />
             </a-form-item>
           </a-col>
           <a-col :xl="{ span: 7, offset: 1 }" :lg="{ span: 8 }" :md="{ span: 12 }" :sm="24">
             <a-form-item label="销售属性描述">
-              <a-input placeholder="请输入销售属性描述" v-model="attrData.description" />
+              <a-input placeholder="请输入销售属性描述" v-decorator="['description']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -81,7 +80,7 @@
 <script>
 import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
-import { createProductAttr } from '@/api/product/attr'
+import { createProductAttr, updateProductAttr, getProductAttr } from '@/api/product/attr'
 
 const fieldLabels = {
   name: '属性名',
@@ -96,10 +95,11 @@ export default {
   },
   data () {
     return {
+      title: '添加销售属性',
+      id: 0,
       form: this.$form.createForm(this),
       loading: false,
       memberLoading: false,
-      attrData: {},
       // table
       columns: [
         {
@@ -145,7 +145,38 @@ export default {
       errors: []
     }
   },
-  created () {},
+  created () {
+    this.id = this.$route.query.id
+    if (this.id && this.id > 0) {
+      this.title = '更新销售属性'
+
+      const params = {
+        id: this.id
+      }
+      getProductAttr(params)
+        .then((res) => {
+          this.id = res.id
+          this.form.setFieldsValue({
+            name: res.name,
+            description: res.description
+          })
+          const newData = []
+          res.attrValues.forEach((item, index) => {
+            newData.push({
+              ...item,
+              key: index,
+              editable: false,
+              isNew: false
+            })
+          })
+          this.data = newData
+        })
+        .catch((err) => {
+          console.log('销售属性找不到了:', err)
+          this.$message.error('销售属性找不到了')
+        })
+    }
+  },
   methods: {
     handleSubmit () {
       const {
@@ -153,6 +184,7 @@ export default {
       } = this
       this.errors = []
       let errorFlag = false
+      let attrData = {}
       attr.form.validateFields((err, values) => {
         if (err) {
           const errors = Object.assign({}, attr.getFieldsError())
@@ -161,6 +193,7 @@ export default {
           errorFlag = true
           return
         }
+        attrData = { ...values }
         console.log(values)
       })
       if (errorFlag) {
@@ -174,33 +207,43 @@ export default {
       if (this.data.length === 0) {
         this.$message.warning('销售属性必须有销售属性值')
       }
-      console.log('name:' + this.attrData.name + ',' + this.attrData.description)
       const params = {
-        name: this.attrData.name,
-        description: this.attrData.description,
-        attrValues: this.data
+        name: attrData.name,
+        description: attrData.description,
+        attrValues: this.data,
+        id: this.id
       }
-
-      createProductAttr(params)
-        .then((res) => {
-          this.$message.success('销售属性添加成功！继续添加')
-          attr.form.resetFields()
-          this.attrData = {}
-          this.data = []
-          this.data.push({
-            key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
-            name: '',
-            description: '默认描述',
-            sort: '100',
-            editable: true,
-            isNew: true
+      if (this.id && this.id > 0) {
+        updateProductAttr(params)
+          .then((res) => {
+            this.$message.success('销售属性更新成功!返回列表')
+            this.$router.go(-1)
           })
-          this.showSuccessFlag = true
-        })
-        .catch((err) => {
-          console.log('销售属性添加失败:', err)
-          this.$message.error('销售属性添加失败')
-        })
+          .catch((err) => {
+            console.log('销售属性更新失败:', err)
+            this.$message.error('销售属性更新失败')
+          })
+      } else {
+        createProductAttr(params)
+          .then((res) => {
+            this.$message.success('销售属性添加成功！继续添加')
+            attr.form.resetFields()
+            this.data = []
+            this.data.push({
+              key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
+              name: '',
+              description: '默认描述',
+              sort: '100',
+              editable: true,
+              isNew: true
+            })
+            this.showSuccessFlag = true
+          })
+          .catch((err) => {
+            console.log('销售属性添加失败:', err)
+            this.$message.error('销售属性添加失败')
+          })
+      }
     },
     errorList (errors) {
       if (!errors || errors.length === 0) {
