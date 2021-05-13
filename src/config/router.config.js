@@ -40,10 +40,27 @@ export const asyncRouterMap = [
         meta: { title: 'menu.product', keepAlive: true, icon: 'shopping', permission: ['product'] },
         children: [
           {
-            path: '/product/list',
-            name: 'productList',
-            component: () => import('@/views/product/ProductList'),
-            meta: { title: 'menu.product.list', keepAlive: false, permission: ['product'] }
+            path: '/product/list-management',
+            name: 'productList-management',
+            redirect: '/product/list',
+            hideChildrenInMenu: true,
+            component: RouteView,
+            meta: { title: 'menu.product.list', keepAlive: false, permission: ['product'] },
+            children: [
+              {
+                path: '/product/list',
+                name: 'productList',
+                meta: { title: 'menu.product.list', keepAlive: true, permission: ['product'] },
+                component: () => import('@/views/product/ProductList')
+              },
+              {
+                path: '/product/addProduct',
+                name: 'addProduct',
+                hidden: true,
+                meta: { title: '新建商品', keepAlive: true, permission: ['product'] },
+                component: () => import('@/views/product/product/AddProduct')
+              }
+            ]
           },
           {
             path: '/product/categoryList',
@@ -85,12 +102,6 @@ export const asyncRouterMap = [
                 component: () => import('@/views/product/attr/SaveAttr'),
                 meta: { title: 'menu.product.addAttr', keepAlive: false, permission: ['product'] }
               }
-              // {
-              //   path: '/product/product-attr-management/edit',
-              //   name: 'skuEdit',
-              //   meta: { title: '编辑销售属性', keepAlive: true, permission: ['attr-edit'] },
-              //   component: () => import('@/views/product/product-attr-management/product-attr-edit/ProductAttrEdit')
-              // }
             ]
           }
         ]

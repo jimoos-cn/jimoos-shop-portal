@@ -6,7 +6,7 @@
 
 <script>
 import E from 'wangeditor'
-import { uploadFileToObs, UploadType } from '@/api/obs'
+import { uploadFile, UploadType } from '@/api/obs'
 
 const { $, BtnMenu, DropListMenu } = E
 
@@ -337,7 +337,7 @@ export default {
         const params = {
           blobs: blobs
         }
-        uploadFileToObs(params, files[0]).then((res) => {
+        uploadFile(params, files[0]).then((res) => {
           addImg(res)
         })
       }
@@ -356,7 +356,7 @@ export default {
         const params = {
           blobs: blobs
         }
-        uploadFileToObs(params, files[0]).then((res) => {
+        uploadFile(params, files[0]).then((res) => {
           addImg(res)
         })
       }

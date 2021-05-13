@@ -75,6 +75,7 @@ export default {
   name: 'CouponRecordTable',
   props: {
     id: {
+      type: Number,
       required: true
     }
   },

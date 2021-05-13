@@ -15,10 +15,6 @@ const UploadType = {
     MEDIA: 1 // 视频或音频
 }
 
-export {
-    UploadType
-}
-
 export function getObsTempSign (data) {
     return axios(api.getObsTempSign(data))
 }
@@ -29,13 +25,13 @@ export function getObsTempSign (data) {
  * @param {file} file
  * @returns photo url
  */
-export async function uploadFileToObs (data, file) {
+export async function uploadFile (data, file) {
     let result = {}
     await getObsTempSign(data).then(res => {
         console.log('obs result:' + res)
         result = res
     })
-    const photo = 'https://' + result[0].blobUrl
+    const mediaUrl = 'https://' + result[0].blobUrl
     const url = 'https://' + result[0].url
     var formData = new FormData()
     formData.append('key', result[0].key)
@@ -50,5 +46,9 @@ export async function uploadFileToObs (data, file) {
         }
     }
     await rawAxios.post(url, formData, config).then(() => { })
-    return photo
+    return mediaUrl
+}
+
+export {
+    UploadType
 }
