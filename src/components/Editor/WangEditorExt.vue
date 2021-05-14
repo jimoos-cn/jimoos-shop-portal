@@ -320,7 +320,6 @@ export default {
       this.editor.config.onchangeTimeout = 500 // 修改为 500ms
       // 配置 onchange 回调函数
       this.editor.config.onchange = (newHtml) => {
-        console.log('change 之后最新的 html', newHtml)
         this.editorContent = newHtml
         this.$emit('change', this.editorContent)
       }

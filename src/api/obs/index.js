@@ -28,7 +28,6 @@ export function getObsTempSign (data) {
 export async function uploadFile (data, file) {
     let result = {}
     await getObsTempSign(data).then(res => {
-        console.log('obs result:' + res)
         result = res
     })
     const mediaUrl = 'https://' + result[0].blobUrl

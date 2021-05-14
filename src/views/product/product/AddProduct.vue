@@ -1,19 +1,17 @@
 <template>
   <page-header-wrapper>
     <!-- PageHeader 第二种使用方式 (v-slot) -->
-    <template v-slot:content>
-      1.填写商品信息 2.填写 SKU 名称，金额，图片 3 完成填写并提交。
-    </template>
+    <template v-slot:content> 1.填写商品信息 2.填写 SKU 名称，金额，图片 3 完成填写并提交。 </template>
     <a-card :bordered="false">
       <a-steps class="steps" :current="currentTab">
         <a-step title="填写商品信息" />
-        <a-step title="选择商品参数" />
-        <a-step title="完成" />
+        <a-step title="选择商品参数" @click="tab1" />
+        <a-step title="完成" @click="tab2"/>
       </a-steps>
       <div class="content">
-        <AddProductInfo v-if="currentTab === 0" @nextStep="nextStep"/>
-        <!-- <step2 v-if="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep"/>
-        <step3 v-if="currentTab === 2" @prevStep="prevStep" @finish="finish"/> -->
+        <AddProductInfo v-show="currentTab === 0" @nextStep="nextStep" @change="setProductInfo" />
+        <AddSku v-show="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" />
+        <AddProductSuccess v-show="currentTab === 2"/>
       </div>
     </a-card>
   </page-header-wrapper>
@@ -21,19 +19,22 @@
 
 <script>
 import AddProductInfo from './AddProductInfo'
-// import Step2 from './Step2'
-// import Step3 from './Step3'
+import AddSku from './AddSku'
+import AddProductSuccess from './AddProductSuccess'
 
 export default {
-  name: 'StepForm',
+  name: 'AddProduct',
   components: {
-    AddProductInfo
+    AddProductInfo,
+    AddSku,
+    AddProductSuccess
   },
   data () {
     return {
       currentTab: 0,
       // form
-      form: null
+      form: {},
+      sku: []
     }
   },
   methods: {
@@ -43,6 +44,12 @@ export default {
         this.currentTab += 1
       }
     },
+    tab1 () {
+      this.currentTab = 1
+    },
+    tab2 () {
+      this.currentTab = 2
+    },
     prevStep () {
       if (this.currentTab > 0) {
         this.currentTab -= 1
@@ -50,14 +57,11 @@ export default {
     },
     finish () {
       this.currentTab = 0
+    },
+    setProductInfo (val) {
+      console.log('product info:' + JSON.stringify(val))
+      this.form = val
     }
   }
 }
 </script>
-
-<style lang="less" scoped>
-  // .steps {
-  //   max-width: 750px;
-  //   margin: 16px auto;
-  // }
-</style>
