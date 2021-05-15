@@ -160,6 +160,8 @@ export default {
 </script>
 
 <style lang="less">
+//todo size 3 option to add
+//移除 放大调试
 .simple-upload > .ant-upload {
   width: 200px;
   height: 200px;

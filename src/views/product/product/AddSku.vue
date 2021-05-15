@@ -1,6 +1,14 @@
 <template>
-  <div>sku
+  <div>
+    <a-card style="margin-top: 20px" :bordered="false" title="选择商品规格">
+      <span>规格（必选）: </span>
 
+      <a-radio-group @change="skuTypeChange" :value="skuType">
+        <a-radio :value="1">单品</a-radio>
+        <a-radio :value="2">非单品</a-radio>
+      </a-radio-group>
+      <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
+    </a-card>
     <!-- fixed footer toolbar -->
     <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
       <a-space>
@@ -8,24 +16,33 @@
         <a-button type="primary" @click="nextStep">提交</a-button>
       </a-space>
     </footer-tool-bar>
-    </a-form>
   </div>
 </template>
 
 <script>
 import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
+import SingleSkuTable from './modules/SingleSkuTable'
 
 export default {
   name: 'AddProduct',
   mixins: [baseMixin],
   components: {
-    FooterToolBar
+    FooterToolBar,
+    SingleSkuTable
+  },
+  data () {
+    return {
+      skuType: 1,
+      singleSku: null // 单 sku 是否有数据
+    }
   },
   methods: {
     nextStep () {
       const that = this
-      const { form: { validateFields } } = this
+      const {
+        form: { validateFields }
+      } = this
       that.loading = true
       validateFields((err, values) => {
         if (!err) {
@@ -41,6 +58,13 @@ export default {
     },
     prevStep () {
       this.$emit('prevStep')
+    },
+    skuTypeChange (e) {
+      this.skuType = e.target.value
+    },
+    handleSingleSkuChange (val) {
+      console.log('single sku:' + JSON.stringify(val))
+      this.singleSku = val
     }
   }
 }
