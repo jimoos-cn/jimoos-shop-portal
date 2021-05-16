@@ -8,6 +8,9 @@
         <a-radio :value="2">非单品</a-radio>
       </a-radio-group>
       <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
+      <template v-if="skuType == 2">
+        <AttrContainer></AttrContainer>
+      </template>
     </a-card>
     <!-- fixed footer toolbar -->
     <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
@@ -23,13 +26,15 @@
 import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
 import SingleSkuTable from './modules/SingleSkuTable'
+import AttrContainer from './modules/AttrContainer'
 
 export default {
   name: 'AddProduct',
   mixins: [baseMixin],
   components: {
     FooterToolBar,
-    SingleSkuTable
+    SingleSkuTable,
+    AttrContainer
   },
   data () {
     return {
