@@ -10,6 +10,8 @@ const api = {
     createProductAttr: data => requestWrapper('/product/attrs', Methods.POST, data, ContentTypes.JSON),
     updateProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.POST, data, ContentTypes.JSON),
     getProductAttr: data => requestWrapper('/product/attrs/' + data.id, Methods.GET, data),
+    getProductAttrValues: data => requestWrapper('/product/attrs/' + data.id + '/values', Methods.GET),
+    addAttrValue: data => requestWrapper('/product/attrs/' + data.attrId + '/values', Methods.POST, data),
     deleteProductAttr: data => requestWrapper('/product/attrs/' + data.id + '/delete', Methods.POST)
 }
 
@@ -45,6 +47,22 @@ export function updateProductAttr (data) {
  */
 export function getProductAttr (data) {
     return axios(api.getProductAttr(data))
+}
+/**
+ * 获取销售属性值列表
+ * @param {Object} data#id
+ * @returns
+ */
+export function getProductAttrValues (data) {
+    return axios(api.getProductAttrValues(data))
+}
+/**
+ * 添加单个销售属性值
+ * @param {Object} data#id
+ * @returns
+ */
+export function addAttrValue (data) {
+    return axios(api.addAttrValue(data))
 }
 /**
  * 删除销售属性

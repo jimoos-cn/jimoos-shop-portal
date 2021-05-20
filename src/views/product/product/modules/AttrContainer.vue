@@ -4,20 +4,29 @@
  */
 <template>
   <div>
-    <!-- <a-form-item label="规格选择">
-      <a-select :size="20" default-value="a1" style="width: 200px">
-        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
-          {{ (i + 9).toString(36) + i }}
+    <a-form-item label="规格选择">
+      <a-select style="width: 200px" placeholder="请选择" @change="handleAttrSelect" label-in-value>
+        <a-select-option v-for="item in attrList" :key="item.id">
+          {{ item.name }}
         </a-select-option>
       </a-select>
-    </a-form-item> -->
+    </a-form-item>
 
-    <AttrItem v-for="item in attrList" :attr="item" :key="item.id" @deleteAttr="handleAttrRemove"> </AttrItem>
+    <AttrItem
+      v-for="item in attrSelectedList"
+      :attr="item"
+      :key="item.id"
+      @attrValuesChange="handleAttrValuesChange"
+      @deleteAttr="handleAttrRemove"
+    >
+    </AttrItem>
   </div>
 </template>
 
 <script>
 import AttrItem from './AttrItem'
+import { getProductAttrPage } from '@/api/product/attr'
+import { flatten } from './utils'
 export default {
   name: 'AttrContainer',
   components: {
@@ -25,19 +34,65 @@ export default {
   },
   data () {
     return {
-      attrList: [
-        {
-          id: 16,
-          name: '颜色卡'
-        }
-      ]
+      attrList: [],
+      attrSelectedList: [],
+      attrValuesList: [],
+      skus: []
     }
   },
+  created () {
+    getProductAttrPage({
+      offset: 0,
+      limit: 9999
+    }).then((res) => {
+      this.attrList = res['list'].filter((attr) => attr.id !== 1)
+    })
+  },
   methods: {
+    handleAttrSelect (val) {
+      console.log('attr selected:' + JSON.stringify(val))
+      if (!this.attrSelectedList.some((e) => e.id.toString() === val.key)) {
+        if (this.attrSelectedList.length === 3) {
+          this.$message.warning('最多只能选择3个规格属性')
+        } else {
+          this.attrSelectedList.push({
+            id: val.key,
+            name: val.label
+          })
+        }
+      }
+    },
     handleAttrRemove (id) {
       console.log('remove attr id:' + id)
-      const attrList = this.attrList.filter((attr) => attr.id !== id)
-      this.attrList = attrList
+      const attrSelectedList = this.attrSelectedList.filter((attr) => attr.id !== id)
+      this.attrSelectedList = attrSelectedList
+      const attrValuesList = this.attrValuesList.filter((attr) => attr.id !== id)
+      this.attrValuesList = attrValuesList
+      const skus = flatten(this.attrValuesList, this.skus, { optionValue: 'id', optionText: 'name' })
+      const count = skus.length
+      console.log('result:' + JSON.stringify(skus) + 'count:' + count)
+    },
+    handleAttrValuesChange (val) {
+      console.log('attr values change:' + JSON.stringify(val))
+      this.updateAttrValuesByKey(val.id, val)
+      console.log('after flag:' + JSON.stringify(this.attrValuesList))
+      const skus = flatten(this.attrValuesList, this.skus, { optionValue: 'id', optionText: 'name' })
+      const count = skus.length
+      console.log('result:' + JSON.stringify(skus) + 'count:' + count)
+    },
+    updateAttrValuesByKey (id, object) {
+      let flag = false
+      for (const i in this.attrValuesList) {
+        if (this.attrValuesList[i].id === id) {
+          flag = true
+          this.attrValuesList[i] = object
+          break // Stop this loop, we found it!
+        }
+      }
+
+      if (!flag) {
+        this.attrValuesList.push(object)
+      }
     }
   }
 }
