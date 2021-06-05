@@ -9,7 +9,8 @@
       </a-radio-group>
       <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
       <template v-if="skuType == 2">
-        <AttrContainer></AttrContainer>
+        <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
+        <MultiSkuTable :attrValues="attrValuesList"></MultiSkuTable>
       </template>
     </a-card>
     <!-- fixed footer toolbar -->
@@ -27,6 +28,7 @@ import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
 import SingleSkuTable from './modules/SingleSkuTable'
 import AttrContainer from './modules/AttrContainer'
+import MultiSkuTable from './modules/MultiSkuTable'
 
 export default {
   name: 'AddProduct',
@@ -34,12 +36,15 @@ export default {
   components: {
     FooterToolBar,
     SingleSkuTable,
-    AttrContainer
+    AttrContainer,
+    MultiSkuTable
   },
   data () {
     return {
       skuType: 1,
-      singleSku: null // 单 sku 是否有数据
+      singleSku: null, // 单 sku 是否有数据
+      attrValuesList: [],
+      skus: []
     }
   },
   methods: {
@@ -70,6 +75,9 @@ export default {
     handleSingleSkuChange (val) {
       console.log('single sku:' + JSON.stringify(val))
       this.singleSku = val
+    },
+    handleAttrValueChangeEvent (attrValuesList) {
+      this.attrValuesList = attrValuesList
     }
   }
 }

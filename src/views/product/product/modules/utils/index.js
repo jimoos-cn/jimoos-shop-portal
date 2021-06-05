@@ -77,6 +77,61 @@ export function flatten (tree, stocks = [], options) {
 }
 
 /**
+ * 判断单个 sku 是否相同
+ * @param {sku} sku
+ * @param {sku} sku1
+ * @param {Object} options
+ * @returns
+ */
+export function isEqualSku (sku, sku1, options) {
+  const { optionValue = 'attrValueId' } = options || {}
+  return sku.attrs.length === sku1.attrs.length &&
+    sku.attrs.map(item => item[optionValue]).join(',') ===
+    sku1.attrs.map(item => item[optionValue]).join(',')
+}
+/**
+ * 更新 SKU 列表，并保持已有的 sku 的数值
+ * @param {Array} skus
+ * @param Array skus1
+ * @param Object options
+ */
+export function updateSkus (skus, skus1, options) {
+  const { price = 0, showPrice = 0, cover = '' } = options || {}
+  const resultSkus = []
+  for (let index = 0; index < skus1.length; index++) {
+    const element = skus1[index]
+    const exist = findExistSku(element, skus)
+    if (exist != null) {
+      resultSkus.push(exist)
+    } else {
+      resultSkus.push({
+        'attrs': element.attrs,
+        'cover': cover,
+        'price': price,
+        'showPrice': showPrice
+      })
+    }
+  }
+  return resultSkus
+}
+
+/**
+ * 已经存在的 sku 则 保存原有的数据
+ * @param {sku} sku
+ * @param skus skus
+ * @returns
+ */
+export function findExistSku (sku, skus) {
+  for (let index = 0; index < skus.length; index++) {
+    const element = skus[index]
+    if (isEqualSku(sku, element)) {
+      return element
+    }
+  }
+  return null
+}
+
+/**
  * 判断两个sku是否相同
  * @param  {[type]}  prevSKU [description]
  * @param  {[type]}  nextSKU [description]

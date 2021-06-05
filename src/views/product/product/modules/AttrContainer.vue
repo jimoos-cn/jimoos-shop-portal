@@ -26,7 +26,7 @@
 <script>
 import AttrItem from './AttrItem'
 import { getProductAttrPage } from '@/api/product/attr'
-import { flatten } from './utils'
+
 export default {
   name: 'AttrContainer',
   components: {
@@ -36,8 +36,7 @@ export default {
     return {
       attrList: [],
       attrSelectedList: [],
-      attrValuesList: [],
-      skus: []
+      attrValuesList: []
     }
   },
   created () {
@@ -51,7 +50,7 @@ export default {
   methods: {
     handleAttrSelect (val) {
       console.log('attr selected:' + JSON.stringify(val))
-      if (!this.attrSelectedList.some((e) => e.id.toString() === val.key)) {
+      if (!this.attrSelectedList.some((e) => e.id.toString() === val.key.toString())) {
         if (this.attrSelectedList.length === 3) {
           this.$message.warning('最多只能选择3个规格属性')
         } else {
@@ -68,17 +67,16 @@ export default {
       this.attrSelectedList = attrSelectedList
       const attrValuesList = this.attrValuesList.filter((attr) => attr.id !== id)
       this.attrValuesList = attrValuesList
-      const skus = flatten(this.attrValuesList, this.skus, { optionValue: 'id', optionText: 'name' })
-      const count = skus.length
-      console.log('result:' + JSON.stringify(skus) + 'count:' + count)
+      this.emitAttrChangeEvent()
     },
     handleAttrValuesChange (val) {
       console.log('attr values change:' + JSON.stringify(val))
       this.updateAttrValuesByKey(val.id, val)
-      console.log('after flag:' + JSON.stringify(this.attrValuesList))
-      const skus = flatten(this.attrValuesList, this.skus, { optionValue: 'id', optionText: 'name' })
-      const count = skus.length
-      console.log('result:' + JSON.stringify(skus) + 'count:' + count)
+      this.emitAttrChangeEvent()
+    },
+    emitAttrChangeEvent () {
+      this.$emit('attrValueChangeEvent',
+        this.attrValuesList)
     },
     updateAttrValuesByKey (id, object) {
       let flag = false
