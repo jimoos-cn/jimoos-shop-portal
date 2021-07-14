@@ -69,12 +69,12 @@
           <image-preview :img="text" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="text"></image-preview>
         </div>
         <div slot="price" slot-scope="record">
-          <span v-if="record.lowPrice < record.highPrice">￥{{ record.lowPrice }}~￥{{ record.highPrice }}</span>
+          <span v-if="record.price < record.showPrice">￥{{ record.price }}~￥{{ record.showPrice }}</span>
           <span
-            v-if="record.lowPrice === record.highPrice && record.lowPrice && record.highPrice"
-          >￥{{ record.lowPrice }}</span
+            v-if="record.price === record.showPrice && record.price && record.showPrice"
+          >￥{{ record.price }}</span
           >
-          <span v-if="!record.lowPrice">未知</span>
+          <span v-if="!record.price">未知</span>
         </div>
         <div slot="status" slot-scope="text">
           <a-badge status="error" v-if="text === 0" text="未上架"></a-badge>
@@ -124,19 +124,19 @@ const columns = [
   },
   {
     title: '商品分类',
-    dataIndex: 'beProductCategoryDTO.name',
+    dataIndex: 'category.name',
     scopedSlots: {
       customRender: 'category'
     }
   },
-  // {
-  //   title: '商品价格',
-  //   scopedSlots: {
-  //     customRender: 'price'
-  //   },
-  //   align: 'center',
-  //   width: '120px'
-  // },
+  {
+    title: '商品价格',
+    scopedSlots: {
+      customRender: 'price'
+    },
+    align: 'center',
+    width: '120px'
+  },
   {
     title: '状态',
     dataIndex: 'status',
