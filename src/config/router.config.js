@@ -31,6 +31,54 @@ export const asyncRouterMap = [
           }
         ]
       },
+      //  user 用户管理
+      {
+        path: '/users',
+        name: 'user',
+        redirect: '/user/list-management',
+        component: RouteView,
+        meta: { title: 'menu.user', keepAlive: true, icon: 'team', permission: ['user'] },
+        children: [
+          {
+            path: '/user/list-management',
+            name: 'userList-management',
+            hideChildrenInMenu: true,
+            component: () => import('@/views/user/UserList'),
+            meta: { title: 'menu.user.list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: '/user/detail',
+            name: 'userDetail',
+            hidden: true,
+            component: () => import('@/views/user/UserDetail'),
+            meta: { title: 'menu.user.detail', keepAlive: true, permission: ['user'] }
+          }
+        ]
+      },
+      //  order 订单管理
+      {
+        path: '/orders',
+        name: 'order',
+        redirect: '/order/list',
+        component: RouteView,
+        meta: { title: 'menu.order', keepAlive: true, icon: 'shop', permission: ['order'] },
+        children: [
+          {
+            path: '/order/list-management',
+            name: 'orderList-management',
+            hideChildrenInMenu: true,
+            component: () => import('@/views/order/OrderList'),
+            meta: { title: 'menu.order.list', keepAlive: false, permission: ['order'] }
+          },
+          {
+            path: '/order/detail',
+            name: 'orderDetail',
+            hidden: true,
+            component: () => import('@/views/order/OrderDetail'),
+            meta: { title: 'menu.order.detail', keepAlive: false, permission: ['order'] }
+          }
+        ]
+      },
       //  product 商品管理
       {
         path: '/products',
