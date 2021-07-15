@@ -9,7 +9,8 @@ const api = {
   getUserInfo: data => requestWrapper('/users/query', Methods.GET, data),
   banUser: data => requestWrapper('/users/' + data.id + '/ban', Methods.POST, data),
   cancelBanUser: data => requestWrapper('/users/' + data.id + '/unban', Methods.POST, data),
-  removeUser: data => requestWrapper('/users/' + data.id + '/remove', Methods.POST, data)
+  deleteUser: data => requestWrapper('/users/' + data.id + '/remove', Methods.POST, data),
+  getUserDetail: data => requestWrapper('/users/' + data.userId + '/details', Methods.GET)
 }
 
 /**
@@ -44,6 +45,15 @@ export function cancelBanUser (data) {
  * @param data
  * @returns {AxiosPromise}
  */
-export function removeUser (data) {
-  return axios(api.removeUser(data))
+export function deleteUser (data) {
+  return axios(api.deleteUser(data))
+}
+
+/**
+ * 获取用户详细数据
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function getUserDetail (data) {
+  return axios(api.getUserDetail(data))
 }

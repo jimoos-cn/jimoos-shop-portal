@@ -18,7 +18,7 @@
             <a-col :md="8" :sm="24"><span>性别</span></a-col>
             <a-col :md="8" :sm="24"><span>生日</span></a-col>
             <a-col :md="8" :sm="24"><a>收货地址</a></a-col>
-            <a-col :md="8" :sm="24"><a>平台查看</a></a-col>
+            <a-col :md="8" :sm="24"><a>社交登陆</a></a-col>
             <a-col :md="8" :sm="24"><a>分销关系</a></a-col>
           </a-row>
           <a-row class="leftThirdTop" style="margin-top: 20px" :gutter="[24,24]">
@@ -116,6 +116,7 @@
 <script>
   import { STable } from '@/components'
   import { getUserRecentOrder } from '@/api/order'
+  import { getUserDetail } from '@/api/user'
   const columns = [
     {
       title: '订单编号',
@@ -186,9 +187,21 @@
       }
     },
     created () {
-      this.search.id = this.$route.query.id // 赋予用户ID
+      this.search.userId = this.$route.query.id // 赋予用户ID
+      this.init()
     },
     methods: {
+      // 初始化调用
+      init () {
+        this.getUserDetail(this.search)
+      },
+      // 获取用户详细数据
+      getUserDetail (params) {
+        getUserDetail(params)
+        .then((res) => {
+          console.log(res)
+        })
+      },
       // 跳转至订单详细页面
       gotoOrderDetail (param) {
         this.$router.push({

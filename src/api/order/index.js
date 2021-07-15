@@ -7,7 +7,7 @@ import { axios } from '@/utils/request'
  */
 const api = {
   getOrderInfo: data => requestWrapper('/orders/query', Methods.GET, data),
-  getUserRecentOrder: data => requestWrapper('/orders/' + data.id + '/query', Methods.GET, data)
+  getUserRecentOrder: data => requestWrapper('/orders/byUserId', Methods.GET, data)
 }
 
 /**

@@ -13,8 +13,8 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="用户状态">
                 <a-select v-model="search.ban" placeholder="请选择用户状态">
-                  <a-select-option :value="0">未禁止</a-select-option>
-                  <a-select-option :value="1">已禁止</a-select-option>
+                  <a-select-option :value="false">未禁止</a-select-option>
+                  <a-select-option :value="true">已禁止</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -58,7 +58,7 @@
           <image-preview :img="text" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="text"></image-preview>
         </div>
         <div slot="ban" slot-scope="text">
-          <a-badge status="success" v-if="text === 0" text="未Ban"></a-badge>
+          <a-badge status="success" v-if="!text" text="未Ban"></a-badge>
           <a-badge status="error" v-else text="已Ban"></a-badge>
         </div>
         <div slot="createAt" slot-scope="record">
@@ -66,9 +66,9 @@
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoUserDetails(record)">详情</a>
-          <a @click="banUser(record)" v-if="record.ban === 0" style="margin-left: 10px">Ban</a>
-          <a @click="cancelBanUser(record)" v-if="record.ban === 1" style="margin-left: 10px">取消Ban</a>
-          <a @click="removeUser(record)" style="color: red; margin-left: 10px">删除</a>
+          <a @click="banUser(record)" v-if="!record.ban" style="margin-left: 10px">Ban</a>
+          <a @click="cancelBanUser(record)" v-if="record.ban" style="margin-left: 10px">取消Ban</a>
+          <a @click="deleteUser(record)" style="color: red; margin-left: 10px">删除</a>
         </span>
       </s-table>
     </a-card>
@@ -78,7 +78,7 @@
 <script>
   import ImagePreview from '@/components/Image/ImagePreview'
   import { STable } from '@/components'
-  import { banUser, cancelBanUser, getUserInfo, removeUser } from '@/api/user'
+  import { banUser, cancelBanUser, getUserInfo, deleteUser } from '@/api/user'
   const columns = [
     {
       title: '用户Id',
@@ -206,8 +206,8 @@
             this.$message.error('取消禁止用户失败')
           })
       },
-      removeUser (record) {
-        removeUser({ id: record.id })
+      deleteUser (record) {
+        deleteUser({ id: record.id })
           .then((res) => {
             this.$message.success('删除用户成功')
             this.$refs.table.refresh()
