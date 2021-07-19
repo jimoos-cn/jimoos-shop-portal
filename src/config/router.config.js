@@ -59,7 +59,7 @@ export const asyncRouterMap = [
       {
         path: '/orders',
         name: 'order',
-        redirect: '/order/list',
+        redirect: '/order/list-management',
         component: RouteView,
         meta: { title: 'menu.order', keepAlive: true, icon: 'shop', permission: ['order'] },
         children: [

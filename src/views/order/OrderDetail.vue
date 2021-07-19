@@ -3,11 +3,13 @@
   <page-header-wrapper>
     <a-row>
       <a-card>
-        <a-steps progress-dot :current="1">
-          <a-step title="Start" description="订单创建" />
-          <a-step title="Pay" description="订单支付" />
-          <a-step title="In Progress" description="订单发货" />
-          <a-step title="In Progress" description="订单确认" />
+        <a-steps progress-dot :current="orderDetails.status">
+          <a-step :initial="ORDER_STATUS.ORDER_NEW" title="NEW" description="新订单" />
+          <a-step :initial="ORDER_STATUS.PAID" title="PAID" description="已支付" />
+          <a-step :initial="ORDER_STATUS.DELIVERY" title="DELIVERY" description="已发货" />
+          <a-step :initial="ORDER_STATUS.RECEIVE" title="RECEIVE" description="已签收" />
+          <a-step :initial="ORDER_STATUS.RATED" title="RATED" description="已评价" />
+          <a-step :initial="ORDER_STATUS.CANCEL" title="CANCEL" description="已取消" />
         </a-steps>
       </a-card>
     </a-row>
@@ -19,11 +21,11 @@
             <a-row class="orderDetailTitle">
               <div>订单信息</div>
             </a-row>
-            <a-row class="orderDetailContent">
-              <div>收货地址</div>
-              <div>留言</div>
-              <div>订单编号</div>
-              <div>商家</div>
+            <a-row class="orderDetailContent" v-if="loading">
+              <div>收货地址 {{ getReceiveAddr }}</div>
+              <div>订单编号 {{ orderDetails.shipment.outTradeNo }}</div>
+              <div>电话 {{ orderDetails.shipment.phone }}</div>
+              <div>留言 {{ orderDetails.shipment.comment }}</div>
             </a-row>
           </a-col>
           <a-col :md="16" :sm="24" class="orderLogistics">
@@ -38,32 +40,48 @@
           ref="table"
           size="default"
           :columns="columns"
-          :data="loadData"
+          :data="getOrderItems"
           showPagination="auto"
           :rowKey="(record) => record.id"
         >
+          <template slot="product" slot-scope="record">
+            <a-row>
+              <a-col :sm="24" :md="8">
+                <image-preview :img="record.productCover" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="record.productCover"/>
+              </a-col>
+              <a-col :sm="24" :md="16">
+                <div style="text-align: left "> {{ record.productName }}</div>
+              </a-col>
+            </a-row>
+          </template>
+          <template slot="price" slot-scope="record">
+            <div>￥ {{ record.price }} </div>
+          </template>
+          <template slot="discount" slot-scope="record">
+            <div>￥ {{ record.discount }} </div>
+          </template>
         </s-table>
       </a-card>
     </a-row>
     <a-row>
       <a-card>
-        <a-row class="ordersBottom">
+        <a-row class="ordersBottom" v-if="loading">
           <a-row>
             <div>
-              <span>商品总价</span>
-              <span>￥111</span>
+              <span class="firstSpan">商品总价</span>
+              <span>￥{{ orderDetails.totalProductPrice }}</span>
             </div>
             <div>
-              <span>运费</span>
-              <span>￥111</span>
+              <span class="firstSpan">运费</span>
+              <span>￥{{ orderDetails.totalFee }}</span>
             </div>
             <div>
-              <span>运费险</span>
-              <span>￥111</span>
+              <span class="firstSpan">总优惠</span>
+              <span>￥{{ orderDetails.totalDiscount }}</span>
             </div>
             <div>
-              <span>实付款</span>
-              <span>￥111</span>
+              <span class="realPay firstSpan">实付款</span>
+              <span class="realPaymomey">￥{{ orderDetails.realPay }}</span>
             </div>
           </a-row>
         </a-row>
@@ -74,10 +92,20 @@
 
 <script>
   import { STable } from '@/components'
+  import { getOrderDetails } from '@/api/order'
+  import { avliable } from '@/utils/data'
+  import ImagePreview from '@/components/Image/ImagePreview'
+  const ORDER_STATUS = {
+    ORDER_NEW: 0,
+    PAID: 1,
+    DELIVERY: 2,
+    RECEIVE: 3,
+    RATED: 4,
+    CANCEL: -99
+  }
   const columns = [
     {
       title: '商品',
-      dataIndex: 'product',
       scopedSlots: {
         customRender: 'product'
       },
@@ -85,64 +113,48 @@
     },
     {
       title: '单价',
-      dataIndex: 'product',
       scopedSlots: {
-        customRender: 'product'
+        customRender: 'price'
       },
       width: '100px'
     },
     {
       title: '数量',
-      dataIndex: 'product',
+      dataIndex: 'num',
       scopedSlots: {
-        customRender: 'product'
+        customRender: 'num'
       },
       width: '100px'
     },
     {
       title: '优惠',
-      dataIndex: 'product',
       scopedSlots: {
-        customRender: 'product'
+        customRender: 'discount'
       },
       width: '100px'
     },
     {
       title: '状态',
-      dataIndex: 'product',
-      scopedSlots: {
-        customRender: 'product'
-      },
+      dataIndex: 'status',
       width: '100px'
     }
   ]
   export default {
     data () {
       this.columns = columns
+      this.ORDER_STATUS = ORDER_STATUS
       return {
+        loading: false, // 数据加载状态
         search: {}, // 查询数据
-        loadData: (paramters) => {
-          const requestParamters = Object.assign({}, paramters, this.search)
-          console.log('load params', requestParamters)
-          const params = {
-            offset: (requestParamters.pageNo - 1) * requestParamters.pageSize,
-            limit: requestParamters.pageSize,
-            type: 0
-          }
-          Object.keys(this.search).forEach((key) => {
-            if (this.search[key] !== undefined && this.search[key] != null && this.search[key] !== '') {
-              params[key] = this.search[key]
-            }
-          })
+        orderDetails: {}, // 订单详细内容
+        getOrderItems: (param) => {
           let dataTable = {}
-          return this.getOrderProduct(params)
+          return this.getOrderDetails(this.search)
           .then((res) => {
-            console.log('获取数据', res)
             dataTable = {
-              pageSize: requestParamters.pageSize,
-              pageNo: requestParamters.pageNo,
-              totalCount: this.pagination.total,
-              totalPage: this.pagination.pageTotal,
+              pageSize: param.pageSize,
+              pageNo: param.pageNo,
+              totalCount: 1,
               data: res
             }
             return dataTable
@@ -150,13 +162,52 @@
         }
       }
     },
+    created () {
+      this.search.id = this.$route.query.id
+    },
     components: {
-      STable
+      STable,
+      ImagePreview
+    },
+    computed: {
+      // 收货地址拼接
+      getReceiveAddr () {
+        let addr = ''
+        const shipment = this.orderDetails.shipment
+        if (avliable(shipment)) {
+          if (avliable(shipment.province)) {
+            addr += shipment.province
+          }
+          if (avliable(shipment.province)) {
+            addr += shipment.city
+          }
+          if (avliable(shipment.area)) {
+            addr += shipment.area
+          }
+          if (avliable(shipment.address)) {
+            addr += shipment.address
+          }
+        }
+        return addr
+      }
     },
     methods: {
       // 获取订单中的商品信息
-      getOrderProduct (params) {
-        //
+      getOrderDetails (params) {
+        return new Promise((resolve) => {
+          this.loading = false
+          getOrderDetails(params)
+          .then((res) => {
+            console.log('获得订单详细内容', res)
+            this.orderDetails = res
+            this.loading = true
+            resolve(this.orderDetails.orderItems)
+          })
+          .catch((err) => {
+            this.data = []
+            this.$message.error(err)
+          })
+        })
       }
     }
   }
@@ -190,7 +241,22 @@
   .ordersBottom{
     display: flex;
     justify-content: flex-end;
+    align-items: flex-end;
     padding-right: 50px;
+  }
+  .realPay{
+    color: #333333;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .realPaymomey{
+    color: #DD2727;
+    font-size: 14px;
+    font-weight: 600;
+    width: 120px;
+  }
+  .ordersBottom .firstSpan{
+    margin-right: 20px;
   }
 
 </style>

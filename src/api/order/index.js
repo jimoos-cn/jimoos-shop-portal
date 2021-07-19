@@ -7,7 +7,8 @@ import { axios } from '@/utils/request'
  */
 const api = {
   getOrderInfo: data => requestWrapper('/orders/query', Methods.GET, data),
-  getUserRecentOrder: data => requestWrapper('/orders/byUserId', Methods.GET, data)
+  getUserRecentOrder: data => requestWrapper('/orders/byUserId', Methods.GET, data),
+  getOrderDetails: data => requestWrapper('/orders/' + data.id + '/details', Methods.GET)
 }
 
 /**
@@ -26,4 +27,13 @@ export function getOrderInfo (data) {
  */
 export function getUserRecentOrder (data) {
   return axios(api.getUserRecentOrder(data))
+}
+
+/**
+ * 获取某订单 详细内容
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function getOrderDetails (data) {
+  return axios(api.getOrderDetails(data))
 }
