@@ -6,11 +6,11 @@
       <a-steps class="steps" :current="currentTab">
         <a-step title="填写商品信息" @click="tab(0)"/>
         <a-step title="选择商品参数" @click="tab(1)" />
-        <a-step title="完成" @click="tab(2)"/>
+        <a-step title="完成"/>
       </a-steps>
       <div class="content">
         <AddProductInfo v-show="currentTab === 0" @nextStep="nextStep" @change="setProductInfo" />
-        <AddSku v-show="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" />
+        <AddSku v-show="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" @change="setProductSkuInfo" />
         <AddProductSuccess v-show="currentTab === 2"/>
       </div>
     </a-card>
@@ -21,6 +21,7 @@
 import AddProductInfo from './AddProductInfo'
 import AddSku from './AddSku'
 import AddProductSuccess from './AddProductSuccess'
+import { createProduct } from '@/api/product'
 
 export default {
   name: 'AddProduct',
@@ -31,6 +32,10 @@ export default {
   },
   data () {
     return {
+      stepJug: {
+        step1: false,
+        step2: false
+      },
       currentTab: 0,
       // form
       form: {},
@@ -45,7 +50,9 @@ export default {
       }
     },
     tab (val) {
-      this.currentTab = val
+      if (this.stepJug.step1) {
+        this.currentTab = val
+      }
     },
     prevStep () {
       if (this.currentTab > 0) {
@@ -58,7 +65,20 @@ export default {
     setProductInfo (val) {
       console.log('product info:' + JSON.stringify(val))
       this.form = val
+      // 设置步骤成功
+      this.stepJug.step1 = true
+    },
+    setProductSkuInfo (val) {
+      console.log('sku info:' + JSON.stringify(val))
+      this.form.skus = val
+      this.stepJug.step2 = true
+      // 第三步调用接口创建商品
+      createProduct(this.form)
+      .then((res) => {
+        console.log(res)
+      })
     }
+
   }
 }
 </script>
