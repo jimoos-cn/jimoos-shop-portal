@@ -187,12 +187,10 @@
           })
           let dataTable = {}
           return this.getOrderInfo(params).then((res) => {
-            console.log('表格获取数据', this.data)
             dataTable = {
               pageSize: requestParameters.pageSize,
               pageNo: requestParameters.pageNo,
               totalCount: this.pagination.total,
-              totalPage: this.pagination.pageTotal,
               data: res
             }
             return dataTable

@@ -120,7 +120,9 @@ export default {
       validateFields((err, values) => {
         if (!err) {
           console.log('values:' + JSON.stringify(values))
-          // this.$emit('nextStep')
+          // 校验无误 调用父类保存数据
+          this.$emit('change', values)
+          this.$emit('nextStep')
         }
       })
     },

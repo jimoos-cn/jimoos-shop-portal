@@ -1,8 +1,8 @@
 /**
- * 单个sku 的商品
+ * 多个sku 的商品
  */
 <template>
-  <a-table style="margin-top: 20px" :columns="columns" :dataSource="data" :pagination="false" bordered>
+  <a-table style="margin-top: 20px" :columns="columns" :dataSource="skus" :pagination="false" bordered>
     <template slot="price" slot-scope="text, record">
       <a-input-number
         v-if="record.editable"
@@ -28,11 +28,11 @@
     <template slot="operation" slot-scope="text, record">
       <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => saveSingle(record)">保存</a>
-          <a @click="() => cancelSingle(record)" style="margin-left: 10px">取消</a>
+          <a @click="() => saveMulti(record)">保存</a>
+          <a @click="() => cancelMulti(record)" style="margin-left: 10px">取消</a>
         </span>
         <span v-else>
-          <a @click="() => editSingle(record)">编辑</a>
+          <a @click="() => editMulti(record)">编辑</a>
         </span>
       </div>
     </template>
@@ -45,9 +45,9 @@ import { updateSkus, flatten } from './utils'
 const naiveColumns = [
   {
     title: '规格',
-    dataIndex: 'name',
+    dataIndex: 'attrs[0].attrValueName',
     width: '16%',
-    scopedSlots: { customRender: 'name' }
+    scopedSlots: { customRender: 'attrs[0].attrValueName' }
   },
   {
     title: '价格(元)',
@@ -83,30 +83,26 @@ export default {
   },
   data () {
     return {
-      data: [],
-      sku: [],
+      skus: [],
       navieAttrSkus: [],
       columns: naiveColumns
     }
   },
-  created () {
-    this.data.push({
-      key: 1,
-      name: '单品',
-      editable: true
-    })
-  },
   watch: {
-    attrValues: function (newVal, oldVal) {
-      console.log('new attrValueList:' + JSON.stringify(newVal))
-      const navieAttrSkus = flatten(newVal, this.navieAttrSkus, { optionValue: 'id', optionText: 'name' })
-      this.navieAttrSkus = navieAttrSkus
-      this.skus = updateSkus(this.skus, navieAttrSkus)
-      console.log('new Sku list:' + JSON.stringify(this.skus))
+    attrValues: {
+      handler (newVal, oldVal) {
+        console.log('watch更新', newVal)
+        const navieAttrSkus = flatten(newVal, this.navieAttrSkus, { optionValue: 'id', optionText: 'name' })
+        this.navieAttrSkus = navieAttrSkus
+        this.skus = updateSkus(this.skus, navieAttrSkus, '')
+        console.log('new Data list:' + JSON.stringify(this.skus))
+      },
+      deep: true
     }
+
   },
   methods: {
-    saveSingle (record) {
+    saveMulti (record) {
       if (!record.price || record.price === '') {
         this.$message.error('请填写价格')
         return
@@ -120,8 +116,8 @@ export default {
         this.$message.error('展示价不能低于实际价格')
         return
       }
-      const newData = [...this.data]
-      const target = newData.filter((item) => record.key === item.key)[0]
+      const newData = [...this.skus]
+      const target = newData.filter((item) => record.attrs[0].attrValueId === item.attrs[0].attrValueId)[0]
       if (typeof target.price === 'number') {
         target.price = target.price.toFixed(2)
       }
@@ -129,31 +125,18 @@ export default {
         target.showPrice = target.showPrice.toFixed(2)
       }
       if (target) {
-        target.editable = false
-        this.data = newData
+        this.$set(target, 'editable', false)
+        this.$delete(target, '_originalData')
+        this.skus = newData
       }
-
-      console.log('data:' + JSON.stringify(this.data))
-
-      const { price, showPrice } = record
-      this.$emit('change', {
-        price,
-        showPrice,
-        attrs: [
-          {
-            attrId: 1,
-            attrName: '单品',
-            attrValueId: 1,
-            attrValueName: '单品'
-          }
-        ]
-      })
+      console.log('newData!!!!!!!!!!', newData)
+      this.$emit('change', this.skus)
     },
-    editSingle (record) {
+    editMulti (record) {
       record._originalData = { ...record }
-      record.editable = true
+      this.$set(record, 'editable', true)
     },
-    cancelSingle (record) {
+    cancelMulti (record) {
       if (record.price) {
         record.price = record._originalData.price
         record.showPrice = record._originalData.showPrice

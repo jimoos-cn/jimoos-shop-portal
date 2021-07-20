@@ -3,21 +3,29 @@
   <page-header-wrapper>
     <a-row :gutter="24">
       <a-col :md="8" :sm="24">
-        <a-card :bordered="false">
+        <a-card :bordered="false" v-if="userInfo">
           <a-row
             type="flex"
             justify="center"
-            class="leftTop">
-            <a-avatar :size="100" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            class="leftTop"
+          >
+            <a-avatar :size="100":src="userInfo.avatar" />
             <div>
-              <div class="nickName">用户昵称</div>
-              <div class="role">用户角色</div>
+              <div class="nickName">{{ userInfo.nickname }}</div>
+              <div class="role">{{ userInfo.role }}</div>
             </div>
           </a-row>
           <a-row class="leftSecondTop" style="margin-top: 10px" :gutter="[24,24]">
-            <a-col :md="8" :sm="24"><span>性别</span></a-col>
-            <a-col :md="8" :sm="24"><span>生日</span></a-col>
-            <a-col :md="8" :sm="24"><a>收货地址</a></a-col>
+            <a-col :md="6" :sm="24">
+              <span>
+                性别
+                <span style="margin-left: 5px">
+                  <span v-if="userInfo.gender === 0">男</span>
+                  <span v-else>女</span>
+                </span>
+              </span></a-col>
+            <a-col :md="10" :sm="24"><span>生日 {{ $dateFormat(userInfo.birthday, 'YYYY-MM-DD') }} </span></a-col>
+            <a-col :md="8" :sm="24"><a @click="openAddress">收货地址</a></a-col>
             <a-col :md="8" :sm="24"><a>社交登陆</a></a-col>
             <a-col :md="8" :sm="24"><a>分销关系</a></a-col>
           </a-row>
@@ -98,25 +106,28 @@
           <a-row style="padding-right: 100px;padding-left: 100px;margin-top: 20px">
             <template>
               <div style="margin-bottom: 16px;">
-                <a-input addon-before="邀请码" default-value="无" />
+                <a-input addon-before="邀请码" default-value="无" :value="inviteCode">
+                </a-input>
               </div>
             </template>
             <template>
               <div style="margin-bottom: 16px;">
-                <a-input addon-before="填写地址" default-value="无" />
+                <a-input addon-before="居住地址" default-value="无" :value="liveAddress"/>
               </div>
             </template>
           </a-row>
         </a-card>
       </a-col>
     </a-row>
+    <UserAddress ref="address"></UserAddress>
   </page-header-wrapper>
 </template>
 
 <script>
+  import UserAddress from './modules/UserAddress'
   import { STable } from '@/components'
   import { getUserRecentOrder } from '@/api/order'
-  import { getUserDetail } from '@/api/user'
+  import { getUserAddress, getUserDetail } from '@/api/user'
   const columns = [
     {
       title: '订单编号',
@@ -142,11 +153,13 @@
   ]
   export default {
     components: {
-      STable
+      STable,
+      UserAddress
     },
     data () {
       this.columns = columns
       return {
+        userInfo: {}, // 用户数据
         search: {}, // 查询数据
         rowClick: (record, index) => ({ // 表格点击
           on: {
@@ -186,6 +199,27 @@
         }
       }
     },
+    computed: {
+      inviteCode () {
+        return this.userInfo.inviteCode
+      },
+      liveAddress () {
+        let res = ''
+        if (this.userInfo.province != null) {
+          res += this.userInfo.province
+        }
+        if (this.userInfo.city != null) {
+          res += this.userInfo.city
+        }
+        if (this.userInfo.area != null) {
+          res += this.userInfo.area
+        }
+        if (res === '') {
+          return '无信息'
+        }
+        return res
+      }
+    },
     created () {
       this.search.userId = this.$route.query.id // 赋予用户ID
       this.init()
@@ -195,11 +229,21 @@
       init () {
         this.getUserDetail(this.search)
       },
+      // 打开用户地址,并请求
+      openAddress () {
+        this.$refs.address.visible = true
+        getUserAddress(this.search)
+        .then((res) => {
+          console.log('地址数据', res)
+          this.$refs.address.userAddress = res
+        })
+      },
       // 获取用户详细数据
       getUserDetail (params) {
         getUserDetail(params)
         .then((res) => {
           console.log(res)
+          this.userInfo = res
         })
       },
       // 跳转至订单详细页面
@@ -216,7 +260,7 @@
         return new Promise((resolve) => {
           getUserRecentOrder(params)
             .then((res) => {
-              console.log(res)
+              console.log('用户最近订单', res)
               const pagination = {
                 ...this.pagination
               }

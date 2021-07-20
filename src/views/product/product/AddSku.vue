@@ -10,7 +10,7 @@
       <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
       <template v-if="skuType == 2">
         <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
-        <MultiSkuTable :attrValues="attrValuesList"></MultiSkuTable>
+        <MultiSkuTable :attrValues="attrValuesList" @change="handleMultiSkuChange"></MultiSkuTable>
       </template>
     </a-card>
     <!-- fixed footer toolbar -->
@@ -42,7 +42,7 @@ export default {
   data () {
     return {
       skuType: 1,
-      singleSku: null, // 单 sku 是否有数据
+      Sku: null, // 单 sku 是否有数据
       attrValuesList: [],
       skus: []
     }
@@ -50,21 +50,13 @@ export default {
   methods: {
     nextStep () {
       const that = this
-      const {
-        form: { validateFields }
-      } = this
       that.loading = true
-      validateFields((err, values) => {
-        if (!err) {
-          console.log('表单 values', values)
-          that.timer = setTimeout(function () {
-            that.loading = false
-            that.$emit('nextStep')
-          }, 1500)
-        } else {
-          that.loading = false
-        }
-      })
+      console.log('表单 values', that.Sku)
+      that.timer = setTimeout(function () {
+        that.loading = false
+        that.$emit('change', that.Sku)
+        that.$emit('nextStep')
+      }, 1500)
     },
     prevStep () {
       this.$emit('prevStep')
@@ -72,12 +64,19 @@ export default {
     skuTypeChange (e) {
       this.skuType = e.target.value
     },
+    // 单品变化
     handleSingleSkuChange (val) {
       console.log('single sku:' + JSON.stringify(val))
-      this.singleSku = val
+      this.Sku = [val]
+    },
+    // 非单品变化
+    handleMultiSkuChange (val) {
+      console.log('multi sku:' + JSON.stringify(val))
+      this.Sku = val
     },
     handleAttrValueChangeEvent (attrValuesList) {
       this.attrValuesList = attrValuesList
+      console.log('改变', JSON.stringify(attrValuesList))
     }
   }
 }
