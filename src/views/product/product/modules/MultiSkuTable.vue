@@ -33,6 +33,7 @@
         </span>
         <span v-else>
           <a @click="() => editMulti(record)">编辑</a>
+          <a style="margin-left: 10px" @click="() => deleteMulti(record)">删除</a>
         </span>
       </div>
     </template>
@@ -99,7 +100,9 @@ export default {
       },
       deep: true
     }
-
+  },
+  created () {
+    this.skus = this.attrValues
   },
   methods: {
     saveMulti (record) {
@@ -143,6 +146,10 @@ export default {
       }
       record.editable = false
       record._originalData = undefined
+    },
+    deleteMulti (record) {
+      // 删除某项
+      this.skus = this.skus.filter(value => value.id !== record.id)
     }
   }
 }

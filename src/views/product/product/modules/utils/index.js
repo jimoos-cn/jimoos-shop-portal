@@ -91,13 +91,13 @@ export function isEqualSku (sku, sku1, options) {
 }
 /**
  * 更新 SKU 列表，并保持已有的 sku 的数值
- * @param {Array} skus
- * @param Array skus1
+ * @param {Array} skus 原有
+ * @param Array skus1 新增
  * @param Object options
  */
 export function updateSkus (skus, skus1, options) {
   const { price = 0, showPrice = 0, cover = '' } = options || {}
-  const resultSkus = []
+  const resultSkus = skus
   for (let index = 0; index < skus1.length; index++) {
     const element = skus1[index]
     const exist = findExistSku(element, skus)

@@ -49,23 +49,39 @@
               <a-badge v-else status="error" text="下架"/>
             </a-descriptions-item>
             <a-descriptions-item label="标签" :span="3">
-              <a-tag
+              <d-tag
                 v-for="(item,index) in productDetail.tags"
-                :key="index"
-                :color="item.color">{{ item.name }}</a-tag>
+                :key="index.id"
+                :item="item"
+                :index="index"
+                :color="item.color"
+                :closeTag="closeProductTag"
+                :refresh="refreshTag"
+              >
+                <template slot="showText"> {{ item.name }} </template>
+              </d-tag>
+              <a-button size="small" shape="circle" type="primary" @click="addVisible = true">+</a-button>
             </a-descriptions-item>
             <a-descriptions-item label="规格" :span="3">
-              <a-tag
-                :class="{'clickPrice':index !== skusIndex,'choosePrice':index === skusIndex}"
-                @click="chooseSku(index)"
-                v-if="skus"
+              <d-tag
                 v-for="(item,index) in skus"
-                :key="index">{{ item.attrs[0].attrValueName }}</a-tag>
+                :key="item.id"
+                :item="item"
+                :index="index"
+                :closeTag="closeProductAttr"
+                :refresh="refreshAttr"
+                :class="{'clickPrice':index !== skusIndex,'choosePrice':index === skusIndex}"
+                @click.native="chooseSku(index)"
+                v-if="skus"
+              >
+                <template slot="showText"> {{ item.attrs[0].attrValueName }} </template>
+              </d-tag>
+              <a-button size="small" shape="circle" type="primary" @click="editSkuVisible = true"><a-icon type="more" /></a-button>
             </a-descriptions-item>
-            <a-descriptions-item label="真实价格" :span="1.5">
+            <a-descriptions-item label="真实价格" :span="1.5" v-if="skus.length > 0">
               <div style="color: red">￥{{ skus[skusIndex].price }}</div>
             </a-descriptions-item>
-            <a-descriptions-item label="显示价格" :span="2">
+            <a-descriptions-item label="显示价格" :span="2" v-if="skus.length > 0">
               <div style="color: red">￥{{ skus[skusIndex].showPrice }}</div>
             </a-descriptions-item>
             <a-descriptions-item label="商品介绍">
@@ -75,6 +91,8 @@
         </a-card>
       </a-col>
     </a-row>
+    <add-tag :visible.sync="addVisible" :productId="productDetail.id" :refresh="refreshTag"></add-tag>
+    <edit-sku :visible.sync="editSkuVisible" :product="productDetail" :all-sku="skus" :refresh="refreshAttr"></edit-sku>
   </page-header-wrapper>
 </template>
 
@@ -82,6 +100,11 @@
 import storage from 'store'
 import ImagePreview from '@/components/Image/ImagePreview'
 import { getProductSkus } from '@/api/product/index'
+import DTag from '@/views/product/product/modules/DeleteTag'
+import AddTag from '@/views/product/product/modules/AddTag'
+import EditSku from '@/views/product/product/modules/EditSku'
+import { deleteBoundValue, queryBoundValue } from '@/api/product/tag'
+import { deleteSku } from '@/api/product/sku'
 export default {
   data () {
     return {
@@ -90,12 +113,17 @@ export default {
       Pic: [], // 商品所有相关图片
       selectedIndex: 0, // 选中的图片
       skus: [],
-      skusIndex: 0 // 选中的规格
+      skusIndex: 0, // 选中的规格
+      addVisible: false, // tag添加model的显隐
+      editSkuVisible: false // 修改sku表的显隐
     }
   },
   components: {
     storage,
-    ImagePreview
+    ImagePreview,
+    DTag,
+    AddTag,
+    EditSku
   },
   created () {
     this.init()
@@ -115,6 +143,38 @@ export default {
       .then((res) => {
         this.skus = res
       })
+    },
+    // Tag删除
+    async closeProductTag (tag) {
+      const param = Object.assign({}, { tagId: tag.id }, { productId: tag.productId })
+      return deleteBoundValue(param)
+    },
+    // 刷新tag
+    refreshTag () {
+      const that = this
+      queryBoundValue({ productId: that.productDetail.id })
+      .then(res => {
+        that.$set(that.productDetail, 'tags', res)
+        storage.set('productDetail', that.productDetail)
+        storage.set('product', that.productDetail)
+      })
+    },
+    // Attr删除
+    async closeProductAttr (attr) {
+      const param = Object.assign({}, { id: attr.id })
+      return deleteSku(param)
+    },
+    // 刷新Attr
+    refreshAttr () {
+      const that = this
+      getProductSkus({ id: that.productDetail.id })
+        .then(res => {
+          that.skus = []
+          that.skusIndex = 0
+          console.log(res)
+          that.skus = res
+        })
+      that.$forceUpdate()
     },
     // 改变商品浏览的图片
     changePre (val) {
@@ -148,7 +208,8 @@ export default {
     color: #909399;
   }
   .choosePrice{
-    color: #1890ff;
+    color: #ffffff;
+    background: #1890ff;
   }
 
 </style>
