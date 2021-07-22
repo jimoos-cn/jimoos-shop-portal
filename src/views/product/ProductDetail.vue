@@ -26,15 +26,35 @@
         <a-card>
           <a-descriptions title="详细" bordered>
             <a-descriptions-item label="商品名">
-              {{ productDetail.name }}
+              <div @click="editProductNameMe" v-if="editList.chooseType !== 'Name' ">{{ productDetail.name }}</div>
+              <div v-else>
+                <a-input style="width: 160px" v-model="editList.editContent" @blur="blurProductName"></a-input>
+              </div>
             </a-descriptions-item>
             <a-descriptions-item label="商品类型">
-              <a-tag color="green">
+              <a-tag @click="editProductTypeMe" v-if="editList.chooseType !== 'Type'" color="green">
                 {{ productDetail.category.name }}
               </a-tag>
+              <div v-else>
+                <a-select v-model="editList.editContent">
+                  <a-select-option
+                    v-for="item in productType"
+                    :key="item.id"
+                    :value="item.id"
+                    @blur="blurProductType(item)">
+                    {{ item.name }}
+                  </a-select-option>
+                </a-select>
+                <a-button @click="blurProductType" type="primary" style="margin-left: 5px" size="small" shape="circle">√</a-button>
+                <a-button @click="editProductType = false" style="margin-left: 5px" size="small" shape="circle">×</a-button>
+              </div>
+
             </a-descriptions-item>
             <a-descriptions-item label="运营销量">
-              {{ productDetail.fakeSales }}
+              <div @click="editProductNumMe" v-if="editList.chooseType !== 'Num'">{{ productDetail.fakeSales }}</div>
+              <div v-else>
+                <a-input type="number" style="width: 60px" v-model="editList.editContent" @blur="blurProductfakeSales"></a-input>
+              </div>
             </a-descriptions-item>
             <a-descriptions-item label="创建时间">
               {{ $dateFormat(productDetail.createAt) }}
@@ -85,9 +105,19 @@
               <div style="color: red">￥{{ skus[skusIndex].showPrice }}</div>
             </a-descriptions-item>
             <a-descriptions-item label="商品介绍">
-              <div v-html="productDetail.text"></div>
+              <div v-if="editList.chooseType !== 'Desciption' " v-html="productDetail.text" @click="editList.chooseType = 'Desciption'"></div>
+              <div v-else>
+                <WangEditorExt @change="changeWang" ref="editor" :value="productDetail.text" v-decorator="['text']"/>
+                <a-row type="flex" justify="end">
+                  <a-button style="margin-right: 10px" @click="this.editList.chooseType = 'Desciption'">取消</a-button>
+                  <a-button type="primary" @click="confirm">确认</a-button>
+                </a-row>
+              </div>
             </a-descriptions-item>
           </a-descriptions>
+          <a-row v-if="editList.editFlag" type="flex" justify="end">
+            <a-button style="margin-top: 10px;color: #ffffff;background: #4bc912" @click="saveProductEdit">保存修改</a-button>
+          </a-row>
         </a-card>
       </a-col>
     </a-row>
@@ -99,12 +129,15 @@
 <script>
 import storage from 'store'
 import ImagePreview from '@/components/Image/ImagePreview'
-import { getProductSkus } from '@/api/product/index'
+// eslint-disable-next-line no-unused-vars
+import { getProductSkus, updateProductInfo } from '@/api/product/index'
 import DTag from '@/views/product/product/modules/DeleteTag'
 import AddTag from '@/views/product/product/modules/AddTag'
 import EditSku from '@/views/product/product/modules/EditSku'
 import { deleteBoundValue, queryBoundValue } from '@/api/product/tag'
 import { deleteSku } from '@/api/product/sku'
+import WangEditorExt from '@/components/Editor/WangEditorExt'
+import { getProductCategoryPage } from '@/api/product/category'
 export default {
   data () {
     return {
@@ -115,7 +148,13 @@ export default {
       skus: [],
       skusIndex: 0, // 选中的规格
       addVisible: false, // tag添加model的显隐
-      editSkuVisible: false // 修改sku表的显隐
+      editSkuVisible: false, // 修改sku表的显隐
+      editList: { // 商品编辑项目
+        chooseType: '', // Desciption, Name, Type, Num
+        editContent: null, // 修改的内容
+        editFlag: false // 整体保存的按钮显隐
+      },
+      productType: []
     }
   },
   components: {
@@ -123,7 +162,8 @@ export default {
     ImagePreview,
     DTag,
     AddTag,
-    EditSku
+    EditSku,
+    WangEditorExt
   },
   created () {
     this.init()
@@ -131,11 +171,22 @@ export default {
   methods: {
     // 初始化
     init () {
+      const params = {
+        offset: 0,
+        limit: 99999
+      }
       this.getSkus({ id: this.$route.query.id })
       this.productDetail = storage.get('productDetail')
       const { cover, bannerUrls } = this.productDetail
       this.defaultPic = cover
       this.Pic.push(cover, bannerUrls)
+      this.getProductType(params)
+    },
+    // 获取商品类别
+    getProductType (params) {
+      getProductCategoryPage(params).then(res => {
+        this.productType = res['list']
+      })
     },
     // 获取当前的skus
     getSkus (param) {
@@ -184,8 +235,72 @@ export default {
     // 改变所选的规格
     chooseSku (val) {
       this.skusIndex = val
+    },
+    // 文本内容改变
+    changeWang (val) {
+      this.editList.editContent = val
+    },
+    confirm () {
+      if (this.productDetail.text !== this.editContent) {
+        this.editFlag = true
+      }
+      this.productDetail.text = this.editList.editContent
+      this.editList.chooseType = ''
+    },
+    editProductNameMe () {
+      this.editList.chooseType = 'Name'
+      this.editList.editContent = this.productDetail.name
+    },
+    blurProductName () {
+      if (this.productDetail.name !== this.editList.editContent) {
+        this.editList.editFlag = true
+      }
+      this.productDetail.name = this.editList.editContent
+      this.editList.chooseType = ''
+    },
+    editProductNumMe () {
+      this.editList.chooseType = 'Num'
+      this.editList.editContent = this.productDetail.fakeSales
+    },
+    blurProductfakeSales () {
+      if (this.productDetail.fakeSales !== this.editList.editContent) {
+        this.editList.editFlag = true
+      }
+      this.productDetail.fakeSales = this.editList.editContent
+      this.editList.chooseType = ''
+    },
+    editProductTypeMe () {
+      this.editList.chooseType = 'Type'
+      this.editList.editContent = this.productDetail.category.id
+    },
+    blurProductType () {
+      if (this.productDetail.category.id !== this.editList.editContent) {
+        this.editList.editFlag = true
+      }
+      this.productDetail.category = this.productType.filter(type => type.id === this.editList.editContent)[0]
+      this.productDetail.categoryId = this.productDetail.category.id
+      this.editList.chooseType = ''
+    },
+    saveProductEdit () {
+      const param = JSON.parse(JSON.stringify(this.productDetail))
+      param.tagIds = []
+      for (const item of param.tags) {
+        param.tagIds.push(item.id)
+      }
+      param.tags = null
+      param.category = null
+      console.log(param)
+      updateProductInfo(param)
+      .then(res => {
+        this.$message.success('修改成功')
+        this.$router.push({
+          name: 'productList'
+        })
+      })
+      .catch(err => {
+        this.$message.error(err)
+      })
     }
-
   }
 }
 </script>

@@ -66,9 +66,15 @@
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoUserDetails(record)">详情</a>
-          <a @click="banUser(record)" v-if="!record.ban" style="margin-left: 10px">Ban</a>
-          <a @click="cancelBanUser(record)" v-if="record.ban" style="margin-left: 10px">取消Ban</a>
-          <a @click="deleteUser(record)" style="color: red; margin-left: 10px">删除</a>
+          <a-popconfirm v-if="!record.ban" title="确认Ban用户" @confirm="banUser(record)">
+            <a style="margin-left: 10px">Ban</a>
+          </a-popconfirm>
+          <a-popconfirm v-if="record.ban" title="确认取消Ban" @confirm="cancelBanUser(record)">
+            <a v-if="record.ban" style="margin-left: 10px">取消Ban</a>
+          </a-popconfirm>
+          <a-popconfirm title="确认删除用户" @confirm="deleteUser(record)">
+            <a style="color: red; margin-left: 10px">删除</a>
+          </a-popconfirm>
         </span>
       </s-table>
     </a-card>

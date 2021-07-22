@@ -13,7 +13,8 @@ const api = {
     deleteCoupon: data => requestWrapper('/coupons/' + data.id + '/delete', Methods.POST),
     upCoupon: data => requestWrapper('/coupons/' + data.id + '/up', Methods.POST, data),
     downCoupon: data => requestWrapper('/coupons/' + data.id + '/down', Methods.POST),
-    couponRecords: data => requestWrapper('/coupons/' + data.id + '/records', Methods.GET, data)
+    couponRecords: data => requestWrapper('/coupons/' + data.id + '/records', Methods.GET, data),
+    getCouponstatistics: data => requestWrapper('/coupons/' + data.id + '/statistics', Methods.GET, data)
 }
 
 /**
@@ -82,4 +83,12 @@ export function downCoupon (data) {
  */
 export function getCouponRecords (data) {
     return axios(api.couponRecords(data))
+}
+/**
+ * 查询 优惠券的统计信息
+ * @param {object} data
+ * @returns
+ */
+export function getCouponstatistics (data) {
+  return axios(api.getCouponstatistics(data))
 }
