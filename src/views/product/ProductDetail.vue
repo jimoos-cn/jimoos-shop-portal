@@ -46,7 +46,7 @@
                   </a-select-option>
                 </a-select>
                 <a-button @click="blurProductType" type="primary" style="margin-left: 5px" size="small" shape="circle">√</a-button>
-                <a-button @click="editProductType = false" style="margin-left: 5px" size="small" shape="circle">×</a-button>
+                <a-button @click="editList.chooseType = ''" style="margin-left: 5px" size="small" shape="circle">×</a-button>
               </div>
 
             </a-descriptions-item>
@@ -109,7 +109,7 @@
               <div v-else>
                 <WangEditorExt @change="changeWang" ref="editor" :value="productDetail.text" v-decorator="['text']"/>
                 <a-row type="flex" justify="end">
-                  <a-button style="margin-right: 10px" @click="this.editList.chooseType = 'Desciption'">取消</a-button>
+                  <a-button style="margin-right: 10px" @click="editList.chooseType = ''">取消</a-button>
                   <a-button type="primary" @click="confirm">确认</a-button>
                 </a-row>
               </div>

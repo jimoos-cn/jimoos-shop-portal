@@ -3,7 +3,8 @@ import { Methods } from '@/api/methods'
 import { axios } from '@/utils/request'
 
 const api = {
-  login: data => requestWapper('/login', Methods.POST, data)
+  login: data => requestWapper('/login', Methods.POST, data),
+  logout: () => requestWapper('/logout', Methods.POST)
 }
 
 /**
@@ -13,4 +14,11 @@ const api = {
  */
 export function login (data) {
   return axios(api.login(data))
+}
+
+/**
+ * 登出
+ */
+export function logout () {
+  return axios(api.logout())
 }

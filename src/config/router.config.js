@@ -177,7 +177,7 @@ export const asyncRouterMap = [
           }
         ]
       },
-      // admin
+      // admin管理
       {
         path: '/admins',
         name: 'admin',

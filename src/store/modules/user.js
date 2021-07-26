@@ -1,5 +1,5 @@
 import storage from 'store'
-import { login } from '@/api/auth/login'
+import { login, logout } from '@/api/auth/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const user = {
@@ -51,8 +51,8 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         const info = storage.get('info')
-
         commit('SET_NAME', { name: info.username })
+        // todo 后台权限待做
         const role = {
           permissionList: []
         }
@@ -65,11 +65,22 @@ const user = {
     // 登出
     Logout ({ commit, state }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        storage.remove('Authorization')
-        storage.remove(ACCESS_TOKEN)
-        resolve()
+        logout()
+        .then(res => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          storage.remove('Authorization')
+          storage.remove(ACCESS_TOKEN)
+          resolve()
+        })
+        .catch(err => {
+          this.$message.error(err)
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          storage.remove('Authorization')
+          storage.remove(ACCESS_TOKEN)
+          resolve()
+        })
       })
     }
 
