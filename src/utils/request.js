@@ -33,7 +33,15 @@ const errorHandler = (error) => {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
             window.location.reload()
+            this.$router.push(
+              { name: 'login' }
+            )
           }, 1500)
+        })
+        .catch(() => {
+          this.$router.push(
+            { name: 'login' }
+          )
         })
       }
     }

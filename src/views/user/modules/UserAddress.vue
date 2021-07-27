@@ -91,7 +91,7 @@
   * 默认样式(待写
   */
   .defaultIn{
-    background: #3188c2;
+    background: #001529;
     color: #ffffff;
   }
 </style>

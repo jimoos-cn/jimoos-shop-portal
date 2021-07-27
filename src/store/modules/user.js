@@ -74,11 +74,12 @@ const user = {
           resolve()
         })
         .catch(err => {
-          this.$message.error(err)
+          console.log(err)
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           storage.remove('Authorization')
           storage.remove(ACCESS_TOKEN)
+          console.log('2111')
           resolve()
         })
       })

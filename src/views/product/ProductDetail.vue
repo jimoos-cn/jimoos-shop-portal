@@ -60,7 +60,9 @@
               {{ $dateFormat(productDetail.createAt) }}
             </a-descriptions-item>
             <a-descriptions-item label="修改时间" :span="2">
-              {{ $dateFormat(productDetail.updateAt) }}
+              <span v-if="productDetail.updateAt != 0">
+                {{ $dateFormat(productDetail.updateAt) }}
+              </span>
             </a-descriptions-item>
             <a-descriptions-item label="商品状态" :span="3">
               <a-badge v-if="productDetail.status === 2" status="success" text="上架中" />
@@ -71,7 +73,7 @@
             <a-descriptions-item label="标签" :span="3">
               <d-tag
                 v-for="(item,index) in productDetail.tags"
-                :key="index.id"
+                :key="item.id"
                 :item="item"
                 :index="index"
                 :color="item.color"
