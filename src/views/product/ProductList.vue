@@ -82,7 +82,6 @@
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoDetail(record)">详情</a>
-          <a @click="editProduct(record)" style="margin-left: 10px">编辑</a>
           <a @click="upProduct(record)" v-if="record.status === 0" style="margin-left: 10px">上架</a>
           <a @click="downProduct(record)" v-if="record.status === 2" style="margin-left: 10px">下架</a>
           <a @click="removeProduct(record)" style="color: red; margin-left: 10px">删除</a>
@@ -266,17 +265,6 @@ export default {
     addProduct () {
       this.$router.push({
         name: 'addProduct'
-      })
-    },
-    // 编辑商品
-    editProduct (record) {
-      storage.set('productDetail', record)
-      storage.set('product', record)
-      this.$router.push({
-        name: 'product-edit',
-        query: {
-          id: record.id
-        }
       })
     },
     // 删除商品

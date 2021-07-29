@@ -66,9 +66,18 @@
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoUserDetails(record)">详情</a>
-          <a @click="banUser(record)" v-if="!record.ban" style="margin-left: 10px">Ban</a>
-          <a @click="cancelBanUser(record)" v-if="record.ban" style="margin-left: 10px">取消Ban</a>
-          <a @click="deleteUser(record)" style="color: red; margin-left: 10px">删除</a>
+          <a-popconfirm v-if="!record.ban" title="确认Ban用户" @confirm="banUser(record)">
+            <a style="margin-left: 10px">Ban</a>
+          </a-popconfirm>
+          <a-popconfirm v-if="record.ban" title="确认取消Ban" @confirm="cancelBanUser(record)">
+            <a v-if="record.ban" style="margin-left: 10px">取消Ban</a>
+          </a-popconfirm>
+          <a-popconfirm title="确认重置密码" @confirm="resetPwd(record)">
+            <a style="color: red; margin-left: 10px">重置</a>
+          </a-popconfirm>
+          <a-popconfirm title="确认删除用户" @confirm="deleteUser(record)">
+            <a style="color: red; margin-left: 10px">删除</a>
+          </a-popconfirm>
         </span>
       </s-table>
     </a-card>
@@ -78,7 +87,7 @@
 <script>
   import ImagePreview from '@/components/Image/ImagePreview'
   import { STable } from '@/components'
-  import { banUser, cancelBanUser, getUserInfo, deleteUser } from '@/api/user'
+  import { banUser, cancelBanUser, getUserInfo, deleteUser, resetUserPwd } from '@/api/user'
   const columns = [
     {
       title: '用户Id',
@@ -250,6 +259,27 @@
       },
       toggleAdvanced () {
         this.advanced = !this.advanced
+      },
+      // 重置密码
+      resetPwd (record) {
+        resetUserPwd({ userId: record.id })
+        .then(res => {
+          // 直接构建input
+          const _input = document.createElement('input')
+          // 设置内容
+          _input.value = res
+          // 添加临时实例
+          document.body.appendChild(_input)
+          // 选择实例内容
+          _input.select()
+          // 执行复制
+          document.execCommand('Copy')
+          document.body.removeChild(_input)
+          this.$message.success('密码重置成功，新密码为:' + res + ',已自动复制')
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
       }
     }
   }

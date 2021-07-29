@@ -9,9 +9,10 @@ const api = {
   getUserInfo: data => requestWrapper('/users/query', Methods.GET, data),
   banUser: data => requestWrapper('/users/' + data.id + '/ban', Methods.POST, data),
   cancelBanUser: data => requestWrapper('/users/' + data.id + '/unban', Methods.POST, data),
-  deleteUser: data => requestWrapper('/users/' + data.id + '/remove', Methods.POST, data),
+  deleteUser: data => requestWrapper('/users/' + data.id + '/delete', Methods.POST, data),
   getUserDetail: data => requestWrapper('/users/' + data.userId + '/details', Methods.GET),
-  getUserAddress: data => requestWrapper('/users/' + data.userId + '/address', Methods.GET)
+  getUserAddress: data => requestWrapper('/users/' + data.userId + '/address', Methods.GET),
+  resetUserPwd: data => requestWrapper('/users/' + data.userId + '/resetPwd', Methods.POST)
 }
 
 /**
@@ -66,4 +67,13 @@ export function getUserDetail (data) {
  */
 export function getUserAddress (data) {
   return axios(api.getUserAddress(data))
+}
+
+/**
+ * 重置用户密码
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function resetUserPwd (data) {
+  return axios(api.resetUserPwd(data))
 }
