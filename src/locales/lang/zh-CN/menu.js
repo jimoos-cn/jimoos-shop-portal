@@ -16,8 +16,6 @@ export default {
     'menu.collect.list': '商品集合列表',
     'menu.coupon': '优惠券',
     'menu.coupon.list': '优惠券列表',
-    'menu.banner': '优惠券',
-    'menu.banner.list': '广告栏列表',
     'menu.order': '订单管理',
     'menu.order.list': '订单列表',
     'menu.order.detail': '订单详细',
@@ -28,5 +26,9 @@ export default {
     'menu.setting': '设置',
     'menu.setting.system': '系统设置',
     'menu.setting.shopInfo': '商城信息',
-    'menu.develop': '开发者选项'
+    'menu.develop': '开发者选项',
+    'menu.banner': '广告栏管理',
+    'menu.banner.list': '广告栏列表',
+    'menu.banner.add': '广告栏添加',
+    'menu.banner.detail': '广告栏详细'
 }

@@ -7,7 +7,7 @@
             <span class="hendline">商品图片</span>
           </a-row>
           <a-row type="flex" justify="center" style="margin-top: 10px">
-            <image-preview :img="productDetail.cover" :smallWidth="256" :bigWidth="400" :proportion="1" v-if="defaultPic"></image-preview>
+            <image-preview :img="defaultPic" :smallWidth="256" :bigWidth="400" :proportion="1" v-if="defaultPic"></image-preview>
           </a-row>
           <a-row style="margin-top: 20px">
             <a-col
@@ -100,7 +100,7 @@
               </d-tag>
               <a-button size="small" shape="circle" type="primary" @click="editSkuVisible = true"><a-icon type="more" /></a-button>
             </a-descriptions-item>
-            <a-descriptions-item label="真实价格" :span="1.5" v-if="skus.length > 0">
+            <a-descriptions-item label="真实价格" :span="1" v-if="skus.length > 0">
               <div style="color: red">￥{{ skus[skusIndex].price }}</div>
             </a-descriptions-item>
             <a-descriptions-item label="显示价格" :span="2" v-if="skus.length > 0">

@@ -13,8 +13,8 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="用户状态">
                 <a-select v-model="search.ban" placeholder="请选择用户状态">
-                  <a-select-option :value="false">未禁止</a-select-option>
-                  <a-select-option :value="true">已禁止</a-select-option>
+                  <a-select-option :value="0">未禁止</a-select-option>
+                  <a-select-option :value="1">已禁止</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>

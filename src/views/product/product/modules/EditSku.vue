@@ -73,7 +73,6 @@
       handleOk () {
         const that = this
         const param = []
-        console.log(that.Sku)
         for (const i in that.Sku) {
           const data = {
             attrs: that.Sku[i].attrs,
@@ -99,8 +98,7 @@
       // 初始化
       init () {
         // 判断sku类别
-        console.log(this.allSku)
-        console.log(this.allSku[0].attrName)
+        console.log('www', this.allSku)
         if (this.allSku.length > 1 || this.allSku[0].attrs[0].attrName !== '单品') {
           this.skuType = 2
           this.handleAttrValueChangeEvent(this.allSku)

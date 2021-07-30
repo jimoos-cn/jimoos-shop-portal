@@ -41,13 +41,26 @@
           placeholder="请输入商品排序"
           style="width:100%" />
       </a-form-item>
-      <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
-        <sf-simple-upload
-          @input="updateCover"
-          :uploadType="0"
-          v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
-        ></sf-simple-upload>
-      </a-form-item>
+      <a-row type="flex" justify="start">
+        <a-col :span="6">
+          <a-form-item label="商品封面" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
+            <sf-simple-upload
+              @input="updateCover"
+              :uploadType="0"
+              v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
+            ></sf-simple-upload>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label="商品banner" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
+            <sf-simple-upload
+              @input="updateBanner"
+              :uploadType="0"
+              v-decorator="['bannerUrls']"
+            ></sf-simple-upload>
+          </a-form-item>
+        </a-col>
+      </a-row>
       <a-form-item label="商品视频" :labelCol="labelCol" :wrapperCol="wrapperCol">
         <sf-simple-upload @input="updateVideoUrl" :uploadType="1" v-decorator="['videoUrl']"></sf-simple-upload>
       </a-form-item>
@@ -131,6 +144,9 @@ export default {
     },
     updateCover (url) {
       this.form.setFieldsValue({ cover: url })
+    },
+    updateBanner (url) {
+      this.form.setFieldsValue({ bannerUrls: url })
     },
     updateVideoUrl (url) {
       this.form.setFieldsValue({ videoUrl: url })

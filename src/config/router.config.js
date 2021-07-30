@@ -154,6 +154,35 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // banner相关
+      {
+        path: '/banner',
+        name: 'banner',
+        redirect: '/banner/list',
+        component: RouteView,
+        meta: { title: 'menu.banner', keepAlive: true, icon: 'experiment', permission: ['banner'] },
+        children: [
+          {
+            path: '/banner/list',
+            name: 'bannerList',
+            component: () => import('@/views/banner/BannerList'),
+            meta: { title: 'menu.banner.list', keepAlive: false, permission: ['banner'] }
+          },
+          {
+            path: '/banner/add',
+            name: 'bannerAdd',
+            component: () => import('@/views/banner/BannerAdd'),
+            meta: { title: 'menu.banner.add', keepAlive: false, permission: ['banner'] }
+          },
+          {
+            path: '/banner/details',
+            name: 'bannerDetail',
+            hidden: true,
+            component: () => import('@/views/banner/BannerDetail'),
+            meta: { title: 'menu.banner.detail', keepAlive: false, permission: ['banner'] }
+          }
+        ]
+      },
       // coupons 优惠券管理
       {
         path: '/coupons',

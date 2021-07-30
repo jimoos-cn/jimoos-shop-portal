@@ -252,7 +252,6 @@ export default {
       })
     },
     gotoDetail (record) {
-      this.$store.commit('setProduct', record)
       storage.set('productDetail', record)
       this.$router.push({
         name: 'productDetail',
