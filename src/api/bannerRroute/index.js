@@ -19,7 +19,7 @@ export function getRouteList (data) {
 }
 
 /**
- * 获取route列表
+ * 增加route
  * @param data
  * @returns {AxiosPromise}
  */
@@ -28,7 +28,7 @@ export function addRoute (data) {
 }
 
 /**
- * 获取route列表
+ * 修改route
  * @param data
  * @returns {AxiosPromise}
  */
@@ -37,7 +37,7 @@ export function editRoute (data) {
 }
 
 /**
- * 获取route列表
+ * 删除route
  * @param data
  * @returns {AxiosPromise}
  */

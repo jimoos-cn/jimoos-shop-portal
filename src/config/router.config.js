@@ -180,6 +180,12 @@ export const asyncRouterMap = [
             hidden: true,
             component: () => import('@/views/banner/BannerDetail'),
             meta: { title: 'menu.banner.detail', keepAlive: false, permission: ['banner'] }
+          },
+          {
+            path: '/banner/route',
+            name: 'bannerRoute',
+            component: () => import('@/views/banner/BannerRoute'),
+            meta: { title: 'menu.banner.route', keepAlive: false, permission: ['banner'] }
           }
         ]
       },

@@ -30,5 +30,6 @@ export default {
     'menu.banner': '广告栏管理',
     'menu.banner.list': '广告栏列表',
     'menu.banner.add': '广告栏添加',
-    'menu.banner.detail': '广告栏详细'
+    'menu.banner.detail': '广告栏详细',
+    'menu.banner.route': '广告栏路由'
 }

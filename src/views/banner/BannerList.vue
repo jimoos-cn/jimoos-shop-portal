@@ -1,6 +1,10 @@
 <!-- 广告栏页面 -->
 <template>
   <page-header-wrapper>
+    <template slot="title">
+      <span>广告栏列表</span>
+      <a-button @click="gotoAddBanner" style="margin-left: 40px" type="primary">添加</a-button>
+    </template>
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -46,9 +50,6 @@
                   <a-icon :type="advanced ? 'up' : 'down'" />
                 </a>
               </span>
-            </a-col>
-            <a-col :md="8" :sm="24" style="padding-bottom: 10px">
-              <a-button style="background-color: #4bc912;color: #f0f2f5" @click="gotoAddBanner">添加广告栏</a-button>
             </a-col>
           </a-row>
         </a-form>
