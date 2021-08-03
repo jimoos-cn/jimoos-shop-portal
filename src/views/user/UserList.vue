@@ -58,26 +58,39 @@
           <image-preview :img="text" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="text"></image-preview>
         </div>
         <div slot="ban" slot-scope="text">
-          <a-badge status="success" v-if="!text" text="未Ban"></a-badge>
-          <a-badge status="error" v-else text="已Ban"></a-badge>
+          <a-badge status="success" v-if="!text" text="正常"></a-badge>
+          <a-badge status="error" v-else text="封禁"></a-badge>
         </div>
         <div slot="createAt" slot-scope="record">
           {{ $dateFormat(record) }}
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoUserDetails(record)">详情</a>
-          <a-popconfirm v-if="!record.ban" title="确认Ban用户" @confirm="banUser(record)">
-            <a style="margin-left: 10px">Ban</a>
-          </a-popconfirm>
-          <a-popconfirm v-if="record.ban" title="确认取消Ban" @confirm="cancelBanUser(record)">
-            <a v-if="record.ban" style="margin-left: 10px">取消Ban</a>
-          </a-popconfirm>
-          <a-popconfirm title="确认重置密码" @confirm="resetPwd(record)">
-            <a style="color: red; margin-left: 10px">重置</a>
-          </a-popconfirm>
-          <a-popconfirm title="确认删除用户" @confirm="deleteUser(record)">
-            <a style="color: red; margin-left: 10px">删除</a>
-          </a-popconfirm>
+          <a-dropdown style="margin-left: 10px">
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a-popconfirm v-if="!record.ban" title="确认封禁用户" @confirm="banUser(record)">
+                  <a>封禁</a>
+                </a-popconfirm>
+              </a-menu-item>
+              <a-menu-item v-if="record.ban">
+                <a-popconfirm title="确认取消封禁" @confirm="cancelBanUser(record)">
+                  <a v-if="record.ban">取消封禁</a>
+                </a-popconfirm>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确认重置密码" @confirm="resetPwd(record)">
+                  <a style="color: red">重置密码</a>
+                </a-popconfirm>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确认删除用户" @confirm="deleteUser(record)">
+                  <a style="color: red">删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+            <a>更多<a-icon type="down"/></a>
+          </a-dropdown>
         </span>
       </s-table>
     </a-card>
@@ -88,58 +101,7 @@
   import ImagePreview from '@/components/Image/ImagePreview'
   import { STable } from '@/components'
   import { banUser, cancelBanUser, getUserInfo, deleteUser, resetUserPwd } from '@/api/user'
-  const columns = [
-    {
-      title: '用户Id',
-      scopedSlots: {
-        customRender: 'id'
-      },
-      width: '100px'
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname'
-    },
-    {
-      title: '头像',
-      dataIndex: 'avatar',
-      scopedSlots: {
-        customRender: 'avatar'
-      },
-      width: '120px'
-    },
-    {
-      title: '手机号',
-      dataIndex: 'phone',
-      scopedSlots: {
-        customRender: 'phone'
-      },
-      width: '120px'
-    },
-    {
-      title: '状态',
-      dataIndex: 'ban',
-      scopedSlots: {
-        customRender: 'ban'
-      }
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createAt',
-      scopedSlots: {
-        customRender: 'createAt'
-      }
-    },
-    {
-      title: '操作',
-      key: 'operation',
-      fixed: 'right',
-      width: '200px',
-      scopedSlots: {
-        customRender: 'action'
-      }
-    }
-  ]
+  import { columns } from './modules/user'
   export default {
     components: {
       STable,

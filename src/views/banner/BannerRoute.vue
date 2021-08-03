@@ -1,25 +1,32 @@
 <!-- banner路由 -->
 <template>
   <page-header-wrapper>
-    <template slot="title">
-      <span>广告栏路由</span>
-      <a-button @click="openAdd" style="margin-left: 40px" type="primary">添加</a-button>
-    </template>
-    <a-list :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 3 }" :data-source="routeList">
+    <a-list
+      :grid="{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }"
+      :data-source="routeList"
+      class="card-list"
+    >
       <a-list-item slot="renderItem" slot-scope="item">
-        <a-card :title="item.description">
-          <template slot="extra">
-            <a @click.prevent="openEdit(item)">修改</a>
-            <a-popconfirm title="确认删除广告栏" @confirm="deleteRoute(item)">
-              <a style="color: red; margin-left: 20px">删除</a>
-            </a-popconfirm>
-          </template>
-          <template slot=""></template>
-          <a-row> 跳转类型: {{ getType(item.type) }} </a-row>
-          <a-row> 跳转路径: {{ item.route }} </a-row>
-          <a-row> 创建时间: {{ $dateFormat(item.createAt) }} </a-row>
-          <a-row> 更新时间: {{ $dateFormat(item.updateAt) }} </a-row>
-        </a-card>
+        <template v-if="!item || item.id === undefined">
+          <a-button class="new-btn" type="dashed" @click="openAdd">
+            <a-icon type="plus"/>
+            新增广告栏路由
+          </a-button>
+        </template>
+        <template v-else>
+          <a-card :hoverable="true">
+            <a-card-meta>
+              <a-row slot="title">跳转类型: {{ getType(item.type) }}</a-row>
+              <a-row slot="description"> 跳转路径: {{ item.route }} </a-row>
+              <a-row slot="description"> 创建时间: {{ $dateFormat(item.createAt) }} </a-row>
+              <a-row slot="description"> 更新时间: {{ $dateFormat(item.updateAt) }} </a-row>
+            </a-card-meta>
+            <template class="ant-card-actions" slot="actions">
+              <a @click="openEdit(item)">修改</a>
+              <a @click="deleteRoute(item)">删除</a>
+            </template>
+          </a-card>
+        </template>
       </a-list-item>
     </a-list>
     <add-or-edit-route
@@ -60,6 +67,12 @@
         getRouteList(this.search)
         .then(res => {
           this.routeList = res
+          this.routeList.unshift(
+            {
+              type: 0
+            }
+          )
+          console.log(this.routeList)
         })
         .catch(err => {
           this.$message.error(err)
@@ -137,3 +150,12 @@
     }
   }
 </script>
+
+<style scoped>
+  .new-btn {
+    background-color: #fff;
+    border-radius: 2px;
+    width: 100%;
+    height: 188px;
+  }
+</style>

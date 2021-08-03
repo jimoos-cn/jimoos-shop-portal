@@ -56,7 +56,7 @@
                   },
                 ]"
                 :rows="4"
-                placeholder="请输入路由跳转路径"
+                placeholder="请输入路由跳转路径。其中%s代表通配符，targetId会依据%s进行替换"
               />
             </a-form-item>
           </a-col>
@@ -126,6 +126,9 @@
     watch: {
       data: {
         handler (val) {
+          if (val == null) {
+            this.form.resetFields()
+          }
           if (val) {
             this.$nextTick(() => {
               this.form.setFieldsValue({

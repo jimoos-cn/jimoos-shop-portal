@@ -44,6 +44,7 @@
               :value="item.id"
             >
               {{ item.description }}
+              <span style="color: #bfc0c6">{{ item.route }}</span>
             </a-select-option>
           </a-select>
         </a-form-item>

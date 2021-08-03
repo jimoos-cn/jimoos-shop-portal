@@ -92,8 +92,6 @@
         </div>
         <span slot="action" slot-scope="text, record">
           <a @click="gotoOrderDetails(record)">详情</a>
-          <a v-if="record.status === 1" @click="gotoOrderDetails(record)" style="margin-left: 10px;color: #4bc912">发货</a>
-          <a @click="cancelOrder(record)" style="color: red; margin-left: 10px">订单取消</a>
         </span>
       </s-table>
     </a-card>
@@ -199,10 +197,6 @@
       }
     },
     methods: {
-      // 订单取消
-      cancelOrder (params) {
-        //
-      },
       // 订单详细页跳转
       gotoOrderDetails (params) {
         this.$router.push({

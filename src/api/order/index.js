@@ -8,7 +8,9 @@ import { axios } from '@/utils/request'
 const api = {
   getOrderInfo: data => requestWrapper('/orders/query', Methods.GET, data),
   getUserRecentOrder: data => requestWrapper('/orders/byUserId', Methods.GET, data),
-  getOrderDetails: data => requestWrapper('/orders/' + data.id + '/details', Methods.GET)
+  getOrderDetails: data => requestWrapper('/orders/' + data.id + '/details', Methods.GET),
+  deliver: data => requestWrapper('/orders/' + data.id + '/deliver', Methods.POST, data),
+  cancelOrder: data => requestWrapper('/orders/' + data.id + '/cancel', Methods.POST, data)
 }
 
 /**
@@ -36,4 +38,22 @@ export function getUserRecentOrder (data) {
  */
 export function getOrderDetails (data) {
   return axios(api.getOrderDetails(data))
+}
+
+/**
+ * 商家发货
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function deliver (data) {
+  return axios(api.deliver(data))
+}
+
+/**
+ * 取消订单
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function cancelOrder (data) {
+  return axios(api.cancelOrder(data))
 }

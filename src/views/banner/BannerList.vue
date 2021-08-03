@@ -1,10 +1,6 @@
 <!-- 广告栏页面 -->
 <template>
   <page-header-wrapper>
-    <template slot="title">
-      <span>广告栏列表</span>
-      <a-button @click="gotoAddBanner" style="margin-left: 40px" type="primary">添加</a-button>
-    </template>
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -52,6 +48,9 @@
               </span>
             </a-col>
           </a-row>
+          <a-row>
+            <a-button icon="plus" @click="gotoAddBanner" style="margin-left: 40px" type="primary">添加广告栏</a-button>
+          </a-row>
         </a-form>
       </div>
       <s-table
@@ -61,6 +60,7 @@
         :data="loadData"
         showPagination="auto"
         :rowKey="(record) => record.id"
+        style="margin-top: 10px"
       >
         <div slot="imgUrl" slot-scope="text">
           <image-preview :img="text" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="text"></image-preview>

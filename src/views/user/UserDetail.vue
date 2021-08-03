@@ -1,175 +1,44 @@
 <!-- 用户详细页 -->
 <template>
-  <page-header-wrapper>
-    <a-row :gutter="24">
-      <a-col :md="8" :sm="24">
-        <a-card :bordered="false" v-if="userInfo">
-          <a-row
-            type="flex"
-            justify="center"
-            class="leftTop"
-          >
-            <a-avatar :size="100":src="userInfo.avatar" />
-            <div>
-              <div class="nickName">{{ userInfo.nickname }}</div>
-              <div class="role">{{ userInfo.role }}</div>
-            </div>
-          </a-row>
-          <a-row class="leftSecondTop" style="margin-top: 10px" :gutter="[24,24]">
-            <a-col :md="6" :sm="24">
-              <span>
-                性别
-                <span style="margin-left: 5px">
-                  <span v-if="userInfo.gender === 0">男</span>
-                  <span v-else>女</span>
-                </span>
-              </span></a-col>
-            <a-col :md="10" :sm="24"><span>生日 {{ $dateFormat(userInfo.birthday, 'YYYY-MM-DD') }} </span></a-col>
-            <a-col :md="8" :sm="24"><a @click="openAddress">收货地址</a></a-col>
-            <a-col :md="8" :sm="24"><a>社交登陆</a></a-col>
-            <a-col :md="8" :sm="24"><a>分销关系</a></a-col>
-          </a-row>
-          <a-row class="leftThirdTop" style="margin-top: 20px" :gutter="[24,24]">
-            <div>最近订单</div>
-            <s-table
-              style="margin-top: 20px"
-              :columns="columns"
-              :data="loadData"
-              :customRow="rowClick">
-              <div slot="createAt" slot-scope="record">
-                {{ $dateFormat(record) }}
-              </div>
-            </s-table>
-          </a-row>
-        </a-card>
-      </a-col>
-      <a-col :md="16" :sm="24">
-        <a-card :bordered="false" style="">
-          <a-row
-            class="statistics"
-            :gutter="[16,16]">
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background: #31C7CB;">
-                <a-icon type="check-circle" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>今日支付订单</a-row>
-              </a-col>
-            </a-col>
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background-color: #FFB980">
-                <a-icon type="star" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>今日收藏订单</a-row>
-              </a-col>
-            </a-col>
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background-color:#59B1EF ">
-                <a-icon type="undo" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>今日未支付订单</a-row>
-              </a-col>
-            </a-col>
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background: #31C7CB;">
-                <a-icon type="check-circle" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>本月支付订单</a-row>
-              </a-col>
-            </a-col>
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background-color: #FFB980">
-                <a-icon type="star" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>本月收藏订单</a-row>
-              </a-col>
-            </a-col>
-            <a-col :md="8" :sm="24" class="module">
-              <a-col :md="8" class="leftPic" style="background-color:#59B1EF ">
-                <a-icon type="undo" style="font-size: 24px;color: #ffffff" />
-              </a-col>
-              <a-col :md="16" class="rightContent">
-                <a-row>￥ 1234</a-row>
-                <a-row>本月未支付订单</a-row>
-              </a-col>
-            </a-col>
-          </a-row>
-          <a-row style="padding-right: 100px;padding-left: 100px;margin-top: 20px">
-            <template>
-              <div style="margin-bottom: 16px;">
-                <a-input addon-before="邀请码" default-value="无" :value="inviteCode">
-                </a-input>
-              </div>
-            </template>
-            <template>
-              <div style="margin-bottom: 16px;">
-                <a-input addon-before="居住地址" default-value="无" :value="liveAddress"/>
-              </div>
-            </template>
-          </a-row>
-        </a-card>
-      </a-col>
-    </a-row>
-    <UserAddress ref="address"></UserAddress>
+  <page-header-wrapper v-if="userInfo" :title="userInfo.nickname" :tab-list="tabList" :tab-active-key="tabActiveKey" @tabChange="handleTabChange">
+    <template v-slot:content>
+      <a-descriptions size="small" :column="2">
+        <a-descriptions-item label="编号">{{ userInfo.id }}</a-descriptions-item>
+        <a-descriptions-item label="头像"><a-avatar shape="square" icon="user" :src="userInfo.avatar"/></a-descriptions-item>
+        <a-descriptions-item label="手机号">{{ userInfo.phone }}</a-descriptions-item>
+        <a-descriptions-item label="角色">
+          <span v-if="userInfo.role === 0">普通用户</span>
+          <span v-else-if="userInfo.role === 1">VIP用户</span>
+        </a-descriptions-item>
+        <a-descriptions-item label="创建时间">{{ $dateFormat(userInfo.createAt) }}</a-descriptions-item>
+      </a-descriptions>
+    </template>
+    <UserAddress :user="userInfo" v-if="tabActiveKey === '1'"></UserAddress>
+    <UserRelation v-if="tabActiveKey === '2'"></UserRelation>
   </page-header-wrapper>
 </template>
 
 <script>
   import UserAddress from './modules/UserAddress'
+  import UserRelation from './modules/UserRelation'
   import { STable } from '@/components'
   import { getUserRecentOrder } from '@/api/order'
-  import { getUserAddress, getUserDetail } from '@/api/user'
-  const columns = [
-    {
-      title: '订单编号',
-      dataIndex: 'orderNum',
-      scopedSlots: {
-        customRender: 'orderNum'
-      }
-    },
-    {
-      title: '订单标题',
-      dataIndex: 'subject',
-      scopedSlots: {
-        customRender: 'subject'
-      }
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createAt',
-      scopedSlots: {
-        customRender: 'createAt'
-      }
-    }
-  ]
+  import { getUserDetail } from '@/api/user'
   export default {
     components: {
       STable,
-      UserAddress
+      UserAddress,
+      UserRelation
     },
     data () {
-      this.columns = columns
       return {
-        userInfo: {}, // 用户数据
+        tabList: [
+          { key: '1', tab: '详情' },
+          { key: '2', tab: '分销' }
+        ],
+        tabActiveKey: '1',
+        userInfo: null, // 用户数据
         search: {}, // 查询数据
-        rowClick: (record, index) => ({ // 表格点击
-          on: {
-            click: () => {
-              // 行点击
-              console.log('点击行数据', record)
-              this.gotoOrderDetail(record)
-            }
-          }
-        }),
         loadData: (param) => { // 加载数据
           const requestParam = Object.assign({}, param, this.search)
           console.log('loadData request parameters:', requestParam)
@@ -199,27 +68,6 @@
         }
       }
     },
-    computed: {
-      inviteCode () {
-        return this.userInfo.inviteCode
-      },
-      liveAddress () {
-        let res = ''
-        if (this.userInfo.province != null) {
-          res += this.userInfo.province
-        }
-        if (this.userInfo.city != null) {
-          res += this.userInfo.city
-        }
-        if (this.userInfo.area != null) {
-          res += this.userInfo.area
-        }
-        if (res === '') {
-          return '无信息'
-        }
-        return res
-      }
-    },
     created () {
       this.search.userId = this.$route.query.id // 赋予用户ID
       this.init()
@@ -229,14 +77,8 @@
       init () {
         this.getUserDetail(this.search)
       },
-      // 打开用户地址,并请求
-      openAddress () {
-        this.$refs.address.visible = true
-        getUserAddress(this.search)
-        .then((res) => {
-          console.log('地址数据', res)
-          this.$refs.address.userAddress = res
-        })
+      handleTabChange (key) {
+        this.tabActiveKey = key
       },
       // 获取用户详细数据
       getUserDetail (params) {

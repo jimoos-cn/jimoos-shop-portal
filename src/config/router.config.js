@@ -43,15 +43,24 @@ export const asyncRouterMap = [
             path: '/user/list-management',
             name: 'userList-management',
             hideChildrenInMenu: true,
-            component: () => import('@/views/user/UserList'),
-            meta: { title: 'menu.user.list', keepAlive: true, permission: ['user'] }
-          },
-          {
-            path: '/user/detail',
-            name: 'userDetail',
-            hidden: true,
-            component: () => import('@/views/user/UserDetail'),
-            meta: { title: 'menu.user.detail', keepAlive: true, permission: ['user'] }
+            redirect: '/user/user-management',
+            component: RouteView,
+            meta: { title: 'menu.user.list', keepAlive: true, permission: ['user'], hideInBreadcrumb: true },
+            children: [
+              {
+                path: '/user/list-management',
+                name: 'userList-management',
+                component: () => import('@/views/user/UserList'),
+                meta: { title: '', keepAlive: true, permission: ['user'], hideInBreadcrumb: true }
+              },
+              {
+                path: '/user/detail',
+                name: 'userDetail',
+                hidden: true,
+                component: () => import('@/views/user/UserDetail'),
+                meta: { title: 'menu.user.detail', keepAlive: true, permission: ['user'] }
+              }
+            ]
           }
         ]
       },
@@ -65,17 +74,27 @@ export const asyncRouterMap = [
         children: [
           {
             path: '/order/list-management',
-            name: 'orderList-management',
+            name: 'orderList',
             hideChildrenInMenu: true,
-            component: () => import('@/views/order/OrderList'),
-            meta: { title: 'menu.order.list', keepAlive: false, permission: ['order'] }
-          },
-          {
-            path: '/order/detail',
-            name: 'orderDetail',
-            hidden: true,
-            component: () => import('@/views/order/OrderDetail'),
-            meta: { title: 'menu.order.detail', keepAlive: false, permission: ['order'] }
+            redirect: '/order/list-management',
+            component: RouteView,
+            meta: { title: 'menu.order.list', keepAlive: false, permission: ['order'] },
+            children: [
+              {
+                path: '/order/list-management',
+                name: 'orderList-management',
+                hidden: true,
+                component: () => import('@/views/order/OrderList'),
+                meta: { title: '', keepAlive: false, permission: ['order'] }
+              },
+              {
+                path: '/order/detail',
+                name: 'orderDetail',
+                hidden: true,
+                component: () => import('@/views/order/OrderDetail'),
+                meta: { title: 'menu.order.detail', keepAlive: false, permission: ['order'] }
+              }
+            ]
           }
         ]
       },
@@ -98,7 +117,7 @@ export const asyncRouterMap = [
               {
                 path: '/product/list',
                 name: 'productList',
-                meta: { title: 'menu.product.list', keepAlive: true, permission: ['product'] },
+                meta: { title: '', keepAlive: true, permission: ['product'] },
                 component: () => import('@/views/product/ProductList')
               },
               {
@@ -107,6 +126,20 @@ export const asyncRouterMap = [
                 hidden: true,
                 meta: { title: '新建商品', keepAlive: true, permission: ['product'] },
                 component: () => import('@/views/product/product/AddProduct')
+              },
+              {
+                path: '/product/detail',
+                name: 'productDetail',
+                hidden: true,
+                component: () => import('@/views/product/ProductDetail'),
+                meta: { title: '商品详情', keepAlive: true, permission: ['product'] }
+              },
+              {
+                path: '/product/edit',
+                name: 'productEdit',
+                hidden: true,
+                component: () => import('@/views/product/ProductEdit'),
+                meta: { title: '商品编辑', keepAlive: true, permission: ['product'] }
               }
             ]
           },
@@ -121,13 +154,6 @@ export const asyncRouterMap = [
             name: 'productTagList',
             component: () => import('@/views/product/ProductTagList'),
             meta: { title: 'menu.product.tag', keepAlive: false, permission: ['product'] }
-          },
-          {
-            path: '/product/detail',
-            name: 'productDetail',
-            hidden: true,
-            component: () => import('@/views/product/ProductDetail'),
-            meta: { title: '商品详情', keepAlive: true, permission: ['product'] }
           },
           {
             path: '/product/attrList-management',
