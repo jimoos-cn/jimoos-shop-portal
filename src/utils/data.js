@@ -4,6 +4,6 @@
  * @param val
  * @returns {boolean}
  */
-export function avliable (val) {
+export function available (val) {
   return val !== undefined && val !== '' && val != null
 }

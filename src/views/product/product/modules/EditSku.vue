@@ -1,29 +1,34 @@
-<!-- 修改商品的modal -->
+<!-- 修改商品规格 -->
 <template>
-  <a-modal v-model="modelVisible" @ok="handleOk" @cancel="close" width="60%">
-    <a-card style="margin-top: 20px" :bordered="false" title="修改商品规格">
-      <span>规格（必选）: </span>
+  <a-card style="margin-top: 20px" :bordered="false" title="修改商品规格">
+    <span>规格（必选）: </span>
 
-      <a-radio-group @change="skuTypeChange" :value="skuType">
-        <a-radio :value="1">单品</a-radio>
-        <a-radio :value="2">非单品</a-radio>
-      </a-radio-group>
-      <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
-      <template v-if="skuType == 2">
-        <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
-        <MultiSkuTable :attrValues="attrValuesList" @change="handleMultiSkuChange"></MultiSkuTable>
-      </template>
-    </a-card>
-  </a-modal>
+    <a-radio-group @change="skuTypeChange" :value="skuType">
+      <a-radio :value="1">单品</a-radio>
+      <a-radio :value="2">非单品</a-radio>
+    </a-radio-group>
+    <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange" :single="allSku"></SingleSkuTable>
+    <template v-if="skuType == 2">
+      <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
+      <MultiSkuTable :attrValues="attrValuesList" @change="handleMultiSkuChange"></MultiSkuTable>
+    </template>
+    <!-- fixed footer toolbar -->
+    <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
+      <a-space>
+        <a-button>取消</a-button>
+        <a-button type="primary" @click="handleOk">修改</a-button>
+      </a-space>
+    </footer-tool-bar>
+  </a-card>
 </template>
 <script>
-  import FooterToolBar from '@/components/FooterToolbar'
   import { baseMixin } from '@/store/app-mixin'
   import SingleSkuTable from '../modules/SingleSkuTable'
   import AttrContainer from '../modules/AttrContainer'
   import MultiSkuTable from '../modules/MultiSkuTable'
   import { updateSku } from '@/api/product/sku'
-  import { avliable } from '@/utils/data'
+  import { available } from '@/utils/data'
+  import FooterToolBar from '@/components/FooterToolbar'
 
   export default {
     name: 'AddProduct',
@@ -48,10 +53,6 @@
         type: Boolean,
         default: false
       },
-      refresh: {
-        type: Function,
-        required: true
-      },
       allSku: {
         type: Array,
         default: null
@@ -62,18 +63,20 @@
       }
     },
     watch: {
-      visible (val) {
-        if (val) {
-          this.init()
-        }
-        this.modelVisible = val
+      visible: {
+        handler (val) {
+          if (val) {
+            this.init()
+          }
+          this.modelVisible = val
+        },
+        immediate: true
       }
     },
     methods: {
       handleOk () {
         const that = this
         const param = []
-        console.log(that.Sku)
         for (const i in that.Sku) {
           const data = {
             attrs: that.Sku[i].attrs,
@@ -84,7 +87,7 @@
             attrValueIds: that.Sku[i].attrs[0].attrId
           }
           // 寻找修改项
-          if (avliable(that.Sku[i].id)) {
+          if (available(that.Sku[i].id)) {
             data.id = that.Sku[i].id
           }
           param.push(data)
@@ -92,15 +95,17 @@
         console.log(param)
         updateSku(param)
         .then(res => {
-          this.refresh()
-          this.close()
+          console.log(res)
+          this.$message.success('修改成功')
+          this.$router.push({
+            name: 'productList'
+          })
         })
       },
       // 初始化
       init () {
         // 判断sku类别
-        console.log(this.allSku)
-        console.log(this.allSku[0].attrName)
+        console.log('www', this.allSku)
         if (this.allSku.length > 1 || this.allSku[0].attrs[0].attrName !== '单品') {
           this.skuType = 2
           this.handleAttrValueChangeEvent(this.allSku)

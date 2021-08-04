@@ -1,73 +1,103 @@
-<!-- 用户收货地址查看 -->
+<!-- 用户收货地址 -->
 <template>
-  <a-drawer
-    placement="right"
-    :closable="false"
-    :visible="visible"
-    @close="onClose"
-    width="500"
-  >
-    <a-row class="title">
-      <a-col :sm="24" :md="12">
-        <span class="titleContent">收货地址</span>
-      </a-col>
-      <a-col :sm="24" :md="6" :offset="6">
-        <a-button type="primary" @click="childVisible = true">新增地址</a-button>
-      </a-col>
-    </a-row>
-    <a-row
-      class="addressRow"
-      v-for="item in userAddress"
-      :key="item.id"
-      :class="{defaultIn:item.defaultIn}"
-    >
-      <a-col :sm="24" :md="12" :offset="2">
-        收件人:{{ item.name }}
-      </a-col>
-      <a-col :sm="24" :md="10">
-        电话:{{ item.phone }}
-      </a-col>
-      <a-col :sm="24" :md="24" :offset="8" style="margin-top: 20px">
-        收货地址:{{ item.address }}
-      </a-col>
-      <a-col :sm="24" :md="12" :offset="2" style="margin-top: 20px">
-        <a v-if="!item.defaultIn">设置默认地址</a>
-        <a v-else>取消默认地址</a>
-      </a-col>
-      <a-col :sm="24" :md="8" :offset="2" style="margin-top: 20px">
-        <a>删除地址</a>
-      </a-col>
-    </a-row>
-    <a-drawer
-      v-if="childVisible"
-      title="新增收货地址"
-      placement="right"
-      :closable="false"
-      :visible="childVisible"
-      @close="onCloseChild"
-      width="500"
-    >
-    </a-drawer>
-
-  </a-drawer>
+  <a-card :bordered="false" style="margin-top:20px">
+    <a-descriptions size="small" :column="2">
+      <a-descriptions-item label="编号">{{ user.id }}</a-descriptions-item>
+      <a-descriptions-item label="昵称">{{ user.nickname }}</a-descriptions-item>
+      <a-descriptions-item label="头像"><a-avatar shape="square" icon="user" :src="user.avatar"/></a-descriptions-item>
+      <a-descriptions-item label="性别">
+        <span v-if="user.gender === 0">未知</span>
+        <span v-else-if="user.gender === 1">女</span>
+        <span v-else-if="user.gender === 2">男</span>
+      </a-descriptions-item>
+      <a-descriptions-item label="生日">
+        <span v-if="user.birthday">{{ $dateFormat(user.birthday,'yyyy-MM-DD') }}</span>
+      </a-descriptions-item>
+      <a-descriptions-item label="手机号">{{ user.phone }}</a-descriptions-item>
+      <a-descriptions-item label="角色">
+        <span v-if="user.role === 0">普通用户</span>
+        <span v-else-if="user.role === 1">VIP用户</span>
+      </a-descriptions-item>
+      <a-descriptions-item label="邀请码">{{ user.inviteCode }}</a-descriptions-item>
+      <a-descriptions-item label="居住地址">{{ liveAddress }}</a-descriptions-item>
+      <a-descriptions-item label="创建时间">{{ $dateFormat(user.createAt) }}</a-descriptions-item>
+    </a-descriptions>
+    <a-divider style="margin-bottom: 24px" />
+    <div class="title">收货地址</div>
+    <a-table :columns="columns" :dataSource="userAddress" :pagination="false">
+      <div slot="zipCode" slot-scope="text">
+        <span v-if="text !== 'null'">{{ text }}</span>
+      </div>
+      <div slot="tag" slot-scope="text">
+        <a-tag color="red" v-if="text === '0'">家</a-tag>
+        <a-tag color="green" v-else-if="text === '1'">学校</a-tag>
+        <a-tag color="blue" v-else-if="text === '2'">公司</a-tag>
+      </div>
+      <div slot="createAt" slot-scope="text">
+        {{ $dateFormat(text) }}
+      </div>
+      <!--是否默认-->
+      <div slot="defaultIn" slot-scope="text">
+        <a-badge status="success" v-if="text" text="默认"></a-badge>
+        <a-badge status="error" v-else text="非默认"></a-badge>
+      </div>
+    </a-table>
+  </a-card>
 </template>
 
 <script>
+  import { columns } from '@/views/user/modules/address'
+  import { getUserAddress } from '@/api/user'
+
   export default {
-    name: 'UserAddress',
     data () {
       return {
-        visible: false, // 显隐
-        childVisible: false, // 抽屉二层显隐
-        userAddress: {} // 地址
+        columns: columns,
+        userAddress: [], // 地址
+        search: {} // 查询表单
+      }
+    },
+    mounted () {
+      this.init()
+    },
+    computed: {
+      liveAddress () {
+        let res = ''
+        if (this.user.province != null) {
+          res += this.user.province
+        }
+        if (this.user.city != null) {
+          res += this.user.city
+        }
+        if (this.user.area != null) {
+          res += this.user.area
+        }
+        if (res === '') {
+          return '无信息'
+        }
+        return res
+      }
+    },
+    props: {
+      user: {
+        type: Object,
+        default: () => {}
       }
     },
     methods: {
-      onClose () {
-        this.visible = false
+      init () {
+        this.getAddress()
       },
-      onCloseChild () {
-        this.childVisible = false
+      // 获取用户地址
+      getAddress () {
+        this.search = {
+          userId: this.user.id
+        }
+        console.log(this.search)
+        getUserAddress(this.search)
+          .then((res) => {
+            this.userAddress = res
+          })
       }
     }
   }
@@ -86,12 +116,5 @@
   .titleContent{
     font-weight: 700;
     font-size: 20px;
-  }
-  /*
-  * 默认样式(待写
-  */
-  .defaultIn{
-    background: #001529;
-    color: #ffffff;
   }
 </style>

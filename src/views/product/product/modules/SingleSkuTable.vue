@@ -81,12 +81,28 @@ export default {
       columnsSingle: columns
     }
   },
+  props: {
+    single: {
+      type: Array,
+      default: null
+    }
+  },
   created () {
-    this.dataSingle.push({
-      key: 1,
-      name: '单品',
-      editable: true
-    })
+    if (this.single != null) {
+      this.dataSingle.push({
+        key: 1,
+        name: '单品',
+        editable: true,
+        price: this.single[0].price,
+        showPrice: this.single[0].showPrice
+      })
+    } else {
+      this.dataSingle.push({
+        key: 1,
+        name: '单品',
+        editable: true
+      })
+    }
   },
   methods: {
     saveSingle (record) {
