@@ -18,6 +18,7 @@
       :key="item.id"
       @attrValuesChange="handleAttrValuesChange"
       @deleteAttr="handleAttrRemove"
+      :edit-flag="editFlag"
     >
     </AttrItem>
   </div>
@@ -39,6 +40,12 @@ export default {
       attrValuesList: []
     }
   },
+  props: {
+    editFlag: {
+      type: Boolean,
+      default: false
+    }
+  },
   created () {
     getProductAttrPage({
       offset: 0,
@@ -48,6 +55,15 @@ export default {
     })
   },
   methods: {
+    setContent (attrs) {
+      attrs.forEach(item => {
+        const one = {
+          id: item.attrId,
+          name: item.attrName
+        }
+        this.attrSelectedList.push(one)
+      })
+    },
     handleAttrSelect (val) {
       console.log('attr selected:' + JSON.stringify(val))
       if (!this.attrSelectedList.some((e) => e.id.toString() === val.key.toString())) {
