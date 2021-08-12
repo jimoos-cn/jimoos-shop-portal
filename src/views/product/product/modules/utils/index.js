@@ -119,6 +119,35 @@ export function updateSkus (skus, skus1, options) {
 }
 
 /**
+ * 修改规格时调用另一个方法
+ * @param {Array} skus
+ * @param Array skus1
+ * @param Object options
+ */
+export function editSkus (skus, skus1, options) {
+  let uid = 1
+  const { price = 0, showPrice = 0, cover = '', editable = true } = options || {}
+  skus.forEach(item => {
+    item.uid = uid++
+  })
+  const resultSkus = [...skus]
+  for (const item of skus1) {
+    const find = findExistSku(item, skus)
+    if (find == null) {
+      resultSkus.push({
+        attrs: item.attrs,
+        cover: cover,
+        price: price,
+        showPrice: showPrice,
+        uid: uid++,
+        editable: editable
+      })
+    }
+  }
+  return resultSkus
+}
+
+/**
  * 已经存在的 sku 则 保存原有的数据
  * @param {sku} sku
  * @param skus skus

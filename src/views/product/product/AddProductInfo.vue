@@ -142,16 +142,7 @@ export default {
     updateCover (url) {
       this.form.setFieldsValue({ cover: url })
     },
-    updateBanner (fileList) {
-      let url = ''
-      fileList.forEach(item => {
-        if (url === '') {
-          url = item.url
-        } else {
-          url += ',' + item.url
-        }
-      })
-      console.log(url)
+    updateBanner (url) {
       this.form.setFieldsValue({ bannerUrls: url })
     },
     updateVideoUrl (url) {
