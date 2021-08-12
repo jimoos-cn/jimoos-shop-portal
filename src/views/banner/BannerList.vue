@@ -49,7 +49,7 @@
             </a-col>
           </a-row>
           <a-row>
-            <a-button icon="plus" @click="gotoAddBanner" style="margin-left: 40px" type="primary">添加广告栏</a-button>
+            <a-button icon="plus" style="margin-left: 40px" type="primary" @click="addVisible = true">添加广告栏</a-button>
           </a-row>
         </a-form>
       </div>
@@ -85,6 +85,7 @@
           </a-popconfirm>
         </span>
       </s-table>
+      <BannerAdd :visible="addVisible" @cancel="addVisible = false"></BannerAdd>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -94,6 +95,7 @@
   import { STable } from '@/components'
   import { getBannerPage, putOnBanner, deleteBanner, offShelfBanner } from '@/api/banner'
   import { BANNER_POSITION } from '@/views/banner/enum/BannerConstant'
+  import BannerAdd from '@/views/banner/BannerAdd'
   const columns = [
     {
       title: '广告栏Id',
@@ -140,7 +142,8 @@
   export default {
     components: {
       STable,
-      ImagePreview
+      ImagePreview,
+      BannerAdd
     },
     data () {
       this.columns = columns
@@ -149,6 +152,7 @@
         canEdit: false,
         categoryList: [], // 分类列表
         advanced: false, // 高级搜索 展开/关闭
+        addVisible: false,
         // 查询条件参数
         search: {},
         // 加载数据方法 必须为 Promise 对象
@@ -180,11 +184,6 @@
       }
     },
     methods: {
-      gotoAddBanner () {
-        this.$router.push({
-          name: 'bannerAdd'
-        })
-      },
       // async返回Promise对象
       async queryData (param) {
         return getBannerPage(param)

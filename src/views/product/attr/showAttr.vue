@@ -7,24 +7,9 @@
 </template>
 <script>
   export default {
-    props: {
-      skus: {
-        type: Array,
-        default: null
-      }
-    },
-    created () {
-      console.log(this.skus)
-    },
     data () {
       return {
         columns: [
-          {
-            title: '属性值',
-            dataIndex: 'attrs[0].attrValueName',
-            key: 'attrs[0].attrValueName',
-            scopedSlots: { customRender: 'attrs[0].attrValueName' }
-          },
           {
             title: '价格(元)',
             dataIndex: 'price',
@@ -44,6 +29,31 @@
             scopedSlots: { customRender: 'cover' }
           }
         ]
+      }
+    },
+    props: {
+      skus: {
+        type: Array,
+        default: null
+      }
+    },
+    created () {
+      console.log(this.skus)
+      this.changeTableColumns(this.skus[0].attrs)
+    },
+    methods: {
+      // 动态变化表格的column
+      changeTableColumns (val) {
+        const newColum = []
+        for (let i = 0; i < val.length; i++) {
+          newColum.push({
+            title: val[i].attrName,
+            align: 'center',
+            dataIndex: 'attrs[' + i + '].attrValueName',
+            scopedSlots: { customRender: 'attrs[' + i + '].attrValueName' }
+          })
+        }
+        this.columns = [...newColum, ...this.columns]
       }
     }
   }

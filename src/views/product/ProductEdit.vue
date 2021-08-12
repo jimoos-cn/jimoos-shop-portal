@@ -7,7 +7,7 @@
       </template>
       <a-descriptions size="middle" :column="2">
         <a-descriptions-item label="商品编号">{{ productDetail.id }}</a-descriptions-item>
-        <a-descriptions-item label="商品分类">{{ productDetail.category.name }}</a-descriptions-item>
+        <a-descriptions-item label="商品分类" v-if="productDetail.category">{{ productDetail.category.name }}</a-descriptions-item>
         <a-descriptions-item label="运营销量">{{ productDetail.fakeSales }}</a-descriptions-item>
 
         <a-descriptions-item label="商品价格">
@@ -77,32 +77,26 @@
                 placeholder="请输入商品排序"
                 style="width:100%" />
             </a-form-item>
-            <a-row type="flex" justify="start">
-              <a-col :span="6">
-                <a-form-item label="商品封面" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
-                  <sf-simple-upload
-                    @input="updateCover"
-                    :uploadType="0"
-                    v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
-                  ></sf-simple-upload>
-                </a-form-item>
-              </a-col>
-              <a-col :span="6">
-                <a-form-item label="商品banner" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
-                  <sf-simple-upload
-                    @input="updateBanner"
-                    :uploadType="0"
-                    v-decorator="['bannerUrls']"
-                  ></sf-simple-upload>
-                </a-form-item>
-              </a-col>
-            </a-row>
+            <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <sf-simple-upload
+                @input="updateCover"
+                :uploadType="0"
+                v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
+              ></sf-simple-upload>
+            </a-form-item>
+            <a-form-item label="商品图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <ListUploadWrapper
+                @input="updateBanner"
+                :uploadType="0"
+                v-decorator="['bannerUrls']"
+                ref="listUpload"
+              ></ListUploadWrapper>
+            </a-form-item>
             <a-form-item label="商品视频" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <sf-simple-upload @input="updateVideoUrl" :uploadType="1" v-decorator="['videoUrl']"></sf-simple-upload>
             </a-form-item>
             <a-form-item label="商品详情" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <WangEditorExt @change="changeWang" :value="productDetail.text" ref="editor"/>
-              <WangEditorExt v-show="false" @change="changeWang" :value="productDetail.text" ref="editor" v-decorator="['text']"/>
+              <WangEditorExt @change="changeWang" ref="editor" v-decorator="['text', { rules: [{ required: true, message: '商品详情必须填写' }] }]"/>
             </a-form-item>
           </a-form>
           <!-- fixed footer toolbar -->
@@ -125,7 +119,7 @@
 <script>
   import storage from 'store'
   import ImagePreview from '@/components/Image/ImagePreview'
-  import { getProductSkus, updateProductInfo } from '@/api/product/index'
+  import { updateProductInfo } from '@/api/product/index'
   import DTag from '@/views/product/product/modules/DeleteTag'
   import AddTag from '@/views/product/product/modules/AddTag'
   import EditSku from '@/views/product/product/modules/EditSku'
@@ -137,9 +131,11 @@
   import { baseMixin } from '@/store/app-mixin'
   import FooterToolBar from '@/components/FooterToolbar'
   import pick from 'lodash.pick'
+  import ListUploadWrapper from '@/components/Upload/ListUploadWrapper'
+  import { getProduct } from '@/api/product'
   // 表单字段
   // eslint-disable-next-line no-unused-vars
-  const fields = ['name', 'categoryId', 'tagIds', 'fakeSales', 'sort', 'cover', 'bannerUrls', 'videoUrl', 'text']
+  const fields = ['name', 'categoryId', 'tagIds', 'fakeSales', 'sort', 'cover', 'bannerUrls', 'videoUrl', 'text', 'id']
   export default {
     mixins: [baseMixin],
     data () {
@@ -164,7 +160,8 @@
       WangEditorExt,
       showAttr,
       SfSimpleUpload,
-      FooterToolBar
+      FooterToolBar,
+      ListUploadWrapper
     },
     created () {
       this.init()
@@ -172,41 +169,35 @@
     methods: {
       // 初始化
       init () {
+        const that = this
         const params = {
           offset: 0,
           limit: 99999
         }
-        this.getTags(params)
-        this.getCategories(params)
-        this.getSkus({ id: this.$route.query.id })
-        this.getProductType(params)
-        this.productDetail = storage.get('productDetail')
-        this.$nextTick(() => {
-          fields.forEach(v => this.form.getFieldDecorator(v))
-          this.form.setFieldsValue(pick(this.productDetail, fields))
-          const ids = []
-          for (const i in this.productDetail.tags) {
-            ids.push(this.productDetail.tags[i].id)
-          }
-          this.form.setFieldsValue({ tagIds: ids })
-          this.form.setFieldsValue({ text: this.productDetail.text })
-          console.log(this.productDetail.text)
+        that.getTags(params)
+        that.getCategories(params)
+        getProduct({ id: that.$route.query.id })
+        .then(res => {
+          that.productDetail = res
+          that.skus = that.productDetail.productSkuVos
+          // that.$refs.editor.setContent(that.productDetail.text)
+          // that.$refs.listUpload.setContent(that.productDetail.bannerUrls)
+          that.$nextTick(() => {
+            fields.forEach(v => that.form.getFieldDecorator(v))
+            that.form.setFieldsValue(pick(that.productDetail, fields))
+            const ids = []
+            for (const i in that.productDetail.tags) {
+              ids.push(that.productDetail.tags[i].id)
+            }
+            that.form.setFieldsValue({ tagIds: ids })
+          })
         })
-        console.log(this.form)
       },
       // 获取商品类别
       getProductType (params) {
         getProductCategoryPage(params).then(res => {
           this.productType = res['list']
         })
-      },
-      // 获取当前的skus
-      getSkus (param) {
-        getProductSkus(param)
-          .then((res) => {
-            this.skus = res
-            this.skuVisible = true
-          })
       },
       getCategories (params) {
         getProductCategoryPage(params).then(res => {
@@ -230,9 +221,6 @@
       // 更新 wangEditor
       changeWang (val) {
         this.form.setFieldsValue({ text: val })
-      },
-      wtf () {
-        console.log('wwww')
       },
       editProduct () {
         const {

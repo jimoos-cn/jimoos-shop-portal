@@ -27,7 +27,6 @@
   import AttrContainer from '../modules/AttrContainer'
   import MultiSkuTable from '../modules/MultiSkuTable'
   import { updateSku } from '@/api/product/sku'
-  import { available } from '@/utils/data'
   import FooterToolBar from '@/components/FooterToolbar'
 
   export default {
@@ -87,7 +86,7 @@
             attrValueIds: that.Sku[i].attrs[0].attrId
           }
           // 寻找修改项
-          if (available(that.Sku[i].id)) {
+          if (this.$available(that.Sku[i].id)) {
             data.id = that.Sku[i].id
           }
           param.push(data)

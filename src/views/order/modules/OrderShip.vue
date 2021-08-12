@@ -21,20 +21,27 @@
           <a-input v-decorator="['shipCode', {rules: [{required: true, message: '请输入快递单号！'}]}]" />
         </a-form-item>
         <a-form-item label="快递名称">
-          <a-input v-decorator="['express', {rules: [{required: true, message: '请输入快递名称'}]}]" />
+          <a-select v-decorator="['express', {rules: [{required: true, message: '请输入快递名称'}]}]" @change="changeSelect">
+            <a-select-option
+              v-for="item of EXPRESS"
+              :value="item.express"
+              :key="item.expressCode">
+              {{ item.express }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="快递编码">
-          <a-input v-decorator="['expressCode', {rules: [{required: true, message: '请输入快递编码！'}]}]" />
+          <a-input v-decorator="['expressCode', {rules: [{required: true, message: '请输入快递编码！'}]}]" disabled/>
         </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
 </template>
 <script>
+  import { EXPRESS } from './express'
   import pick from 'lodash.pick'
   // 表单字段
   const fields = ['shipCode', 'express', 'expressCode', 'id', 'outTradeNo']
-
   export default {
     props: {
       visible: {
@@ -61,16 +68,20 @@
           sm: { span: 13 }
         }
       }
+      this.EXPRESS = EXPRESS
       return {
         form: this.$form.createForm(this)
       }
     },
     created () {
-      console.log(this.model)
-      console.log('custom modal created')
       fields.forEach(v => this.form.getFieldDecorator(v))
       this.model && this.form.setFieldsValue(pick(this.model, fields))
       console.log(this.form)
+    },
+    methods: {
+      changeSelect (val, option) {
+        this.form.setFieldsValue({ expressCode: option.key })
+      }
     }
   }
 </script>
