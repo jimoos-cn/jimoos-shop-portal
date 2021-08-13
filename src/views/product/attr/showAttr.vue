@@ -6,29 +6,11 @@
   </a-table>
 </template>
 <script>
+  import { BASE_COLUMNS } from '@/views/product/skuTable/index'
   export default {
     data () {
       return {
-        columns: [
-          {
-            title: '价格(元)',
-            dataIndex: 'price',
-            key: 'price',
-            scopedSlots: { customRender: 'price' }
-          },
-          {
-            title: '展示价(元)',
-            dataIndex: 'showPrice',
-            key: 'showPrice',
-            scopedSlots: { customRender: 'showPrice' }
-          },
-          {
-            title: '图片',
-            key: 'cover',
-            dataIndex: 'cover',
-            scopedSlots: { customRender: 'cover' }
-          }
-        ]
+        columns: BASE_COLUMNS
       }
     },
     props: {
@@ -53,7 +35,7 @@
             scopedSlots: { customRender: 'attrs[' + i + '].attrValueName' }
           })
         }
-        this.columns = [...newColum, ...this.columns]
+        this.columns = [...newColum, ...BASE_COLUMNS]
       }
     }
   }

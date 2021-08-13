@@ -60,10 +60,10 @@
           v-if="record.editable"
           style="width: 100%"
           v-model="record.quantity"
+          :key="record.id"
           :max="99999999"
           :min="0"
           :precision="0"
-          :defaultValue="0"
         />
         <template v-else>{{ record.quantity }}</template>
       </template>
@@ -220,6 +220,10 @@ export default {
       }
       record.price = record.price * 1
       record.showPrice = record.showPrice * 1
+      console.log(record.quantity)
+      if (!this.$available(record.quantity)) {
+        record.quantity = 0
+      }
       record.quantity = record.quantity * 1
       if (typeof record.price === 'number') {
         record.price = record.price.toFixed(2)

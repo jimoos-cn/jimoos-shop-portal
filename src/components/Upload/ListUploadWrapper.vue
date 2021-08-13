@@ -172,16 +172,20 @@
         }
       },
       changeTip () {
-        switch (this.uploadType) {
-          case 0:
-            this.uploadTip = '上传图片<br>支持png/jpg/gif格式<br>大小不超过1M'
-            break
-          case 1:
-            this.uploadTip = '上传视频仅支持mp4格式，且大小不超过100MB'
-            break
-          case 2:
-            this.uploadTip = '上传音频仅支持mp3格式，且大小不超过100MB'
-            break
+        if (this.hint !== '') {
+          this.uploadTip = this.hint
+        } else {
+          switch (this.uploadType) {
+            case 0:
+              this.uploadTip = '上传图片<br>支持png/jpg/gif格式<br>大小不超过1M'
+              break
+            case 1:
+              this.uploadTip = '上传视频仅支持mp4格式，且大小不超过100MB'
+              break
+            case 2:
+              this.uploadTip = '上传音频仅支持mp3格式，且大小不超过100MB'
+              break
+          }
         }
       },
       // 取消预览

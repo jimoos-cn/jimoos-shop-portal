@@ -5,7 +5,7 @@
 <template>
   <div>
     <a-form-item label="规格选择">
-      <a-select style="width: 200px" placeholder="请选择" @change="handleAttrSelect" label-in-value>
+      <a-select style="width: 200px" placeholder="请选择" @change="handleAttrSelect" label-in-value :disabled="editFlag">
         <a-select-option v-for="item in attrList" :key="item.id">
           {{ item.name }}
         </a-select-option>
@@ -13,6 +13,7 @@
     </a-form-item>
 
     <AttrItem
+      ref="attrItem"
       v-for="item in attrSelectedList"
       :attr="item"
       :key="item.id"
@@ -55,13 +56,46 @@ export default {
     })
   },
   methods: {
-    setContent (attrs) {
+    setContent (allSku) {
+      const attrs = allSku[0].attrs
+      // 保存leaf
+      const map = new Map()
       attrs.forEach(item => {
         const one = {
           id: item.attrId,
           name: item.attrName
         }
+        const list = []
+        map.set(item.attrId, list)
         this.attrSelectedList.push(one)
+      })
+      allSku.forEach(item => {
+        item.attrs.forEach(attr => {
+          const list = map.get(attr.attrId)
+          const param = {
+            id: attr.attrValueId,
+            name: attr.attrValueName
+          }
+          list.push(param)
+        })
+      })
+      this.$nextTick(() => {
+        const hash = {}
+        this.attrSelectedList.forEach((item, index) => {
+          let list = map.get(item.id)
+          // 去重
+          list = list.reduce((item, next) => {
+            // eslint-disable-next-line no-unused-expressions
+            hash[next.id] ? '' : (hash[next.id] = true && item.push(next))
+            return item
+          }, [])
+          this.$refs.attrItem[index].setContent(list)
+          this.attrValuesList.push({
+            id: item.id,
+            name: item.name,
+            leaf: list
+          })
+        })
       })
     },
     handleAttrSelect (val) {

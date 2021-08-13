@@ -81,7 +81,7 @@ export default {
         console.log(res)
         this.$message.success('修改成功')
         this.$router.push({
-          name: 'product-management'
+          name: 'productList-management'
         })
       })
     },
@@ -93,7 +93,7 @@ export default {
         that.$nextTick(() => {
           that.$refs.multi.changeTableColumns(that.allSku)
           that.$refs.multi.setContent(that.allSku)
-          that.$refs.attr.setContent(that.allSku[0].attrs)
+          that.$refs.attr.setContent(that.allSku)
         })
       } else {
         this.skuType = 1
@@ -122,16 +122,13 @@ export default {
     },
     handleAttrValueChangeEvent (attrValuesList) {
       const attrs = this.allSku[0].attrs
-      // 判断是否将所有
-      this.attrValuesList = attrValuesList.filter(item => {
-        const w = attrs.find(attr => attr.attrId === item.id)
-        if (w) {
-          return item
-        }
-      })
+      this.attrValuesList = attrValuesList
       // 当规格名全选择完后
-      if (this.attrValuesList.length === attrs.length) {
+      console.log(this.attrValuesList)
+      if (this.attrValuesList.length === attrs.length && !this.attrValuesList.find(item => item.leaf.length === 0)) {
         this.$refs.multi.updateAttrValues(attrValuesList)
+      } else {
+        this.$refs.multi.updateAttrValues([])
       }
     }
   }

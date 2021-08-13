@@ -5,6 +5,7 @@
         <p>点击图片放大预览</p>
       </template>
       <img
+        :class="{ circle:this.circle }"
         :src="img"
         :style="{ width: smallWidth + 'px', height: smallWidth * proportion + 'px' }"
         @click="previewImg"/>
@@ -12,6 +13,7 @@
     <!--预览图片对话框-->
     <a-modal :footer="null" :visible="visible" :destroyOnClose="true" @cancel="visible = false" title="预览图片">
       <img
+        :class="{ circle:this.circle }"
         :src="img"
         :style="{ width: bigWidth + 'px', height: bigWidth * proportion + 'px' }"/></a-modal>
   </div>
@@ -36,6 +38,10 @@ export default {
     img: {
       type: String,
       default: ''
+    },
+    circle: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -51,4 +57,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+  .circle {
+    border-radius: 50%;
+  }
+</style>

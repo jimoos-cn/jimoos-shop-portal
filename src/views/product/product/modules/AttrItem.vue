@@ -80,6 +80,9 @@ export default {
     }
   },
   methods: {
+    setContent (val) {
+      this.attrValuesSelected = val
+    },
     removeTag (key) {
       console.log('key:' + key)
       const attrValuesSelected = this.attrValuesSelected.filter((attrValue) => attrValue.id !== key)

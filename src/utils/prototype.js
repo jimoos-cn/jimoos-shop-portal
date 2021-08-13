@@ -20,5 +20,5 @@ Vue.prototype.$storage = storage
  * @returns {boolean}
  */
 Vue.prototype.$available = val => {
-  return val !== undefined && val !== '' && val != null
+  return val !== undefined && val != null && val !== ''
 }

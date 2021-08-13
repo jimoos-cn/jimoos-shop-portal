@@ -39,38 +39,38 @@
         style="width:100%"
       />
     </a-form-item>
-    <a-form-item label="商品属性" :labelCol="labelCol" :wrapperCol="wrapperCol">
-      <a-table :columns="columns" :dataSource="specification" :pagination="false" :loading="memberLoading">
-        <template v-for="(col, i) in ['specKey', 'specValue', 'sort']" :slot="col" slot-scope="text, record">
-          <a-input
-            :key="col"
-            v-if="record.editable"
-            style="margin: -5px 0"
-            :value="text"
-            :placeholder="columns[i].title"
-            @change="e => handleChange(e.target.value, record.uid, col)"
-          />
-          <template v-else>{{ text }}</template>
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <template v-if="record.editable">
-            <span>
-              <a @click="saveRow(record)">保存</a>
-              <a-divider type="vertical" />
-              <a @click="cancel(record.uid)">取消</a>
-            </span>
-          </template>
-          <span v-else>
-            <a @click="toggle(record.uid)">编辑</a>
-            <a-divider type="vertical" />
-            <a-popconfirm title="是否要删除此行？" @confirm="remove(record.uid)">
-              <a>删除</a>
-            </a-popconfirm>
-          </span>
-        </template>
-      </a-table>
-      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">添加</a-button>
-    </a-form-item>
+    <!--    <a-form-item label="商品属性" :labelCol="labelCol" :wrapperCol="wrapperCol">-->
+    <!--      <a-table :columns="columns" :dataSource="specification" :pagination="false" :loading="memberLoading">-->
+    <!--        <template v-for="(col, i) in ['specKey', 'specValue', 'sort']" :slot="col" slot-scope="text, record">-->
+    <!--          <a-input-->
+    <!--            :key="col"-->
+    <!--            v-if="record.editable"-->
+    <!--            style="margin: -5px 0"-->
+    <!--            :value="text"-->
+    <!--            :placeholder="columns[i].title"-->
+    <!--            @change="e => handleChange(e.target.value, record.uid, col)"-->
+    <!--          />-->
+    <!--          <template v-else>{{ text }}</template>-->
+    <!--        </template>-->
+    <!--        <template slot="operation" slot-scope="text, record">-->
+    <!--          <template v-if="record.editable">-->
+    <!--            <span>-->
+    <!--              <a @click="saveRow(record)">保存</a>-->
+    <!--              <a-divider type="vertical" />-->
+    <!--              <a @click="cancel(record.uid)">取消</a>-->
+    <!--            </span>-->
+    <!--          </template>-->
+    <!--          <span v-else>-->
+    <!--            <a @click="toggle(record.uid)">编辑</a>-->
+    <!--            <a-divider type="vertical" />-->
+    <!--            <a-popconfirm title="是否要删除此行？" @confirm="remove(record.uid)">-->
+    <!--              <a>删除</a>-->
+    <!--            </a-popconfirm>-->
+    <!--          </span>-->
+    <!--        </template>-->
+    <!--      </a-table>-->
+    <!--      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">添加</a-button>-->
+    <!--    </a-form-item>-->
     <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
       <SimpleUploadWrapper
         @input="updateCover"
@@ -198,10 +198,10 @@ export default {
         that.form.setFieldsValue({ tagIds: ids })
         // 设置属性值
         that.specification = that.product.specs
-        that.specification.forEach(item => {
-          item.uid = that.uid++
-          that.$set(item, 'editable', false)
-        })
+        // that.specification.forEach(item => {
+        //   item.uid = that.uid++
+        //   that.$set(item, 'editable', false)
+        // })
       })
     },
     saveRow (record) {
@@ -258,8 +258,8 @@ export default {
       validateFields((err, values) => {
         if (!err) {
           // 校验无误 调用父类保存数据
-          const specifications = this.specification.filter(item => item.editable === false && item.specKey !== '' && item.specValue !== '')
-          values.specifications = specifications
+          // const specifications = this.specification.filter(item => item.editable === false && item.specKey !== '' && item.specValue !== '')
+          // values.specifications = specifications
           values.id = that.product.id
           Object.assign(this.product, values)
           updateProduct(this.product).then(res => {
@@ -270,7 +270,7 @@ export default {
       })
     },
     cancelSaveProduct () {
-      this.$router.push({ name: 'product-management' })
+      this.$router.push({ name: 'productList-management' })
     },
     updateCover (url) {
       this.form.setFieldsValue({ cover: url })

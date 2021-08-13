@@ -8,7 +8,7 @@ import { axios } from '@/utils/request'
 const api = {
     getProductPage: data => requestWrapper('/products/query', Methods.GET, data),
     createProduct: data => requestWrapper('/products', Methods.POST, data, ContentTypes.JSON),
-    updateProduct: data => requestWrapper('/products/' + data.id, Methods.POST, data, ContentTypes.JSON),
+    updateProduct: data => requestWrapper('/products/' + data.id + '/info', Methods.POST, data, ContentTypes.JSON),
     getProduct: data => requestWrapper('/products/' + data.id, Methods.GET, data),
     deleteProduct: data => requestWrapper('/products/' + data.id + '/delete', Methods.POST),
     updateProductInfo: data => requestWrapper('/products/' + data.id + '/info', Methods.POST, data, ContentTypes.JSON),
