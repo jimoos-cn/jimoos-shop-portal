@@ -42,22 +42,25 @@
           style="width:100%" />
       </a-form-item>
       <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
-        <sf-simple-upload
+        <ListUploadWrapper
           @input="updateCover"
-          :uploadType="0"
+          :upload-type="0"
           v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
-        ></sf-simple-upload>
+        ></ListUploadWrapper>
       </a-form-item>
       <a-form-item label="商品图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
-        <list-upload-wrapper
-          @input="updateBanner"
-          :uploadType="0"
-          :length="9"
-          v-decorator="['bannerUrls']"
-        ></list-upload-wrapper>
+        <list-upload-wrapper @input="updateBanner" :uploadType="0" :length="9" v-decorator="['bannerUrls']"></list-upload-wrapper>
       </a-form-item>
       <a-form-item label="商品视频" :labelCol="labelCol" :wrapperCol="wrapperCol">
-        <sf-simple-upload @input="updateVideoUrl" :uploadType="1" v-decorator="['videoUrl']"></sf-simple-upload>
+        <ListUploadWrapper
+          @input="updateVideoUrl"
+          :uploadType="1"
+          :upload-type="1"
+          hint="上传"
+          :width="100"
+          :height="50"
+          v-decorator="['videoUrl']"
+        ></ListUploadWrapper>
       </a-form-item>
       <a-form-item label="商品详情" :labelCol="labelCol" :wrapperCol="wrapperCol">
         <WangEditorExt @change="changeWang" ref="editor" v-decorator="['text', { rules: [{ required: true, message: '商品详情必须填写' }] }]"/>

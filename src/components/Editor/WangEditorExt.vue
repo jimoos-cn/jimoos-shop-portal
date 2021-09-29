@@ -275,6 +275,7 @@ export default {
       this.editor.disable()
     },
     initEditor () {
+      const that = this
       this.editor = new E(this.$refs.editor)
       // console.log(this.editor)
       this.editor.config.placeholder = '请输入内容'
@@ -329,7 +330,7 @@ export default {
       this.editor.config.customUploadImg = function (files, addImg) {
         const blobs = []
         const blob = {
-          name: files[0].name,
+          name: that.$specialStrFilter(files[0].name),
           type: UploadType.IMG
         }
         blobs.push(blob)
@@ -348,7 +349,7 @@ export default {
       this.editor.config.customUploadVideo = function (files, addImg) {
         const blobs = []
         const blob = {
-          name: files[0].name,
+          name: that.$specialStrFilter(files[0].name),
           type: UploadType.MEDIA
         }
         blobs.push(blob)
