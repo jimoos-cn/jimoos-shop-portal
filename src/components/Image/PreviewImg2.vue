@@ -1,21 +1,20 @@
 <template>
   <div>
-    <a-tooltip>
-      <template slot="title">
+    <a-popover title="提示">
+      <template slot="content">
         <p>点击图片放大预览</p>
       </template>
       <img
-        :class="{ circle:this.circle }"
+        :class="{ circle: this.circle }"
         :src="img"
-        :style="{ width: smallWidth + 'px', height: smallWidth * proportion + 'px' }"
-        @click="previewImg"/>
-    </a-tooltip>
+        :style="{ width: smallHeight + 'px' }"
+        @click="previewImg"
+      />
+    </a-popover>
     <!--预览图片对话框-->
     <a-modal :footer="null" :visible="visible" :destroyOnClose="true" @cancel="visible = false" title="预览图片">
-      <img
-        :class="{ circle:this.circle }"
-        :src="img"
-        :style="{ width: bigWidth + 'px', height: bigWidth * proportion + 'px' }"/></a-modal>
+      <img :class="{ circle: this.circle }" :src="img" :style="{ width: bigHeight + 'px'}" />
+    </a-modal>
   </div>
 </template>
 
@@ -27,11 +26,11 @@ export default {
       type: Number,
       default: 1
     },
-    smallWidth: {
+    smallHeight: {
       type: Number,
       default: 0
     },
-    bigWidth: {
+    bigHeight: {
       type: Number,
       default: 0
     },
@@ -58,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-  .circle {
-    border-radius: 50%;
-  }
+.circle {
+  border-radius: 50%;
+}
 </style>

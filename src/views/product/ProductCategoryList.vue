@@ -39,6 +39,15 @@
         <div slot="updateAt" slot-scope="text">
           {{ $dateFormat(text) }}
         </div>
+        <div slot="imgUrl" slot-scope="text">
+          <image-preview
+            :circle="true"
+            :img="text"
+            :smallWidth="48"
+            :bigWidth="400"
+            :proportion="1"
+            v-if="text"></image-preview>
+        </div>
         <span slot="action" slot-scope="text, record">
           <a-space>
             <a @click="editCategory(record)">编辑</a>
@@ -57,6 +66,17 @@
         <a-button key="submit" type="primary" :loading="createLoad" @click="handleCreateOk">提交</a-button>
       </template>
       <k-form-build ref="CategoryCreateTable" :value="createTable" />
+      <a-form-item label="图标" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <ListUploadWrapper
+          hint="上传图片"
+          :circle="true"
+          :width="120"
+          :height="120"
+          @input="updateImgUrl"
+          :uploadType="0"
+          :length="1"
+          :urls="imgUrl"> </ListUploadWrapper>
+      </a-form-item>
     </a-modal>
     <!--编辑对话框-->
     <a-modal :forceRender="true" v-model="updateVisible" title="编辑分类" on-ok="handleUpdateOk">
@@ -65,6 +85,17 @@
         <a-button key="submit" type="primary" :loading="updateLoad" @click="handleUpdateOk">提交</a-button>
       </template>
       <k-form-build ref="CategoryUpdateTable" :value="updateTable" />
+      <a-form-item label="图标" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <ListUploadWrapper
+          :width="120"
+          hint="上传图片"
+          :circle="true"
+          :height="120"
+          @input="updateImgUrl2"
+          :uploadType="0"
+          :length="1"
+          :urls="editUrl"> </ListUploadWrapper>
+      </a-form-item>
     </a-modal>
   </page-header-wrapper>
 </template>
@@ -77,12 +108,21 @@ import {
   updateProductCategory,
   deleteProductCategory
 } from '@/api/product/category'
+import ListUploadWrapper from '@/components/Upload/ListUploadWrapper'
+import ImagePreview from '@/components/Image/ImagePreview'
 import categoryCreateForm from '@/views/product/k-form/product-category-create-form'
 
 const columns = [
   {
     title: '分类名称',
     dataIndex: 'name'
+  },
+  {
+    title: '分类图标',
+    dataIndex: 'imgUrl',
+    scopedSlots: {
+      customRender: 'imgUrl'
+    }
   },
   {
     title: '分类描述',
@@ -109,7 +149,6 @@ const columns = [
   {
     title: '操作',
     key: 'operation',
-    width: '200px',
     fixed: 'right',
     scopedSlots: {
       customRender: 'action'
@@ -119,13 +158,19 @@ const columns = [
 export default {
   name: 'ProductCategoryList',
   components: {
-    STable
+    STable,
+    ListUploadWrapper,
+    ImagePreview
   },
   data () {
     this.columns = columns
     return {
       addTitle: '添加分类',
+      labelCol: { lg: { span: 7 }, sm: { span: 7 } },
+      wrapperCol: { lg: { span: 13 }, sm: { span: 17 } },
       canEdit: false,
+      imgUrl: '', // 图标
+      editUrl: '',
       data: [], // 表格数据
       loading: false, // 表格加载
       advanced: false, // 高级搜索 展开/关闭
@@ -208,8 +253,11 @@ export default {
             name: values.name,
             description: values.description,
             sort: values.sort,
-            pid: this.pid
+            pid: this.pid,
+            imgUrl: this.imgUrl
           }
+          this.imgUrl = ''
+          this.editUrl = ''
           createProductCategory(params)
             .then((res) => {
               this.$message.success('新增成功')
@@ -246,8 +294,11 @@ export default {
           name: values.name,
           description: values.description,
           sort: values.sort,
-          id: this.categoryId
+          id: this.categoryId,
+          imgUrl: this.editUrl
         }
+        this.imgUrl = ''
+        this.editUrl = ''
         updateProductCategory(params)
           .then(() => {
             this.$message.success('修改成功')
@@ -298,6 +349,16 @@ export default {
           treeData.push(item)
         })
       this.data = treeData
+    },
+    updateImgUrl (url) {
+      this.imgUrl = url
+    },
+    updateImgUrl2 (url) {
+      this.editUrl = url
+    },
+    cancel () {
+      this.imgUrl = ''
+      this.editUrl = ''
     },
     // 重置
     redo () {

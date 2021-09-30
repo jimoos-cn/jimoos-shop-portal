@@ -83,12 +83,7 @@
 <script>
 import storage from 'store'
 import ImagePreview from '@/components/Image/ImagePreview'
-import { getProductSkus, updateProductInfo } from '@/api/product/index'
-import DTag from '@/views/product/product/modules/DeleteTag'
-import AddTag from '@/views/product/product/modules/AddTag'
-import { deleteBoundValue, queryBoundValue } from '@/api/product/tag'
-import { deleteSku } from '@/api/product/sku'
-import WangEditorExt from '@/components/Editor/WangEditorExt'
+import { getProductSkus } from '@/api/product/index'
 import { getProductCategoryPage } from '@/api/product/category'
 import showAttr from '@/views/product/attr/showAttr'
 export default {
@@ -103,11 +98,7 @@ export default {
     }
   },
   components: {
-    storage,
     ImagePreview,
-    DTag,
-    AddTag,
-    WangEditorExt,
     showAttr
   },
   created () {
@@ -124,7 +115,7 @@ export default {
       this.productDetail = storage.get('productDetail')
       const { cover, bannerUrls } = this.productDetail
       this.defaultPic = cover
-      this.Pic.push(cover, bannerUrls)
+      this.Pic.push(cover, ...bannerUrls.split(','))
       this.getProductType(params)
     },
     // 改变商品浏览的图片
@@ -143,58 +134,6 @@ export default {
       getProductSkus(param)
       .then((res) => {
         this.skus = res
-      })
-    },
-    // Tag删除
-    async closeProductTag (tag) {
-      const param = Object.assign({}, { tagId: tag.id }, { productId: tag.productId })
-      return deleteBoundValue(param)
-    },
-    // 刷新tag
-    refreshTag () {
-      const that = this
-      queryBoundValue({ productId: that.productDetail.id })
-      .then(res => {
-        that.$set(that.productDetail, 'tags', res)
-        storage.set('productDetail', that.productDetail)
-        storage.set('product', that.productDetail)
-      })
-    },
-    // Attr删除
-    async closeProductAttr (attr) {
-      const param = Object.assign({}, { id: attr.id })
-      return deleteSku(param)
-    },
-    // 刷新Attr
-    refreshAttr () {
-      const that = this
-      getProductSkus({ id: that.productDetail.id })
-        .then(res => {
-          that.skus = []
-          that.skusIndex = 0
-          console.log(res)
-          that.skus = res
-        })
-      that.$forceUpdate()
-    },
-    saveProductEdit () {
-      const param = JSON.parse(JSON.stringify(this.productDetail))
-      param.tagIds = []
-      for (const item of param.tags) {
-        param.tagIds.push(item.id)
-      }
-      param.tags = null
-      param.category = null
-      console.log(param)
-      updateProductInfo(param)
-      .then(res => {
-        this.$message.success('修改成功')
-        this.$router.push({
-          name: 'productList'
-        })
-      })
-      .catch(err => {
-        this.$message.error(err)
       })
     }
   }

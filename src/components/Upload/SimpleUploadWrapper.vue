@@ -96,7 +96,6 @@ export default {
       }
     },
     resetValue () {
-      // this.deleteFile(this.value)
       this.value = undefined
       this.$emit('input', this.value)
     },
@@ -149,7 +148,7 @@ export default {
     handleUpload ({ file }) {
       if (this.obs) {
         const blob = {
-          name: file.name,
+          name: this.$specialStrFilter(file.name),
           type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
         }
 

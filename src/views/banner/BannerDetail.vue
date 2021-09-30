@@ -93,7 +93,6 @@
   import FooterToolBar from '@/components/FooterToolbar'
   import { BANNER_POSITION } from '@/views/banner/enum/BannerConstant'
   import { getRouteList } from '@/api/bannerRroute'
-  import { available } from '@/utils/data'
   import { editBanner } from '@/api/banner'
   export default {
     mixins: [baseMixin],
@@ -115,7 +114,7 @@
     },
     computed: {
       showPath () {
-        return available(this.banner.paths)
+        return this.$available(this.banner.paths)
       }
     },
     created () {

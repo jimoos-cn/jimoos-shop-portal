@@ -91,13 +91,14 @@ export function isEqualSku (sku, sku1, options) {
 }
 /**
  * 更新 SKU 列表，并保持已有的 sku 的数值
- * @param {Array} skus 原有
- * @param Array skus1 新增
+ * @param {Array} skus
+ * @param Array skus1
  * @param Object options
  */
 export function updateSkus (skus, skus1, options) {
-  const { price = 0, showPrice = 0, cover = '' } = options || {}
-  const resultSkus = skus
+  const { price = 0, showPrice = 0, cover = '', editable = true } = options || {}
+  const resultSkus = []
+  let uid = 1
   for (let index = 0; index < skus1.length; index++) {
     const element = skus1[index]
     const exist = findExistSku(element, skus)
@@ -108,7 +109,38 @@ export function updateSkus (skus, skus1, options) {
         'attrs': element.attrs,
         'cover': cover,
         'price': price,
-        'showPrice': showPrice
+        'showPrice': showPrice,
+        'uid': uid++,
+        'editable': editable
+      })
+    }
+  }
+  return resultSkus
+}
+
+/**
+ * 修改规格时调用另一个方法
+ * @param {Array} skus
+ * @param Array skus1
+ * @param Object options
+ */
+export function editSkus (skus, skus1, options) {
+  let uid = 1
+  const { price = 0, showPrice = 0, cover = '', editable = true } = options || {}
+  skus.forEach(item => {
+    item.uid = uid++
+  })
+  const resultSkus = [...skus]
+  for (const item of skus1) {
+    const find = findExistSku(item, skus)
+    if (find == null) {
+      resultSkus.push({
+        attrs: item.attrs,
+        cover: cover,
+        price: price,
+        showPrice: showPrice,
+        uid: uid++,
+        editable: editable
       })
     }
   }

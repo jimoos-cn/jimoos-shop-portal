@@ -10,7 +10,7 @@
       <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
       <template v-if="skuType == 2">
         <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
-        <MultiSkuTable :attrValues="attrValuesList" @change="handleMultiSkuChange"></MultiSkuTable>
+        <MultiSkuTable ref="multi" @change="handleMultiSkuChange"></MultiSkuTable>
       </template>
     </a-card>
     <!-- fixed footer toolbar -->
@@ -51,12 +51,16 @@ export default {
     nextStep () {
       const that = this
       that.loading = true
-      console.log('表单 values', that.Sku)
-      that.timer = setTimeout(function () {
-        that.loading = false
-        that.$emit('change', that.Sku)
-        that.$emit('nextStep')
-      }, 1500)
+      that.$refs.multi.batchSave()
+      if (that.Sku == null || that.Sku === '' || that.Sku === undefined) {
+        that.$message.error('规格未保存')
+      } else {
+        that.timer = setTimeout(function () {
+          that.loading = false
+          that.$emit('change', that.Sku)
+          that.$emit('nextStep')
+        }, 1500)
+      }
     },
     prevStep () {
       this.$emit('prevStep')
@@ -76,6 +80,7 @@ export default {
     },
     handleAttrValueChangeEvent (attrValuesList) {
       this.attrValuesList = attrValuesList
+      this.$refs.multi.updateAttrValues(attrValuesList)
       console.log('改变', JSON.stringify(attrValuesList))
     }
   }

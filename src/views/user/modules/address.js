@@ -5,8 +5,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'id'
     },
-    align: 'center',
-    width: '100px'
+    align: 'center'
   },
   {
     title: '省',
@@ -14,8 +13,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'province'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '市',
@@ -23,8 +21,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'city'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '县',
@@ -32,8 +29,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'area'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '地址',
@@ -41,8 +37,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'address'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '邮编',
@@ -50,8 +45,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'zipCode'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '是否默认',
@@ -59,8 +53,7 @@ export const columns = [
     scopedSlots: {
       customRender: 'defaultIn'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '类型',
@@ -68,13 +61,11 @@ export const columns = [
     scopedSlots: {
       customRender: 'tag'
     },
-    align: 'center',
-    width: '150px'
+    align: 'center'
   },
   {
     title: '创建时间',
     dataIndex: 'createAt',
-    width: '190px',
     align: 'center',
     scopedSlots: {
       customRender: 'createAt'

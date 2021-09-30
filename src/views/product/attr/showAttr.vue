@@ -6,7 +6,13 @@
   </a-table>
 </template>
 <script>
+  import { BASE_COLUMNS } from '@/views/product/skuTable/index'
   export default {
+    data () {
+      return {
+        columns: BASE_COLUMNS
+      }
+    },
     props: {
       skus: {
         type: Array,
@@ -15,35 +21,21 @@
     },
     created () {
       console.log(this.skus)
+      this.changeTableColumns(this.skus[0].attrs)
     },
-    data () {
-      return {
-        columns: [
-          {
-            title: '属性值',
-            dataIndex: 'attrs[0].attrValueName',
-            key: 'attrs[0].attrValueName',
-            scopedSlots: { customRender: 'attrs[0].attrValueName' }
-          },
-          {
-            title: '价格(元)',
-            dataIndex: 'price',
-            key: 'price',
-            scopedSlots: { customRender: 'price' }
-          },
-          {
-            title: '展示价(元)',
-            dataIndex: 'showPrice',
-            key: 'showPrice',
-            scopedSlots: { customRender: 'showPrice' }
-          },
-          {
-            title: '图片',
-            key: 'cover',
-            dataIndex: 'cover',
-            scopedSlots: { customRender: 'cover' }
-          }
-        ]
+    methods: {
+      // 动态变化表格的column
+      changeTableColumns (val) {
+        const newColum = []
+        for (let i = 0; i < val.length; i++) {
+          newColum.push({
+            title: val[i].attrName,
+            align: 'center',
+            dataIndex: 'attrs[' + i + '].attrValueName',
+            scopedSlots: { customRender: 'attrs[' + i + '].attrValueName' }
+          })
+        }
+        this.columns = [...newColum, ...BASE_COLUMNS]
       }
     }
   }
