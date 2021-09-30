@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { uploadFile, UploadType } from '@/api/obs'
+import { checkObs, deleteFile, uploadFile, uploadFileToLocal, UploadType } from '@/api/obs'
 // import ImagePreview from '@/components/Image/ImagePreview'
 
 export default {
@@ -64,16 +64,23 @@ export default {
       uploadTip: '上传图片<br>支持png/jpg/gif格式<br>大小不超过1M',
       loading: false,
       previewVisible: false,
-      previewImage: ''
+      previewImage: '',
+      obs: false
     }
   },
   created () {
     this.changeTip()
+    this.checkObs()
   },
   methods: {
     init: (option) => {
       if (option) {
       }
+    },
+    checkObs () {
+      checkObs().then(res => {
+        this.obs = res
+      })
     },
     changeTip () {
       switch (this.uploadType) {
@@ -139,21 +146,41 @@ export default {
       }
     },
     handleUpload ({ file }) {
-      const blob = {
-        name: this.$specialStrFilter(file.name),
-        type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
-      }
+      if (this.obs) {
+        const blob = {
+          name: this.$specialStrFilter(file.name),
+          type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
+        }
 
-      const blobs = []
-      blobs.push(blob)
-      const params = {
-        blobs: blobs
+        const blobs = []
+        blobs.push(blob)
+        const params = {
+          blobs: blobs
+        }
+
+        uploadFile(params, file).then((res) => {
+          console.log(res)
+          this.loading = false
+          this.$emit('input', res)
+        })
+      } else {
+        const form = new FormData()
+        form.append('file', file)
+        form.append('type', this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA)
+
+        uploadFileToLocal(form).then(res => {
+          this.loading = false
+          this.$emit('input', res)
+        })
       }
-      // 处理上传
-      uploadFile(params, file).then((res) => {
-        this.loading = false
-        this.$emit('input', res)
-      })
+    },
+    deleteFile (value) {
+      if (!this.obs) {
+        deleteFile({ url: value }).then(res => {
+          console.log('delete')
+          }
+        )
+      }
     }
   }
 }
@@ -166,7 +193,7 @@ export default {
   width: 200px;
   height: 200px;
 }
-.simple-upload > .ant-upload-list-item {
+.ant-upload-list-item {
   position: absolute;
   z-index: 1;
   width: 200px;

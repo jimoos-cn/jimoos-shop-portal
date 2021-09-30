@@ -7,7 +7,9 @@ import rawAxios from 'axios'
 
 const api = {
     // 获取文件URL签名
-    getObsTempSign: data => requestWapper('/huawei/obs/temporary-signature', methods.POST, data, ContentTypes.JSON)
+    getObsTempSign: data => requestWapper('/huawei/obs/temporary-signature', methods.POST, data, ContentTypes.JSON),
+    checkObs: data => requestWapper('/huawei/obs/checkObs', methods.GET, data),
+    deleteFile: data => requestWapper('/storage/delete', methods.DELETE, data)
 }
 
 const UploadType = {
@@ -17,6 +19,14 @@ const UploadType = {
 
 export function getObsTempSign (data) {
     return axios(api.getObsTempSign(data))
+}
+
+export function checkObs () {
+  return axios(api.checkObs())
+}
+
+export function deleteFile (data) {
+  return axios(api.deleteFile(data))
 }
 
 /**
@@ -46,6 +56,10 @@ export async function uploadFile (data, file) {
     }
     await rawAxios.post(url, formData, config)
     return mediaUrl
+}
+
+export function uploadFileToLocal (data) {
+  return axios({ url: '/storage/upload', method: 'post', data: data })
 }
 
 export {
