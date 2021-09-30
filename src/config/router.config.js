@@ -13,23 +13,14 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/dashboard/workplace',
+    redirect: '/dashboard',
     children: [
       // dashboard
       {
         path: '/dashboard',
         name: 'dashboard',
-        redirect: '/dashboard/workplace',
-        component: RouteView,
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
-        children: [
-          {
-            path: '/dashboard/workplace',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/DashboardHome'),
-            meta: { title: 'menu.dashboard.main', keepAlive: false, permission: ['dashboard'] }
-          }
-        ]
+        component: () => import('@/views/dashboard/DashboardHome'),
+        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] }
       },
       //  user 用户管理
       {
@@ -95,6 +86,12 @@ export const asyncRouterMap = [
                 meta: { title: 'menu.order.detail', keepAlive: false, permission: ['order'] }
               }
             ]
+          },
+          {
+            path: '/product/list',
+            name: 'productList',
+            meta: { title: '线下支付', keepAlive: true, permission: ['order'] },
+            component: () => import('@/views/order/offline/OfflineOrder')
           }
         ]
       },
@@ -180,14 +177,37 @@ export const asyncRouterMap = [
           }
         ]
       },
-      // banner相关
+      // coupons 优惠券管理
       {
-        path: '/banner',
-        name: 'banner',
-        redirect: '/banner/list',
+        path: '/coupons',
+        name: 'coupon',
+        redirect: '/coupon/list',
         component: RouteView,
-        meta: { title: 'menu.banner', keepAlive: true, icon: 'experiment', permission: ['banner'] },
+        meta: { title: '营销管理', keepAlive: true, icon: 'gift', permission: ['coupon'] },
         children: [
+          {
+            path: '/coupon/list-management',
+            name: 'couponList-management',
+            redirect: '/coupon/list',
+            component: RouteView,
+            hideChildrenInMenu: true,
+            meta: { title: '优惠券', keepAlive: false, permission: ['coupon'] },
+            children: [
+              {
+                path: '/coupon/list',
+                name: 'couponList',
+                component: () => import('@/views/coupon/CouponList'),
+                meta: { title: '', keepAlive: false, permission: ['coupon'] }
+              },
+              {
+                path: '/coupon/detail',
+                name: 'couponDetail',
+                hidden: true,
+                component: () => import('@/views/coupon/CouponDetail'),
+                meta: { title: '优惠券详情', keepAlive: true }
+              }
+            ]
+          },
           {
             path: '/banner/list-management',
             name: 'bannerListManagement',
@@ -216,40 +236,7 @@ export const asyncRouterMap = [
             name: 'bannerRoute',
             hidden: true,
             component: () => import('@/views/banner/BannerRoute'),
-            meta: { title: 'menu.banner.route', keepAlive: false, permission: ['banner'] }
-          }
-        ]
-      },
-      // coupons 优惠券管理
-      {
-        path: '/coupons',
-        name: 'coupon',
-        redirect: '/coupon/list',
-        component: RouteView,
-        meta: { title: 'menu.coupon', keepAlive: true, icon: 'gift', permission: ['coupon'] },
-        children: [
-          {
-            path: '/coupon/list-management',
-            name: 'couponList-management',
-            redirect: '/coupon/list',
-            component: RouteView,
-            hideChildrenInMenu: true,
-            meta: { title: 'menu.coupon.list', keepAlive: false, permission: ['coupon'] },
-            children: [
-              {
-                path: '/coupon/list',
-                name: 'couponList',
-                component: () => import('@/views/coupon/CouponList'),
-                meta: { title: '', keepAlive: false, permission: ['coupon'] }
-              },
-              {
-                path: '/coupon/detail',
-                name: 'couponDetail',
-                hidden: true,
-                component: () => import('@/views/coupon/CouponDetail'),
-                meta: { title: '优惠券详情', keepAlive: true }
-              }
-            ]
+            meta: { title: '广告设置', keepAlive: false, permission: ['banner'] }
           }
         ]
       },
@@ -273,7 +260,7 @@ export const asyncRouterMap = [
       {
         path: '/settings',
         component: RouteView,
-        redirect: '/settings/center',
+        redirect: '/settings/shopInfo',
         name: 'account',
         meta: { title: 'menu.setting', icon: 'setting', keepAlive: true, permission: ['setting'] },
         children: [
@@ -290,41 +277,41 @@ export const asyncRouterMap = [
                 name: 'ShopInfo',
                 component: () => import('@/views/settings/ShopInfo'),
                 meta: { title: '基本信息', hidden: true, permission: ['setting'] }
-              },
-              {
-                path: '/account/settings/security',
-                name: 'SecuritySettings',
-                component: () => import('@/views/account/settings/Security'),
-                meta: {
-                  title: 'account.settings.menuMap.security',
-                  hidden: true,
-                  keepAlive: true,
-                  permission: ['user']
-                }
-              },
-              {
-                path: '/account/settings/custom',
-                name: 'CustomSettings',
-                component: () => import('@/views/account/settings/Custom'),
-                meta: { title: 'account.settings.menuMap.custom', hidden: true, keepAlive: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/binding',
-                name: 'BindingSettings',
-                component: () => import('@/views/account/settings/Binding'),
-                meta: { title: 'account.settings.menuMap.binding', hidden: true, keepAlive: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/notification',
-                name: 'NotificationSettings',
-                component: () => import('@/views/account/settings/Notification'),
-                meta: {
-                  title: 'account.settings.menuMap.notification',
-                  hidden: true,
-                  keepAlive: true,
-                  permission: ['user']
-                }
               }
+              // {
+              //   path: '/account/settings/security',
+              //   name: 'SecuritySettings',
+              //   component: () => import('@/views/account/settings/Security'),
+              //   meta: {
+              //     title: 'account.settings.menuMap.security',
+              //     hidden: true,
+              //     keepAlive: true,
+              //     permission: ['user']
+              //   }
+              // },
+              // {
+              //   path: '/account/settings/custom',
+              //   name: 'CustomSettings',
+              //   component: () => import('@/views/account/settings/Custom'),
+              //   meta: { title: 'account.settings.menuMap.custom', hidden: true, keepAlive: true, permission: ['user'] }
+              // },
+              // {
+              //   path: '/account/settings/binding',
+              //   name: 'BindingSettings',
+              //   component: () => import('@/views/account/settings/Binding'),
+              //   meta: { title: 'account.settings.menuMap.binding', hidden: true, keepAlive: true, permission: ['user'] }
+              // },
+              // {
+              //   path: '/account/settings/notification',
+              //   name: 'NotificationSettings',
+              //   component: () => import('@/views/account/settings/Notification'),
+              //   meta: {
+              //     title: 'account.settings.menuMap.notification',
+              //     hidden: true,
+              //     keepAlive: true,
+              //     permission: ['user']
+              //   }
+              // }
             ]
           }
         ]
