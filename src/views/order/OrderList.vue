@@ -6,18 +6,6 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="订单状态">
-                <a-select v-model="search.status" placeholder="请选择订单状态">
-                  <a-select-option :value="0">新订单</a-select-option>
-                  <a-select-option :value="1">已支付</a-select-option>
-                  <a-select-option :value="2">已发货</a-select-option>
-                  <a-select-option :value="3">已签收</a-select-option>
-                  <a-select-option :value="4">已评价</a-select-option>
-                  <a-select-option :value="-99">已取消</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
               <a-form-item label="订单编号">
                 <a-input v-model="search.orderNum" placeholder="请输入订单编号" />
               </a-form-item>
@@ -59,145 +47,188 @@
           </a-row>
         </a-form>
       </div>
-      <s-table
-        ref="table"
-        size="default"
-        :columns="columns"
-        :data="loadData"
-        showPagination="auto"
-        :rowKey="(record) => record.id"
+      <a-tabs :default-active-key="-1" @change="tabkeyChange">
+        <a-tab-pane :key="-1" tab="所有"> </a-tab-pane>
+        <a-tab-pane :key="0" tab="待支付"> </a-tab-pane>
+        <a-tab-pane :key="1" tab="待发货"> </a-tab-pane>
+        <a-tab-pane :key="2" tab="已发货"> </a-tab-pane>
+        <a-tab-pane :key="3" tab="已签收"> </a-tab-pane>
+        <a-tab-pane :key="4" tab="已评价"> </a-tab-pane>
+        <a-tab-pane :key="5" tab="已取消"> </a-tab-pane>
+      </a-tabs>
+      <a-list
+        :key="orderList.id"
+        :dataSource="orderList"
+        class="card-list"
+        :pagination="paginationProps"
       >
-        <div slot="orderNum" slot-scope="record">
-          <a @click="gotoOrderDetails(record)">{{ record.orderNum }}</a>
-        </div>
-        <div slot="status" slot-scope="record">
-          <span v-if="record === 0">新订单</span>
-          <span v-if="record === 1">已支付</span>
-          <span v-if="record === 2">已发货</span>
-          <span v-if="record === 3">已签收</span>
-          <span v-if="record === 4">已评价</span>
-          <span v-if="record === -99">已取消</span>
-        </div>
-        <div slot="totalProductPrice" slot-scope="record">
-          ￥{{ record }}
-        </div>
-        <div slot="totalDiscount" slot-scope="record">
-          ￥{{ record }}
-        </div>
-        <div slot="realPay" slot-scope="record">
-          ￥{{ record }}
-        </div>
-        <div slot="createAt" slot-scope="record">
-          {{ $dateFormat(record) }}
-        </div>
-        <span slot="action" slot-scope="text, record">
-          <a @click="gotoOrderDetails(record)">详情</a>
-        </span>
-      </s-table>
+        <a-list-item slot="renderItem" slot-scope="item" style="border-bottom: none">
+          <a-card>
+            <template slot="title">
+              <a-descriptions>
+                <a-descriptions-item label="订单编号">
+                  <a @click="gotoOrderDetails(item)">{{ item.orderNum }}</a>
+                </a-descriptions-item>
+                <a-descriptions-item label="订单类型">
+                  {{ orderTypeDesc(item) }}
+                </a-descriptions-item>
+                <a-descriptions-item label="购买用户">
+                  <a @click="gotoUserDetai(item)"> {{ item.nickname }} </a>
+                </a-descriptions-item>
+                <a-descriptions-item label="总价格">
+                  <span style="color: #3e2828">￥{{ item.totalPrice }}</span>
+                </a-descriptions-item>
+                <a-descriptions-item label="实际付款">
+                  <span style="color: red">￥{{ item.realPay }}</span>
+                </a-descriptions-item>
+                <a-descriptions-item label="备注">
+                  <span v-if="item.comment">{{ item.comment }}</span>
+                  <span v-else>无</span>
+                </a-descriptions-item>
+                <a-descriptions-item label="状态">
+                  <a-badge v-if="item.status === 0" text="新订单" color="yellow"></a-badge>
+                  <a-badge v-if="item.status === 1" text="已支付" status="processing"></a-badge>
+                  <a-badge v-if="item.status=== 2" text="已发货" color="geekblue"></a-badge>
+                  <a-badge v-if="item.status === 3" text="已签收" status="success"></a-badge>
+                  <!--          <a-badge v-if="record === 4" text="已评价" status="success"></a-badge>-->
+                  <a-badge v-if="item.status === -99" text="已取消" status="default"></a-badge>
+                </a-descriptions-item>
+                <a-descriptions-item label="下单时间">
+                  {{ $dateFormat(item.createAt) }}
+                </a-descriptions-item>
+                <a-descriptions-item label="操作">
+                  <a-button size="small" type="default" @click="gotoOrderDetails(item)">详情</a-button>
+
+                  <a-row style="display: inline-block">
+                    <a-button
+                      size="small"
+                      type="primary"
+                      v-if="item.status === 1"
+                      style="margin-left: 10px"
+                      @click="openShipment(item)"
+                    >
+                      发货
+                    </a-button>
+                  </a-row>
+                  <a-popconfirm title="确认取消订单" @confirm="cancelOrder(item)" v-if="item.status === 0">
+                    <a-button size="small" type="danger" style="margin-left: 10px">取消订单</a-button>
+                  </a-popconfirm>
+                </a-descriptions-item>
+              </a-descriptions>
+            </template>
+            <OrderItem :item="item.orderItems" :total-pay="item.realPay"></OrderItem>
+          </a-card>
+        </a-list-item>
+      </a-list>
     </a-card>
+    <OrderShip
+      v-if="shipVisible"
+      :visible="shipVisible"
+      @ok="ok"
+      @cancel="cancel"
+      :loading="confirmLoading"
+      :model="choose"
+      ref="ship" />
   </page-header-wrapper>
 </template>
 
 <script>
-  import { STable } from '@/components'
-  import { getOrderInfo } from '@/api/order'
-  const columns = [
-    {
-      title: '订单编号',
-      scopedSlots: {
-        customRender: 'orderNum'
-      },
-      width: '100px'
-    },
-    {
-      title: '订单状态',
-      dataIndex: 'status',
-      scopedSlots: {
-        customRender: 'status'
-      },
-      width: '100px'
-    },
-    {
-      title: '总价',
-      dataIndex: 'totalProductPrice',
-      scopedSlots: {
-        customRender: 'totalProductPrice'
-      },
-      width: '100px'
-    },
-    {
-      title: '优惠额',
-      dataIndex: 'totalDiscount',
-      scopedSlots: {
-        customRender: 'totalDiscount'
-      },
-      width: '100px'
-    },
-    {
-      title: '实际支付',
-      dataIndex: 'realPay',
-      scopedSlots: {
-        customRender: 'realPay'
-      },
-      width: '100px'
-    },
-    {
-      title: '创建日期',
-      dataIndex: 'createAt',
-      scopedSlots: {
-        customRender: 'createAt'
-      },
-      width: '100px'
-    },
-    {
-      title: '操作',
-      key: 'operation',
-      fixed: 'right',
-      width: '200px',
-      scopedSlots: {
-        customRender: 'action'
-      }
-    }
-  ]
+  import OrderItem from '@/views/order/modules/OrderItem'
+  import OrderShip from '@/views/order/OrderShip'
+  import { cancelOrder, deliver, getOrderInfo } from '@/api/order'
+  import { ORDER_TYPE } from '@/views/order/modules/order'
   export default {
     components: {
-      STable
+      OrderItem,
+      OrderShip
     },
     data () {
-      this.columns = columns
+      this.ORDER_TYPE = ORDER_TYPE
       return {
         timeArray: null,
         canEdit: false,
         advanced: false, // 高级搜索
         search: {}, // 查询条件参数
-        loadData: (parameter) => { // 数据加载
-          const requestParameters = Object.assign({}, parameter, this.search)
-          console.log('loadData request parameters:', requestParameters)
-          const params = {
-            offset: (requestParameters.pageNo - 1) * requestParameters.pageSize,
-            limit: requestParameters.pageSize,
-            type: 0
+        orderList: [],
+        total: 0,
+        tableKey: -1,
+        shipVisible: false,
+        confirmLoading: false,
+        choose: null
+      }
+    },
+    created () {
+      this.init()
+    },
+    computed: {
+      paginationProps () {
+        const that = this
+        return {
+          showQuickJumper: true,
+          showSizeChanger: true,
+          total: that.total,
+          pageSize: that.search.limit,
+          current: that.search.offset / that.search.limit + 1,
+          onChange (page, pageSize) {
+            const param = {
+              offset: pageSize * (page - 1)
+            }
+            that.query(param)
+          },
+          onShowSizeChange (page, pageSize) {
+            const param = {
+              offset: 0,
+              limit: pageSize
+            }
+            that.query(param)
           }
-          Object.keys(this.search).forEach((key) => {
-            if (this.search[key] !== undefined && this.search[key] != null && this.search[key] !== '') {
-              params[key] = this.search[key]
-            }
-          })
-          let dataTable = {}
-          return this.getOrderInfo(params).then((res) => {
-            dataTable = {
-              pageSize: requestParameters.pageSize,
-              pageNo: requestParameters.pageNo,
-              totalCount: this.pagination.total,
-              data: res
-            }
-            return dataTable
-          })
         }
       }
     },
     methods: {
-      // 订单详细页跳转
+      init () {
+        this.query({
+          offset: 0,
+          limit: 10
+        })
+      },
+      tabkeyChange (key) {
+        this.tableKey = key
+        switch (this.tableKey) {
+          case -1:
+            this.search.status = null
+            break
+          case 0:
+            this.search.status = 0
+            break
+          case 1:
+            this.search.status = 1
+            break
+          case 2:
+            this.search.status = 2
+            break
+          case 3:
+            this.search.status = 3
+            break
+          case 4:
+            this.search.status = 4
+            break
+          case 5:
+            this.search.status = -99
+            break
+        }
+        this.query({
+          offset: 0,
+          limit: 10
+        })
+      },
+      orderTypeDesc (val) {
+        const type = ORDER_TYPE.filter(type => type.value === val.orderType)
+        if (type.length <= 0) {
+          return null
+        }
+        return type[0].desc
+      },
       gotoOrderDetails (params) {
         this.$router.push({
           name: 'orderDetail',
@@ -206,27 +237,27 @@
           }
         })
       },
+      gotoUserDetai (params) {
+        this.$router.push({
+          name: 'userDetail',
+          query: {
+            id: params.userId
+          }
+        })
+      },
       // 获取订单信息
-      getOrderInfo (params) {
-        return new Promise((resolve) => {
-          getOrderInfo(params)
+      query (option) {
+        this.search = { ...this.search, ...option }
+        this.loading = true
+        getOrderInfo(this.search)
           .then((res) => {
-            console.log(res)
-            const pagination = {
-              ...this.pagination
-            }
-            pagination.total = res['total']
-            this.data = res['list']
-            pagination.current = parseInt(params.offset / params.limit + '') + 1
-            pagination.pageTotal = parseInt((pagination.total + params.limit - 1) / params.limit + '')
-            this.pagination = pagination
-            resolve(this.data)
+            this.orderList = res.list
+            this.total = res.total
+            this.loading = false
           })
           .catch((err) => {
-            this.data = []
             this.$message.error(err)
           })
-        })
       },
       // 日期选择器
       onChange (date, dateString) {
@@ -236,18 +267,64 @@
         this.search.startTime = Date.parse(start)
         this.search.endTime = Date.parse(end)
       },
-      // 查询
-      query () {
-        this.$refs.table.refresh(true)
-      },
       // 重置
       reset () {
         this.search = {}
         this.timeArray = null
-        this.$refs.table.refresh(true)
+        this.query({
+          limit: 10,
+          offset: 0
+        })
+      },
+      cancelOrder (order) {
+        const param = {
+          id: order.id
+        }
+        cancelOrder(param).then(res => {
+          this.$message.success('取消成功')
+          this.init()
+        })
+      },
+      // ok回调
+      ok () {
+        const form = this.$refs.ship.form
+        this.confirmLoading = true
+        form.validateFields((errors, values) => {
+          if (!errors) {
+            console.log(values)
+            const param = {
+              orderId: this.choose.id,
+              shipCode: values.shipCode,
+              express: values.express,
+              expressCode: values.expressCode
+            }
+            deliver(param).then(res => {
+              console.log('res', res)
+              this.shipVisible = false
+              this.confirmLoading = false
+              // 重置表单数据
+              form.resetFields()
+              // 刷新表格
+              this.$message.success('发货成功')
+              this.choose = {}
+              this.init()
+            })
+          } else {
+            this.confirmLoading = false
+          }
+        })
+      },
+      // cancel回调
+      cancel () {
+        this.shipVisible = false
+        this.choose = {}
       },
       toggleAdvanced () {
         this.advanced = !this.advanced
+      },
+      openShipment (item) {
+        this.choose = item
+        this.shipVisible = true
       }
     }
   }

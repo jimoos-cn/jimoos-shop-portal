@@ -26,7 +26,15 @@
       <a-row class="status-list">
         <a-col :xs="12" :sm="12">
           <div class="text">状态</div>
-          <div class="heading">{{ OrderStatusStr }}</div>
+          <div class="heading">
+            <a-badge v-if="orderDetail.status === 0" color="yellow"/>
+            <a-badge v-if="orderDetail.status === 1" status="processing"/>
+            <a-badge v-if="orderDetail.status === 2" color="geekblue"/>
+            <a-badge v-if="orderDetail.status === 3" status="success"/>
+            <!--            <a-badge v-if="orderDetail.status === 4" status="success"/>-->
+            <a-badge v-if="orderDetail.status === -99" status="default"/>
+            {{ OrderStatusStr }}
+          </div>
         </a-col>
         <a-col :xs="12" :sm="12">
           <div class="text">订单金额</div>
@@ -63,41 +71,8 @@
     </a-card>
 
     <a-card>
-      <a-table
-        ref="table"
-        size="default"
-        :columns="columns"
-        :data-source="orderDetail.orderItems"
-        showPagination="auto"
-        :rowKey="(record) => record.id"
-      >
-        <template slot="product" slot-scope="record">
-          <a-row>
-            <a-col :sm="24" :md="8">
-              <image-preview :img="record.productCover" :smallWidth="48" :bigWidth="400" :proportion="1" v-if="record.productCover"/>
-            </a-col>
-            <a-col :sm="24" :md="16">
-              <div style="text-align: left;font-weight: 600"> {{ record.productName }}</div>
-              <div>{{ record.skuName }}</div>
-            </a-col>
-          </a-row>
-        </template>
-        <template slot="productPrice" slot-scope="record">
-          <div>￥ {{ record }} </div>
-        </template>
-        <template slot="num" slot-scope="record">
-          <div style="color: red"> {{ record }} </div>
-        </template>
-        <template slot="price" slot-scope="record">
-          <div>￥ {{ record }} </div>
-        </template>
-        <template slot="discount" slot-scope="record">
-          <div>￥ {{ record }} </div>
-        </template>
-        <template slot="realPay" slot-scope="record">
-          <div style="color: red">￥ {{ record }} </div>
-        </template>
-      </a-table>
+      <OrderItem :item="orderDetail.orderItems">
+      </OrderItem>
     </a-card>
 
     <a-card style="margin-top: 24px" :bordered="false" title="物流信息">
@@ -137,16 +112,15 @@
 <script>
   import { cancelOrder, deliver, getOrderDetails } from '@/api/order'
   import ImagePreview from '@/components/Image/ImagePreview'
-  import { ORDER_STATUS, columns, ORDER_TYPE } from '@/views/order/modules/order'
-  import { available } from '@/utils/data'
+  import { ORDER_STATUS, ORDER_TYPE } from '@/views/order/modules/order'
   import OrderShip from '@/views/order/modules/OrderShip'
+  import OrderItem from '@/views/order/modules/OrderItem'
   export default {
     data () {
-      this.columns = columns
+      this.ORDER_STATUS = ORDER_STATUS
+      this.ORDER_TYPE = ORDER_TYPE
       return {
         shipVisible: false,
-        ORDER_STATUS: ORDER_STATUS,
-        ORDER_TYPE: ORDER_TYPE,
         tabActiveKey: '1',
         search: {}, // 查询数据
         orderDetail: null, // 订单详细内容
@@ -159,19 +133,20 @@
     },
     components: {
       ImagePreview,
-      OrderShip
+      OrderShip,
+      OrderItem
     },
     computed: {
       OrderTypeStr () {
         const type = ORDER_TYPE.filter(type => type.value === this.orderDetail.orderType)
-        if (type.length <= 0) {
+        if (type && type.length <= 0) {
           return null
         }
         return type[0].desc
       },
       OrderStatusStr () {
         const status = ORDER_STATUS.filter(status => status.value === this.orderDetail.status)
-        if (status.length <= 0) {
+        if (status && status.length <= 0) {
           return null
         }
         return status[0].desc
@@ -180,17 +155,17 @@
       getReceiveAddr () {
         let addr = ''
         const shipment = this.orderDetail.shipment
-        if (available(shipment)) {
-          if (available(shipment.province)) {
+        if (this.$available(shipment)) {
+          if (this.$available(shipment.province)) {
             addr += shipment.province
           }
-          if (available(shipment.province)) {
+          if (this.$available(shipment.province)) {
             addr += shipment.city
           }
-          if (available(shipment.area)) {
+          if (this.$available(shipment.area)) {
             addr += shipment.area
           }
-          if (available(shipment.address)) {
+          if (this.$available(shipment.address)) {
             addr += shipment.address
           }
         }

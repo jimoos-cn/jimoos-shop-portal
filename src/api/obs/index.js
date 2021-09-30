@@ -44,7 +44,7 @@ export async function uploadFile (data, file) {
             'Content-type': 'multipart/form-data'
         }
     }
-    await rawAxios.post(url, formData, config).then(() => { })
+    await rawAxios.post(url, formData, config)
     return mediaUrl
 }
 

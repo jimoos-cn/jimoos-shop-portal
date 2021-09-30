@@ -33,8 +33,7 @@
     data () {
       return {
         tabList: [
-          { key: '1', tab: '详情' },
-          { key: '2', tab: '分销' }
+          { key: '1', tab: '详情' }
         ],
         tabActiveKey: '1',
         userInfo: null, // 用户数据

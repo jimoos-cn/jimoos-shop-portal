@@ -8,44 +8,17 @@ export const columns = [
     scopedSlots: {
       customRender: 'product'
     },
-    width: '100px'
+    width: '50%'
   },
   {
-    title: '单价',
-    dataIndex: 'productPrice',
+    title: '金额',
     scopedSlots: {
       customRender: 'productPrice'
-    },
-    width: '100px'
-  },
-  {
-    title: '数量',
-    dataIndex: 'num',
-    scopedSlots: {
-      customRender: 'num'
-    },
-    width: '100px'
-  },
-  {
-    title: '总价',
-    dataIndex: 'price',
-    scopedSlots: {
-      customRender: 'price'
-    },
-    width: '100px'
-  },
-  {
-    title: '优惠',
-    dataIndex: 'discount',
-    scopedSlots: {
-      customRender: 'discount'
-    },
-    width: '100px'
+    }
   },
   {
     title: '实付',
     dataIndex: 'realPay',
-    width: '100px',
     scopedSlots: {
       customRender: 'realPay'
     }

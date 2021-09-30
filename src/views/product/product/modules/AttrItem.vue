@@ -8,7 +8,7 @@
       <a-space>
         <b><span>规格名:</span></b>
         <span class="ant-form-text"> {{ attr.name }} </span>
-        <a-popconfirm title="删除该销售规格？" ok-text="是" cancel-text="取消" @confirm="deleteAttr">
+        <a-popconfirm v-if="!editFlag" title="删除该销售规格？" ok-text="是" cancel-text="取消" @confirm="deleteAttr">
           <a style="color: red">删除</a>
         </a-popconfirm>
       </a-space>
@@ -53,6 +53,10 @@ export default {
     attr: {
       type: Object,
       required: true
+    },
+    editFlag: {
+      type: Boolean,
+      default: false
     }
   },
   created () {
@@ -76,6 +80,9 @@ export default {
     }
   },
   methods: {
+    setContent (val) {
+      this.attrValuesSelected = val
+    },
     removeTag (key) {
       console.log('key:' + key)
       const attrValuesSelected = this.attrValuesSelected.filter((attrValue) => attrValue.id !== key)

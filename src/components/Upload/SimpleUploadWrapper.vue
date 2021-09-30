@@ -140,7 +140,7 @@ export default {
     },
     handleUpload ({ file }) {
       const blob = {
-        name: file.name,
+        name: this.$specialStrFilter(file.name),
         type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
       }
 
@@ -166,7 +166,7 @@ export default {
   width: 200px;
   height: 200px;
 }
-.ant-upload-list-item {
+.simple-upload > .ant-upload-list-item {
   position: absolute;
   z-index: 1;
   width: 200px;

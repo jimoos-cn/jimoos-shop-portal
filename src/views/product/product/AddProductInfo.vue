@@ -41,28 +41,26 @@
           placeholder="请输入商品排序"
           style="width:100%" />
       </a-form-item>
-      <a-row type="flex" justify="start">
-        <a-col :span="6">
-          <a-form-item label="商品封面" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
-            <sf-simple-upload
-              @input="updateCover"
-              :uploadType="0"
-              v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
-            ></sf-simple-upload>
-          </a-form-item>
-        </a-col>
-        <a-col :span="6">
-          <a-form-item label="商品banner" :labelCol="{ lg: { span: 8 }, sm: { span: 8 } }" :wrapperCol="{ lg: { span: 16 }, sm: { span: 16 } }">
-            <sf-simple-upload
-              @input="updateBanner"
-              :uploadType="0"
-              v-decorator="['bannerUrls']"
-            ></sf-simple-upload>
-          </a-form-item>
-        </a-col>
-      </a-row>
+      <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <ListUploadWrapper
+          @input="updateCover"
+          :upload-type="0"
+          v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
+        ></ListUploadWrapper>
+      </a-form-item>
+      <a-form-item label="商品图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <list-upload-wrapper @input="updateBanner" :uploadType="0" :length="9" v-decorator="['bannerUrls']"></list-upload-wrapper>
+      </a-form-item>
       <a-form-item label="商品视频" :labelCol="labelCol" :wrapperCol="wrapperCol">
-        <sf-simple-upload @input="updateVideoUrl" :uploadType="1" v-decorator="['videoUrl']"></sf-simple-upload>
+        <ListUploadWrapper
+          @input="updateVideoUrl"
+          :uploadType="1"
+          :upload-type="1"
+          hint="上传"
+          :width="100"
+          :height="50"
+          v-decorator="['videoUrl']"
+        ></ListUploadWrapper>
       </a-form-item>
       <a-form-item label="商品详情" :labelCol="labelCol" :wrapperCol="wrapperCol">
         <WangEditorExt @change="changeWang" ref="editor" v-decorator="['text', { rules: [{ required: true, message: '商品详情必须填写' }] }]"/>
@@ -82,6 +80,7 @@
 import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
 import SfSimpleUpload from '@/components/Upload/SimpleUploadWrapper'
+import ListUploadWrapper from '@/components/Upload/ListUploadWrapper'
 import { getProductCategoryPage } from '@/api/product/category'
 import { getProductTagPage } from '@/api/product/tag'
 import WangEditorExt from '@/components/Editor/WangEditorExt'
@@ -92,7 +91,8 @@ export default {
   components: {
     FooterToolBar,
     SfSimpleUpload,
-    WangEditorExt
+    WangEditorExt,
+    ListUploadWrapper
   },
   data () {
     return {
