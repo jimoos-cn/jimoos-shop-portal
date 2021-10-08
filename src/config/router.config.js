@@ -277,6 +277,18 @@ export const asyncRouterMap = [
                 name: 'ShopInfo',
                 component: () => import('@/views/settings/ShopInfo'),
                 meta: { title: '基本信息', hidden: true, permission: ['setting'] }
+              },
+              {
+                path: '/settings/uploadSetting',
+                name: 'uploadSetting',
+                component: () => import('@/views/settings/UploadSetting'),
+                meta: { title: '上传配置', hidden: true, permission: ['setting'] }
+              },
+              {
+                path: '/settings/paySetting',
+                name: 'paySetting',
+                component: () => import('@/views/settings/PaySetting'),
+                meta: { title: '支付配置', hidden: true, permission: ['setting'] }
               }
               // {
               //   path: '/account/settings/security',
