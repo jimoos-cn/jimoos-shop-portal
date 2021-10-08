@@ -8,7 +8,8 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "build:preview": "vue-cli-service build --mode preview",
-    "lint:nofix": "vue-cli-service lint --no-fix"
+    "lint:nofix": "vue-cli-service lint --no-fix",
+    "report": "vue-cli-service build --report"
   },
   "dependencies": {
     "@ant-design-vue/pro-layout": "^1.0.7",
@@ -36,7 +37,8 @@
     "vuex": "^3.1.1",
     "wangeditor": "^4.6.3",
     "k-form-design": "^3.7.2",
-    "vcolorpicker": "^1.0.3"
+    "vcolorpicker": "^1.0.3",
+    "compression-webpack-plugin": "^5.0.0"
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",

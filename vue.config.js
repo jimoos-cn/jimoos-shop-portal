@@ -4,6 +4,7 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const GitRevision = new GitRevisionPlugin()
 const buildDate = JSON.stringify(new Date().toLocaleString())
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -48,6 +49,13 @@ const vueConfig = {
         APP_VERSION: `"${require('./package.json').version}"`,
         GIT_HASH: JSON.stringify(getGitHash()),
         BUILD_DATE: buildDate
+      }),
+      new CompressionPlugin({
+        algorithm: 'gzip',
+        test: /\.(js|css)$/, // 匹配文件名
+        threshold: 10240, // 对超过10k的数据压缩
+        deleteOriginalAssets: false, // 不删除源文件
+        minRatio: 0.8 // 压缩比
       })
     ],
     // if prod, add externals
@@ -115,7 +123,7 @@ const vueConfig = {
 
   // disable source map in production
   productionSourceMap: false,
-  lintOnSave: undefined,
+  lintOnSave: false,
   // babel-loader no-ignore node_modules/*
   transpileDependencies: []
 }

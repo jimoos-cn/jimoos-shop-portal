@@ -9,7 +9,8 @@ const api = {
     // 获取文件URL签名
     getObsTempSign: data => requestWapper('/huawei/obs/temporary-signature', methods.POST, data, ContentTypes.JSON),
     checkObs: data => requestWapper('/huawei/obs/checkObs', methods.GET, data),
-    deleteFile: data => requestWapper('/storage/delete', methods.DELETE, data)
+    deleteFile: data => requestWapper('/storage/delete', methods.DELETE, data),
+    uploadFileToLocal: data => requestWapper('/storage/upload', methods.POST, data, ContentTypes.FORM_DATA)
 }
 
 const UploadType = {
@@ -29,6 +30,10 @@ export function deleteFile (data) {
   return axios(api.deleteFile(data))
 }
 
+export function uploadFileToLocal (data) {
+  return axios(api.uploadFileToLocal(data))
+}
+
 /**
  * 上传数据
  * @param {form} data
@@ -37,8 +42,13 @@ export function deleteFile (data) {
  */
 export async function uploadFile (data, file) {
     let result = {}
+    let obs = true
+    await checkObs().then(res => {
+      obs = res
+    })
+  if (obs) {
     await getObsTempSign(data).then(res => {
-        result = res
+      result = res
     })
     const mediaUrl = 'https://' + result[0].blobUrl
     const url = 'https://' + result[0].url
@@ -50,16 +60,22 @@ export async function uploadFile (data, file) {
     formData.append('signature', result[0].signature)
     formData.append('file', file)
     const config = {
-        headers: {
-            'Content-type': 'multipart/form-data'
-        }
+      headers: {
+        'Content-type': 'multipart/form-data'
+      }
     }
     await rawAxios.post(url, formData, config)
     return mediaUrl
-}
-
-export function uploadFileToLocal (data) {
-  return axios({ url: '/storage/upload', method: 'post', data: data })
+  } else {
+    const param = {
+      file: file,
+      type: 0
+    }
+    await uploadFileToLocal(param).then(res => {
+      console.log('res', res)
+    })
+  }
+  return ''
 }
 
 export {
