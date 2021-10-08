@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-  import { uploadFile, UploadType } from '@/api/obs'
+import { uploadFile, UploadType } from '@/api/obs'
   export default {
     data () {
       return {
@@ -262,6 +262,7 @@
             url += ',' + item.url
           }
         })
+        console.log('url', url)
         this.$nextTick(() => {
           this.changeType2()
           if (this.uploadType === 3) {
