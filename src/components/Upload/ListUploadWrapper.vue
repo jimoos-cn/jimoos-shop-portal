@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-  import { getObsTempSign, UploadType } from '@/api/obs'
+  import { uploadFile, UploadType } from '@/api/obs'
   export default {
     data () {
       return {
@@ -403,7 +403,7 @@
           blobs: blobs
         }
         // 处理上传
-        await getObsTempSign(params, file).then(res => {
+        await uploadFile(params, file).then(res => {
           this.loading = false
           // 上传成功后更改状态
           console.log(this.fileList)
