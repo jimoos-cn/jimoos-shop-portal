@@ -41,11 +41,12 @@ export function uploadFileToLocal (data) {
  * @returns photo url
  */
 export async function uploadFile (data, file) {
-    let result = {}
-    let obs = true
-    await checkObs().then(res => {
-      obs = res
-    })
+  let result = {}
+  let obs = true
+  await checkObs().then(res => {
+    obs = res
+  })
+  let ResUrl = ''
   if (obs) {
     await getObsTempSign(data).then(res => {
       result = res
@@ -65,7 +66,7 @@ export async function uploadFile (data, file) {
       }
     }
     await rawAxios.post(url, formData, config)
-    return mediaUrl
+    ResUrl = mediaUrl
   } else {
     const param = {
       file: file,
@@ -73,10 +74,10 @@ export async function uploadFile (data, file) {
     }
     await uploadFileToLocal(param).then(res => {
       console.log('res', res)
-      return res
+      ResUrl = res
     })
   }
-  return ''
+  return ResUrl
 }
 
 export {
