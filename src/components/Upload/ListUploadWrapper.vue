@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-  import { uploadFile, UploadType } from '@/api/obs'
+import { checkObs, uploadFile, uploadFileToLocal, UploadType } from '@/api/obs'
   export default {
     data () {
       return {
@@ -62,7 +62,8 @@
         // 显示的图片
         preImg: '',
         preName: '',
-        pre: false
+        pre: false,
+        obs: false
       }
     },
     props: {
@@ -107,6 +108,7 @@
     },
     created () {
       this.changeTip()
+      this.checkObs()
     },
     mounted () {
       this.changeType1()
@@ -393,35 +395,64 @@
       // 上传
       async handleUpload (option) {
         const { file } = option
-        const blob = {
-          name: this.$specialStrFilter(file.name),
-          type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
-        }
-        const blobs = []
-        blobs.push(blob)
-        const params = {
-          blobs: blobs
-        }
-        // 处理上传
-        await uploadFile(params, file).then(res => {
-          this.loading = false
-          // 上传成功后更改状态
-          console.log(this.fileList)
-          this.fileList.find(item => {
-            if (item.uid === file.uid) {
-              item.status = 'done'
-              this.$set(item, 'url', res)
+        if (this.obs) {
+          const blob = {
+            name: this.$specialStrFilter(file.name),
+            type: this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA
+          }
+          const blobs = []
+          blobs.push(blob)
+          const params = {
+            blobs: blobs
+          }
+          // 处理上传
+          await uploadFile(params, file).then(res => {
+            this.loading = false
+            // 上传成功后更改状态
+            console.log(this.fileList)
+            this.fileList.find(item => {
+              if (item.uid === file.uid) {
+                item.status = 'done'
+                this.$set(item, 'url', res)
+              }
+            })
+            if (this.uploadType === 1) {
+              this.setVideoCover(file, res)
+              this.$nextTick(() => {
+                this.clearIcon()
+              })
             }
           })
-          if (this.uploadType === 1) {
-            this.setVideoCover(file, res)
-            this.$nextTick(() => {
-              this.clearIcon()
+        } else {
+          const form = new FormData()
+          form.append('file', file)
+          form.append('type', this.uploadType === 0 ? UploadType.IMG : UploadType.MEDIA)
+
+          await uploadFileToLocal(form).then(res => {
+            this.loading = false
+            // 上传成功后更改状态
+            console.log(this.fileList)
+            this.fileList.find(item => {
+              if (item.uid === file.uid) {
+                item.status = 'done'
+                this.$set(item, 'url', res)
+              }
             })
-          }
-        })
+            if (this.uploadType === 1) {
+              this.setVideoCover(file, res)
+              this.$nextTick(() => {
+                this.clearIcon()
+              })
+            }
+          })
+        }
         // 回调
         this.changeList()
+      },
+      checkObs () {
+        checkObs().then(res => {
+          this.obs = res
+        })
       }
     }
   }
