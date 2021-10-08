@@ -73,6 +73,7 @@ export async function uploadFile (data, file) {
     }
     await uploadFileToLocal(param).then(res => {
       console.log('res', res)
+      return res
     })
   }
   return ''
