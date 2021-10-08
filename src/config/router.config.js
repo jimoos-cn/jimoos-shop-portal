@@ -88,7 +88,7 @@ export const asyncRouterMap = [
             ]
           },
           {
-            path: '/product/list',
+            path: '/order/OfflineOrder',
             name: 'productList',
             meta: { title: '线下支付', keepAlive: true, permission: ['order'] },
             component: () => import('@/views/order/offline/OfflineOrder')

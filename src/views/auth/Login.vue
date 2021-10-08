@@ -147,7 +147,7 @@ export default {
         if (redirect !== 'undefined') {
           location.replace('/#' + redirect)
         } else {
-          location.replace('/dashboard/workplace')
+          location.replace('/dashboard')
         }
       }, 500)
       this.isLoginError = false
