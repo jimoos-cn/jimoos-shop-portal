@@ -8,10 +8,10 @@
         <a-input-group compact>
           <a-select :default-value="0" style="width: 30%" v-model="batchSet.type">
             <a-select-option :value="0">
-              价格
+              展示价
             </a-select-option>
             <a-select-option :value="1">
-              展示价
+              价格
             </a-select-option>
             <a-select-option :value="2">
               库存
@@ -34,36 +34,24 @@
       </a-col>
     </a-row>
     <a-table style="margin-top: 20px" :columns="columns" :dataSource="skus" :pagination="false" bordered>
-      <template slot="price" slot-scope="text, record">
-        <a-input-number
-          v-if="record.editable"
-          style="width: 100%"
-          v-model="record.price"
-          :max="99999999"
-          :min="0.01"
-          :precision="2" />
-        <template v-else>{{ record.price }}</template>
-      </template>
       <template slot="showPrice" slot-scope="text, record">
-        <a-input-number
-          v-if="record.editable"
-          style="width: 100%"
-          v-model="record.showPrice"
-          :max="99999999"
-          :min="0.01"
-          :precision="2" />
+        <a-input-number v-if="record.editable" style="width: 100%" v-model="record.showPrice" :max="99999999" :min="0.01" :precision="2" />
         <template v-else>{{ record.showPrice }}</template>
+      </template>
+      <template slot="price" slot-scope="text, record">
+        <a-input-number v-if="record.editable" style="width: 100%" v-model="record.price" :max="99999999" :min="0.01" :precision="2" />
+        <template v-else>{{ record.price }}</template>
       </template>
       <template slot="quantity" slot-scope="text, record">
         <a-input-number
-          placeholder="不填写则默认为0"
+          placeholder="不填写则默认为9999"
           v-if="record.editable"
           style="width: 100%"
           v-model="record.quantity"
-          :key="record.id"
           :max="99999999"
           :min="0"
           :precision="0"
+          :defaultValue="0"
         />
         <template v-else>{{ record.quantity }}</template>
       </template>
@@ -118,13 +106,13 @@ const naiveColumns = [
     align: 'center',
     scopedSlots: { customRender: 'showPrice' }
   },
-  {
-    title: '库存',
-    width: '15%',
-    align: 'center',
-    dataIndex: 'quantity',
-    scopedSlots: { customRender: 'quantity' }
-  },
+  // {
+  //   title: '库存',
+  //   width: '15%',
+  //   align: 'center',
+  //   dataIndex: 'quantity',
+  //   scopedSlots: { customRender: 'quantity' }
+  // },
   {
     title: '图片',
     width: '15%',
@@ -266,10 +254,10 @@ export default {
       if (this.batchSet.value != null && this.batchSet.value !== '') {
         switch (this.batchSet.type) {
           case 0:
-            this.batchSetPrice()
+            this.batchSetShowPrice()
             break
           case 1:
-            this.batchSetShowPrice()
+            this.batchSetPrice()
             break
           case 2:
             this.batchSetStock()
@@ -279,16 +267,16 @@ export default {
     },
     batchSetPrice () {
       this.skus.filter(item => {
-        if (item.editable) {
-          item.price = this.batchSet.value
-        }
+        item.price = this.batchSet.value
+        // if (item.editable) {
+        // }
       })
     },
     batchSetShowPrice () {
       this.skus.forEach(item => {
-        if (item.editable) {
-          item.showPrice = this.batchSet.value
-        }
+        item.showPrice = this.batchSet.value
+        // if (item.editable) {
+        // }
       })
     },
     batchSetStock () {
@@ -296,9 +284,10 @@ export default {
         this.batchSet.value = this.batchSet.value.toFixed(0)
       }
       this.skus.forEach(item => {
-        if (item.editable) {
-          this.$set(item, 'quantity', this.batchSet.value)
-        }
+        this.$set(item, 'quantity', this.batchSet.value)
+        // if (item.editable) {
+        //
+        // }
       })
     },
     batchSave () {

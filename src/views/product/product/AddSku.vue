@@ -7,7 +7,7 @@
         <a-radio :value="1">单品</a-radio>
         <a-radio :value="2">非单品</a-radio>
       </a-radio-group>
-      <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
+      <SingleSkuTable  ref="single"  v-if="skuType == '1'" @change="handleSingleSkuChange"></SingleSkuTable>
       <template v-if="skuType == 2">
         <AttrContainer @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
         <MultiSkuTable ref="multi" @change="handleMultiSkuChange"></MultiSkuTable>
@@ -51,7 +51,11 @@ export default {
     nextStep () {
       const that = this
       that.loading = true
-      that.$refs.multi.batchSave()
+      if (this.skuType != 1) {
+        that.$refs.multi.batchSave()
+      } else {
+        that.$refs.single.batchSave()
+      }
       if (that.Sku == null || that.Sku === '' || that.Sku === undefined) {
         that.$message.error('规格未保存')
       } else {

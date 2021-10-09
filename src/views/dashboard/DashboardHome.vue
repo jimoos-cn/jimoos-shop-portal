@@ -1,70 +1,66 @@
 <template>
   <page-header-wrapper>
-    <a-row>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.total-sales')" total="￥126,560">
+    <a-row v-if="statistic">
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" :title="$t('dashboard.analysis.total-sales')" :total="'￥'+ statistic.allSales">
           <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>
-            <trend flag="up" style="margin-right: 16px;">
-              <span slot="term">{{ $t('dashboard.analysis.week') }}</span>
-              12%
-            </trend>
-            <trend flag="down">
-              <span slot="term">{{ $t('dashboard.analysis.day') }}</span>
-              11%
-            </trend>
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.day-sales') }}<span>￥ 234.56</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
-        <chart-card :loading="loading" title="总订单数" :total="6560 | NumberFormat">
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" title="总订单数" :total="statistic.orderAllCount">
           <a-tooltip title="$t('dashboard.analysis.introduce')" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>
-            <mini-bar />
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.conversion-rate') }} <span>60%</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.payments')" :total="6560 | NumberFormat">
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" title="总用户数" :total="statistic.userAllCount">
           <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>
-            <mini-bar />
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.conversion-rate') }} <span>60%</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.payments')" :total="6560 | NumberFormat">
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" title="今日销售额" :total="statistic.day7[0].sales">
           <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>
-            <mini-bar />
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.conversion-rate') }} <span>60%</span></template>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" title="今日订单数" :total="statistic.day7[0].orderCount">
+          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
+            <a-icon type="info-circle-o" />
+          </a-tooltip>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
+        <chart-card :loading="loading" title="今日新增用户" :total="statistic.day7[0].userCount">
+          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
+            <a-icon type="info-circle-o" />
+          </a-tooltip>
         </chart-card>
       </a-col>
     </a-row>
 
-    <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
+    <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}" v-if="statistic">
       <div class="salesCard">
         <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
-          <a-tab-pane loading="true" :tab="$t('dashboard.analysis.sales')" key="1">
-            <a-row>
-              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar :data="barData" :title="$t('dashboard.analysis.sales-trend')" />
-              </a-col>
-              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list :title="$t('dashboard.analysis.sales-ranking')" :list="rankList"/>
-              </a-col>
+          <a-tab-pane loading="true" tab="销售额" key="1">
+            <a-row style="padding-right: 20px">
+                <bar :data="barData1" title="销售额" />
+            </a-row>
+          </a-tab-pane>
+          <a-tab-pane loading="true" tab="订单数" key="2">
+            <a-row style="padding-right: 20px">
+              <bar :data="barData2" title="订单数" />
+            </a-row>
+          </a-tab-pane>
+          <a-tab-pane loading="true" tab="用户数" key="3">
+            <a-row style="padding-right: 20px">
+              <bar :data="barData3" title="用户数" />
             </a-row>
           </a-tab-pane>
         </a-tabs>
@@ -75,25 +71,49 @@
 
 <script>
   import ChartCard from '@/views/dashboard/modules/ChartCard'
+  import Bar from '@/components/Charts/Bar'
   import { getStatistic } from '@/api/shopInfo'
 export default {
   name: 'DashboardHome',
   components: {
-    ChartCard
+    ChartCard,
+    Bar
   },
   data () {
     return {
       loading: false,
-      statistic: null
+      statistic: null,
+      barData1: [],
+      barData2: [],
+      barData3: []
     }
   },
-  mounted () {
+  created () {
     this.getInfo()
   },
   methods: {
     getInfo () {
-      getStatistic.then(res => {
+      getStatistic().then(res => {
         this.statistic = res
+        this.statistic.day7.forEach(item => {
+          const time = this.$dateFormat(item.startTime, 'YYYY-MM-DD')
+          this.barData1.push({
+            x: time,
+            y: item.sales
+          })
+          this.barData2.push({
+            x: time,
+            y: item.orderCount
+          })
+          this.barData3.push({
+            x: time,
+            y: item.userCount
+          })
+        })
+        console.log('statistic', this.statistic)
+        console.log('data1', this.barData1)
+        console.log('data2', this.barData2)
+        console.log('data3', this.barData3)
       })
     }
   }

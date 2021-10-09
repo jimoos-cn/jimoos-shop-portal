@@ -7,14 +7,14 @@
       <a-radio :value="1">单品</a-radio>
       <a-radio :value="2">非单品</a-radio>
     </a-radio-group>
-    <SingleSkuTable v-if="skuType == '1'" @change="handleSingleSkuChange" :single="allSku"></SingleSkuTable>
+    <SingleSkuTable v-if="skuType == '1'" ref="single" @change="handleSingleSkuChange" :single="allSku"></SingleSkuTable>
     <template v-if="skuType == 2">
       <AttrContainer ref="attr" :edit-flag="true" @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
       <MultiSkuTable ref="multi" :edit-flag="true" @change="handleMultiSkuChange"></MultiSkuTable>
     </template>
     <!-- fixed footer toolbar -->
     <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
-      <a-button>取消</a-button>
+      <a-button @click="cancelSaveProduct">取消</a-button>
       <a-button type="primary" @click="handleOk" style="margin-left: 10px">修改</a-button>
     </footer-tool-bar>
   </a-card>
@@ -57,7 +57,11 @@ export default {
       const that = this
       const param = []
       // 提交前 先批量保存
-      this.$refs.multi.batchSave()
+      if (this.skuType !== 1) {
+        this.$refs.multi.batchSave()
+      } else {
+        this.$refs.single.batchSave()
+      }
       for (const i in that.skus) {
         const data = {
           attrs: that.skus[i].attrs,
@@ -119,6 +123,9 @@ export default {
     handleMultiSkuChange (val) {
       console.log('multi sku:' + JSON.stringify(val))
       this.skus = val
+    },
+    cancelSaveProduct () {
+      this.$router.push({ name: 'productList-management' })
     },
     handleAttrValueChangeEvent (attrValuesList) {
       const attrs = this.allSku[0].attrs
