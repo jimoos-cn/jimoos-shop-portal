@@ -72,17 +72,33 @@
     <!--      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">添加</a-button>-->
     <!--    </a-form-item>-->
     <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
-      <SimpleUploadWrapper
+      <ListUploadWrapper
+        :urls="product.cover"
         @input="updateCover"
         :uploadType="0"
         v-decorator="['cover', { rules: [{ required: true, message: '商品封面必须填写' }] }]"
-      ></SimpleUploadWrapper>
+      ></ListUploadWrapper>
     </a-form-item>
     <a-form-item label="商品图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
-      <list-upload-wrapper @input="updateBanner" ref="listUpload" :uploadType="0" :length="9" v-decorator="['bannerUrls']"></list-upload-wrapper>
+      <list-upload-wrapper
+        @input="updateBanner"
+        :urls="product.bannerUrls"
+        :uploadType="0"
+        :length="9"
+        v-decorator="['bannerUrls']"
+      ></list-upload-wrapper>
     </a-form-item>
     <a-form-item label="商品视频" :labelCol="labelCol" :wrapperCol="wrapperCol">
-      <SimpleUploadWrapper @input="updateVideoUrl" :uploadType="1" v-decorator="['videoUrl']"></SimpleUploadWrapper>
+      <ListUploadWrapper
+        :urls="product.videoUrl"
+        @input="updateVideoUrl"
+        :uploadType="1"
+        :upload-type="1"
+        hint="上传"
+        :width="100"
+        :height="50"
+        v-decorator="['videoUrl']"
+      ></ListUploadWrapper>
     </a-form-item>
     <a-form-item label="商品详情" :labelCol="labelCol" :wrapperCol="wrapperCol">
       <WangEditor @change="changeWang" ref="editor" v-decorator="['text', { rules: [{ required: true, message: '商品详情必须填写' }] }]" />
