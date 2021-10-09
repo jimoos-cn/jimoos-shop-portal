@@ -4,7 +4,8 @@ import { axios } from '@/utils/request'
 
 const api = {
     saveShopInfo: data => requestWapper('/shopInfo', Methods.POST, data),
-    getShopInfo: data => requestWapper('/shopInfo', Methods.GET, data)
+    getShopInfo: data => requestWapper('/shopInfo', Methods.GET, data),
+    getStatistic: () => requestWapper('/statistics', Methods.GET)
 }
 
 /**
@@ -22,4 +23,12 @@ export function saveShopInfo (data) {
  */
 export function getShopInfo (data) {
     return axios(api.getShopInfo(data))
+}
+/**
+ * 获取统计数据
+ * @param
+ * @returns
+ */
+export function getStatistic () {
+  return axios(api.getStatistic())
 }

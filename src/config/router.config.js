@@ -267,7 +267,7 @@ export const asyncRouterMap = [
           {
             path: '/settings',
             name: 'settings',
-            component: () => import('@/views/settings/Index'),
+            component: () => import('@/views/settings/Index.vue'),
             meta: { title: '商城设置', hideHeader: true, permission: ['setting'] },
             redirect: '/settings/shopInfo',
             hideChildrenInMenu: true,

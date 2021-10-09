@@ -75,6 +75,7 @@
 
 <script>
   import ChartCard from '@/views/dashboard/modules/ChartCard'
+  import { getStatistic } from '@/api/shopInfo'
 export default {
   name: 'DashboardHome',
   components: {
@@ -82,7 +83,18 @@ export default {
   },
   data () {
     return {
-      loading: false
+      loading: false,
+      statistic: null
+    }
+  },
+  mounted () {
+    this.getInfo()
+  },
+  methods: {
+    getInfo () {
+      getStatistic.then(res => {
+        this.statistic = res
+      })
     }
   }
 }
