@@ -39,38 +39,6 @@
         style="width:100%"
       />
     </a-form-item>
-    <!--    <a-form-item label="商品属性" :labelCol="labelCol" :wrapperCol="wrapperCol">-->
-    <!--      <a-table :columns="columns" :dataSource="specification" :pagination="false" :loading="memberLoading">-->
-    <!--        <template v-for="(col, i) in ['specKey', 'specValue', 'sort']" :slot="col" slot-scope="text, record">-->
-    <!--          <a-input-->
-    <!--            :key="col"-->
-    <!--            v-if="record.editable"-->
-    <!--            style="margin: -5px 0"-->
-    <!--            :value="text"-->
-    <!--            :placeholder="columns[i].title"-->
-    <!--            @change="e => handleChange(e.target.value, record.uid, col)"-->
-    <!--          />-->
-    <!--          <template v-else>{{ text }}</template>-->
-    <!--        </template>-->
-    <!--        <template slot="operation" slot-scope="text, record">-->
-    <!--          <template v-if="record.editable">-->
-    <!--            <span>-->
-    <!--              <a @click="saveRow(record)">保存</a>-->
-    <!--              <a-divider type="vertical" />-->
-    <!--              <a @click="cancel(record.uid)">取消</a>-->
-    <!--            </span>-->
-    <!--          </template>-->
-    <!--          <span v-else>-->
-    <!--            <a @click="toggle(record.uid)">编辑</a>-->
-    <!--            <a-divider type="vertical" />-->
-    <!--            <a-popconfirm title="是否要删除此行？" @confirm="remove(record.uid)">-->
-    <!--              <a>删除</a>-->
-    <!--            </a-popconfirm>-->
-    <!--          </span>-->
-    <!--        </template>-->
-    <!--      </a-table>-->
-    <!--      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">添加</a-button>-->
-    <!--    </a-form-item>-->
     <a-form-item label="商品封面" :labelCol="labelCol" :wrapperCol="wrapperCol">
       <ListUploadWrapper
         :urls="product.cover"
@@ -204,7 +172,6 @@ export default {
       this.$nextTick(() => {
         // 初始化表单
         that.$refs.editor.setContent(that.product.text)
-        that.$refs.listUpload.setContent(that.product.bannerUrls)
         fields.forEach(v => that.form.getFieldDecorator(v))
         that.form.setFieldsValue(pick(that.product, fields))
         const ids = []
@@ -214,10 +181,20 @@ export default {
         that.form.setFieldsValue({ tagIds: ids })
         // 设置属性值
         that.specification = that.product.specs
-        // that.specification.forEach(item => {
-        //   item.uid = that.uid++
-        //   that.$set(item, 'editable', false)
-        // })
+        const categoryValue = []
+        const category = that.product.category
+        if (category.pid !== 0) {
+          categoryValue.push(category.pid)
+        }
+        categoryValue.push(category.id)
+        console.log('categoryValue', categoryValue)
+        that.form.setFieldsValue({ categoryValue: categoryValue })
+        // 设置属性值
+        that.specification = that.product.specs
+        that.specification.forEach(item => {
+          item.uid = that.uid++
+          that.$set(item, 'editable', false)
+        })
       })
     },
     saveRow (record) {
