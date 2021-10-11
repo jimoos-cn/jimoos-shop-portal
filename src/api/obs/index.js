@@ -8,7 +8,8 @@ import rawAxios from 'axios'
 const api = {
     // 获取文件URL签名
     getObsTempSign: data => requestWapper('/huawei/obs/temporary-signature', methods.POST, data, ContentTypes.JSON),
-    checkObs: data => requestWapper('/huawei/obs/checkObs', methods.GET, data),
+    checkStorage: () => requestWapper('/storage/checkStorage', methods.GET),
+    changeStorage: () => requestWapper('/storage/changeStorage', methods.POST),
     deleteFile: data => requestWapper('/storage/delete', methods.DELETE, data),
     uploadFileToLocal: data => requestWapper('/storage/upload', methods.POST, data, ContentTypes.FORM_DATA)
 }
@@ -18,12 +19,16 @@ const UploadType = {
     MEDIA: 1 // 视频或音频
 }
 
-export function getObsTempSign (data) {
-    return axios(api.getObsTempSign(data))
+export function checkStorage () {
+  return axios(api.checkStorage())
 }
 
-export function checkObs () {
-  return axios(api.checkObs())
+export function changeStorage () {
+  return axios(api.changeStorage())
+}
+
+export function getObsTempSign (data) {
+    return axios(api.getObsTempSign(data))
 }
 
 export function deleteFile (data) {
@@ -43,8 +48,8 @@ export function uploadFileToLocal (data) {
 export async function uploadFile (data, file) {
   let result = {}
   let obs = true
-  await checkObs().then(res => {
-    obs = res
+  await checkStorage().then(res => {
+    obs = res.huaweiObs
   })
   let ResUrl = ''
   if (obs) {
