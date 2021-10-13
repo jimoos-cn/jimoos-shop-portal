@@ -16,6 +16,9 @@
             <a-menu-item key="/develop/upload" v-if="debug">
               <router-link :to="{ name: 'Upload' }"> 文件上传设置 </router-link>
             </a-menu-item>
+            <a-menu-item key="/develop/payment" v-if="debug">
+              <router-link :to="{ name: 'Payment' }"> 支付方式设置 </router-link>
+            </a-menu-item>
           </a-menu>
         </div>
         <div class="account-settings-info-right">

@@ -353,6 +353,12 @@ export const asyncRouterMap = [
                 name: 'Upload',
                 component: () => import('@/views/develop/Upload'),
                 meta: { title: '文件上传设置', hidden: true, permission: ['develop'] }
+              },
+              {
+                path: '/develop/payment',
+                name: 'Payment',
+                component: () => import('@/views/develop/Payment'),
+                meta: { title: '支付方式配置', hidden: true, permission: ['develop'] }
               }
             ]
           }

@@ -11,7 +11,10 @@ const api = {
     checkStorage: () => requestWapper('/storage/checkStorage', methods.GET),
     changeStorage: () => requestWapper('/storage/changeStorage', methods.POST),
     deleteFile: data => requestWapper('/storage/delete', methods.DELETE, data),
-    uploadFileToLocal: data => requestWapper('/storage/upload', methods.POST, data, ContentTypes.FORM_DATA)
+    uploadFileToLocal: data => requestWapper('/storage/upload', methods.POST, data, ContentTypes.FORM_DATA),
+    checkPayment: () => requestWapper('/storage/checkPayment', methods.GET),
+    addPayment: data => requestWapper('/storage/addPayment', methods.POST, data),
+    changePayment: data => requestWapper('/storage/changePayment', methods.POST, data)
 }
 
 const UploadType = {
@@ -25,6 +28,18 @@ export function checkStorage () {
 
 export function changeStorage () {
   return axios(api.changeStorage())
+}
+
+export function checkPayment () {
+  return axios(api.checkPayment())
+}
+
+export function addPayment (data) {
+  return axios(api.addPayment(data))
+}
+
+export function changePayment (data) {
+  return axios(api.changePayment(data))
 }
 
 export function getObsTempSign (data) {
