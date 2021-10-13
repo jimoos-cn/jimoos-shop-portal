@@ -25,7 +25,7 @@
       </a-col>
     </a-row>
     <a-tabs type="card">
-      <a-tab-pane key="1" tab="Tab 1">
+      <a-tab-pane key="1" tab="本地存储配置">
         <a-row :gutter="16">
           <a-col :md="24" :lg="16">
             <a-form layout="vertical">
@@ -68,7 +68,7 @@
           </a-col>
         </a-row>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="Tab 2">
+      <a-tab-pane key="2" tab="华为obs配置">
         <a-row :gutter="16">
           <a-col :md="24" :lg="16">
             <a-form layout="vertical">
