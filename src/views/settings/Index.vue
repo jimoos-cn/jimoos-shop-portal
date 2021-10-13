@@ -15,16 +15,6 @@
                 基本设置
               </router-link>
             </a-menu-item>
-            <a-menu-item key="/settings/uploadSetting">
-              <router-link :to="{ name: 'uploadSetting' }">
-                上传配置
-              </router-link>
-            </a-menu-item>
-            <a-menu-item key="/settings/paySetting">
-              <router-link :to="{ name: 'paySetting' }">
-                支付配置
-              </router-link>
-            </a-menu-item>
           </a-menu>
         </div>
         <div class="account-settings-info-right">

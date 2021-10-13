@@ -7,7 +7,6 @@
       <a-col class="storage-select">
         <span class="storage-label">本地存储：</span>
         <a-switch
-          id="local"
           @change="changeStorage"
           checked-children="开"
           un-checked-children="关"
