@@ -139,6 +139,7 @@ export default {
         keyword: 'local.storage'
       }).then((res) => {
         this.local = {
+          keyword: 'local.storage',
           ...res
         }
       })
@@ -146,6 +147,7 @@ export default {
         keyword: 'huawei.obs'
       }).then((res) => {
         this.obs = {
+          keyword: 'huawei.obs',
           ...res
         }
       })
@@ -153,8 +155,12 @@ export default {
   },
   data () {
     return {
-      local: {},
-      obs: {},
+      local: {
+        keyword: 'local.storage'
+      },
+      obs: {
+        keyword: 'huawei.obs'
+      },
       localStorage: false,
       huaweiObs: false
     }
