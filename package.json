@@ -8,6 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "build:preview": "vue-cli-service build --mode preview",
+    "build:release": "vue-cli-service build --mode release",
     "lint:nofix": "vue-cli-service lint --no-fix",
     "report": "vue-cli-service build --report"
   },
