@@ -53,9 +53,21 @@ export default {
       limit: 9999
     }).then((res) => {
       this.attrList = res['list'].filter((attr) => attr.id !== 1)
+      this.changeValue()
     })
   },
   methods: {
+    changeValue () {
+      if (this.attrList.length > 0) {
+        const ids = []
+        if (this.attrSelectedList.length > 0) {
+          this.attrSelectedList.forEach(item => {
+            ids.push(item.id)
+          })
+        }
+        this.attrList = this.attrList.filter(item => !ids.includes(item.id))
+      }
+    },
     setContent (allSku) {
       const attrs = allSku[0].attrs
       // 保存leaf
@@ -108,12 +120,21 @@ export default {
             id: val.key,
             name: val.label
           })
+          this.changeValue()
         }
       }
     },
     handleAttrRemove (id) {
       console.log('remove attr id:' + id)
-      const attrSelectedList = this.attrSelectedList.filter((attr) => attr.id !== id)
+      const that = this
+      const attrSelectedList = this.attrSelectedList.filter((attr) => {
+        if (attr.id === id) {
+          that.attrList.push(attr)
+        }
+        if (attr.id !== id) {
+          return attr
+        }
+      })
       this.attrSelectedList = attrSelectedList
       const attrValuesList = this.attrValuesList.filter((attr) => attr.id !== id)
       this.attrValuesList = attrValuesList

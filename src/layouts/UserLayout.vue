@@ -21,11 +21,11 @@
 
         <div class="footer">
           <div class="links">
-            <a href="https://forum.jimoos.cn/" target="_blank">论坛支持</a>
             <a href="https://github.com/jimoos-cn/jimoos-shop-portal" target="_blank">Github</a>
             <a href="https://github.com/keepcleargas" target="_blank">@keepcleargas</a>
           </div>
           <div class="copyright">Copyright &copy; 2021 积墨开源</div>
+          <div class="copyright">v1.0.0</div>
         </div>
       </div>
     </div>

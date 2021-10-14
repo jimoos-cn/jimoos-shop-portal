@@ -70,6 +70,7 @@ export default {
         })
       })
       this.attrValues = attrValues
+      this.changeValue()
     })
   },
   data () {
@@ -80,12 +81,31 @@ export default {
     }
   },
   methods: {
+    changeValue () {
+      if (this.attrValues.length > 0) {
+        const names = []
+        if (this.attrValuesSelected.length > 0) {
+          this.attrValuesSelected.forEach(item => {
+            names.push(item.name)
+          })
+        }
+        this.attrValues = this.attrValues.filter(item => !names.includes(item.name))
+      }
+    },
     setContent (val) {
       this.attrValuesSelected = val
     },
     removeTag (key) {
+      const that = this
       console.log('key:' + key)
-      const attrValuesSelected = this.attrValuesSelected.filter((attrValue) => attrValue.id !== key)
+      const attrValuesSelected = this.attrValuesSelected.filter((attrValue) => {
+        if (attrValue.id === key) {
+          that.attrValues.push(attrValue)
+        }
+        if (attrValue.id !== key) {
+          return attrValue
+        }
+      })
       this.attrValuesSelected = attrValuesSelected
       this.pubChangeEvent()
     },
@@ -106,28 +126,31 @@ export default {
               this.attrValuesSelected.push(attrValueObjects[0])
               flag = true
             } else {
-              // 添加 属性值添加
-              await addAttrValue({
-                attrId: this.attr.id,
-                name: item,
-                description: '快速添加',
-                sort: 100
-              }).then((res) => {
-                const item = {
-                  id: res.id,
-                  name: res.name
-                }
-                this.attrValuesSelected.push(item)
-                this.attrValues.push(item)
-                this.pubChangeEvent()
-              })
+              if (item !== '') {
+                // 添加 属性值添加
+                await addAttrValue({
+                  attrId: this.attr.id,
+                  name: item,
+                  description: '快速添加',
+                  sort: 100
+                }).then((res) => {
+                  const item = {
+                    id: res.id,
+                    name: res.name
+                  }
+                  this.attrValuesSelected.push(item)
+                  this.attrValues.push(item)
+                  this.pubChangeEvent()
+                })
+              }
             }
           }
         })
         if (flag) {
           this.pubChangeEvent()
         }
-        // console.log('selected:' + this.attrValuesSelected)
+        this.changeValue()
+        console.log('selected:' + this.attrValuesSelected)
       }
       this.tempAttrValues = undefined
     },
