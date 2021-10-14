@@ -9,7 +9,7 @@
     </a-radio-group>
     <SingleSkuTable v-if="skuType == '1'" ref="single" @change="handleSingleSkuChange" :single="allSku"></SingleSkuTable>
     <template v-if="skuType == 2">
-      <AttrContainer ref="attr" :edit-flag="true" @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
+      <AttrContainer ref="attr" @attrValueChangeEvent="handleAttrValueChangeEvent"></AttrContainer>
       <MultiSkuTable ref="multi" :edit-flag="true" @change="handleMultiSkuChange"></MultiSkuTable>
     </template>
     <!-- fixed footer toolbar -->
@@ -128,10 +128,14 @@ export default {
       this.$router.push({ name: 'productList-management' })
     },
     handleAttrValueChangeEvent (attrValuesList) {
+      if (this.allSku.length === 0) {
+        this.$refs.multi.updateAttrValues(attrValuesList)
+      }
       const attrs = this.allSku[0].attrs
       this.attrValuesList = attrValuesList
       // 当规格名全选择完后
       console.log(this.attrValuesList)
+      console.log(attrs)
       if (this.attrValuesList.length === attrs.length && !this.attrValuesList.find(item => item.leaf.length === 0)) {
         this.$refs.multi.updateAttrValues(attrValuesList)
       } else {

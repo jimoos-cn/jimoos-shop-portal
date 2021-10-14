@@ -23,7 +23,7 @@
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px',paddingLeft: '12px',paddingRight: '12px' }">
-        <chart-card :loading="loading" title="今日销售额" :total="statistic.day7[0].sales">
+        <chart-card :loading="loading" title="今日销售额" :total="'￥' + statistic.day7[0].sales">
           <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -50,7 +50,7 @@
         <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
           <a-tab-pane loading="true" tab="销售额" key="1">
             <a-row style="padding-right: 20px">
-                <bar :data="barData1" title="销售额" />
+              <bar :data="barData1" title="销售额" />
             </a-row>
           </a-tab-pane>
           <a-tab-pane loading="true" tab="订单数" key="2">

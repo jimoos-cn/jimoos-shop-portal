@@ -152,14 +152,17 @@ export default {
   },
   methods: {
     updateAttrValues (newVal) {
+      console.log('newVal', newVal)
       const navieAttrSkus = flatten(newVal, this.navieAttrSkus, { optionValue: 'id', optionText: 'name' })
       this.navieAttrSkus = navieAttrSkus
+      console.log('navieAttrSkus', newVal)
       if (this.editFlag) {
         // 修改规格时调用另一个方法,并传的是原始sku数据
         this.skus = editSkus(this.originalSku, navieAttrSkus, '')
       } else {
         this.skus = updateSkus(this.skus, navieAttrSkus, '')
       }
+      console.log('skus', this.skus)
       this.changeTableColumns(this.skus)
     },
     setContent (skus) {
