@@ -95,7 +95,9 @@ export default {
       isOfflinePay: false,
       isWxPay: false,
       offlinePay: {},
-      wxPay: {}
+      wxPay: {
+        keyword: 'wx.pay'
+      }
     }
   },
   mounted () {
@@ -106,6 +108,7 @@ export default {
         keyword: 'wx.pay'
       }).then((res) => {
         this.wxPay = {
+          keyword: 'wx.pay',
           ...res
         }
       })
