@@ -49,7 +49,7 @@
             </a-col>
           </a-row>
           <a-row>
-            <a-button icon="plus" style="margin-left: 40px" type="primary" @click="addVisible = true">添加广告栏</a-button>
+            <a-button icon="plus" type="primary" @click="addVisible = true">添加广告栏</a-button>
           </a-row>
         </a-form>
       </div>
